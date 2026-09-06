@@ -14,7 +14,7 @@ Everything lives in one place: **`js/data.js`**.
 3. Fill in:
    - `id` — a unique slug (letters/numbers/dashes only), used in the URL as
      `blog.html?id=your-id`.
-   - `title`, `glyph` (an emoji icon), `tagline`, `tech` (tag list).
+   - `title`, `glyph` (path to an icon in `images/icons/`), `tagline`, `tech` (tag list).
    - `summary` — short paragraph shown in the pop-up window.
    - `images` — paths to screenshots/photos (drop files into `images/`).
    - `blog` — an array of strings, one per paragraph, for the full write-up.

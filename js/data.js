@@ -15,7 +15,7 @@
  *    id       (string, required)  unique slug, used in the URL:
  *                                  blog.html?id=this-value
  *    title    (string, required)  project name
- *    glyph    (string)            an emoji/character used as the icon
+ *    glyph    (string)            path to an icon image (see images/icons/) used as the icon
  *    tagline  (string)            one-liner shown under the icon & in the popup title
  *    tech     (string[])          short list of tags/technologies
  *    summary  (string)            short paragraph shown in the pop-up window
@@ -29,7 +29,7 @@ window.PROJECTS = [
   {
     id: "noob",
     title: "N.O.O.B.",
-    glyph: "🎮",
+    glyph: "images/icons/gamepad.svg",
     tagline: "An LLM-narrated RPG, built full-stack",
     tech: ["React", "TypeScript", "FastAPI", "Qwen3-4B", "LoRA fine-tuning"],
     summary:
@@ -46,7 +46,7 @@ window.PROJECTS = [
   {
     id: "facelab",
     title: "Deep Learning Lab",
-    glyph: "🧠",
+    glyph: "images/icons/network.svg",
     tagline: "Architecture search & unsupervised learning on faces",
     tech: ["PyTorch", "Autoencoders", "Clustering", "Unsupervised Learning"],
     summary:
@@ -63,7 +63,7 @@ window.PROJECTS = [
   {
     id: "road-rage",
     title: "R.O.A.D. R.A.G.E.",
-    glyph: "🚗",
+    glyph: "images/icons/car.svg",
     tagline: "Autonomous lane-keeping, running in real time",
     tech: ["PyTorch", "YOLOP", "OpenCV", "PID Control", "Comma2k19"],
     summary:

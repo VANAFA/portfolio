@@ -77,6 +77,18 @@ a:visited{ color:#551a8b; }
   overflow:hidden;
   text-overflow:ellipsis;
 }
+.icon-inline{
+  width:16px;
+  height:16px;
+  image-rendering:pixelated;
+  vertical-align:middle;
+  flex-shrink:0;
+}
+.btn98,.start-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
 .title-bar-controls{
   display:flex;
   gap:2px;
@@ -207,7 +219,6 @@ hr.divider{
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:32px;
   background:var(--w98-face);
   border-top:2px solid var(--w98-face-lighter);
   border-left:2px solid var(--w98-face-lighter);
@@ -217,6 +228,11 @@ hr.divider{
 .project-icon:hover .icon-glyph,
 .project-icon:focus .icon-glyph{
   background:#d4d0c8;
+}
+.icon-glyph img{
+  width:32px;
+  height:32px;
+  image-rendering:pixelated;
 }
 .project-icon .icon-label{
   padding:1px 3px;
