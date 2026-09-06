@@ -448,6 +448,11 @@ hr.divider{
   color:var(--w98-text);
   padding:3px 8px;
 }
+.lang-btn{
+  flex-shrink:0;
+  font-size:11px;
+  padding:3px 8px;
+}
 
 @media (max-width:600px){
   /* Reclaim horizontal space and stop the page being three screens tall */
@@ -480,4 +485,5 @@ hr.divider{
   .taskbar-btn .taskbar-label{ display:none; }
   .taskbar-clock{ padding:3px 5px; font-size:11px; }
   .version-badge{ padding:3px 5px; font-size:10px; }
+  .lang-btn{ padding:3px 5px; font-size:10px; }
 }

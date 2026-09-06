@@ -11,15 +11,17 @@ Everything lives in one place: **`js/data.js`**.
 1. Open `js/data.js`.
 2. Copy one of the existing objects in the `PROJECTS` array and paste it as a
    new entry.
-3. Fill in:
+3. Fill in the shared fields:
    - `id` — a unique slug (letters/numbers/dashes only), used in the URL as
      `blog.html?id=your-id`.
-   - `title`, `glyph` (path to an icon in `images/icons/`), `tagline`, `tech` (tag list).
-   - `summary` — short paragraph shown in the pop-up window.
+   - `glyph` — path to an icon in `images/icons/`.
    - `images` — paths to screenshots/photos (drop files into `images/`).
-   - `blog` — an array of strings, one per paragraph, for the full write-up.
-   - `links` — optional extra buttons (e.g. GitHub repo, live demo).
-4. Save the file.
+   - `tech` — tag list.
+   - `repo` — optional GitHub URL, shown as a button on the blog page.
+4. Fill in the text once per language, inside `en` and `es`:
+   - `title`, `tagline`, `summary`, and `blog` (an array of strings, one per
+     paragraph). `es` is Argentinian Spanish; if you omit it, English is used.
+5. Save the file.
 
 That's it — no other file needs to change:
 
@@ -41,7 +43,9 @@ js/data.js         <-- the file you edit to add/change projects
 js/main.js         Renders the project grid + pop-up on index.html
 js/blog.js         Renders a blog.html?id=... page from data.js
 js/windows.js      Minimize/maximize/close + taskbar buttons for each window
+js/i18n.js         English / Argentinian Spanish strings + language toggle
 js/taskbar.js      Decorative taskbar clock
+js/version.js      Version badge showing the deployed commit
 images/icons/      Real Windows 98 .ico icons used across the site
 images/            Photos/screenshots referenced from data.js
 ```
@@ -72,3 +76,13 @@ them in `js/data.js`.
 
 Those are plain HTML in `index.html` (the "About Me" and "Contact" windows)
 and duplicated in the "Contact" window of `blog.html`. Edit the text directly.
+
+## Languages
+
+The site is bilingual (English / Argentinian Spanish). Static interface text
+lives in `js/i18n.js` — add a key there and reference it from HTML with
+`data-i18n="your.key"`. Project text lives per-language inside each project's
+`en` / `es` block in `js/data.js`.
+
+The button in the taskbar toggles between them and remembers the choice in
+`localStorage`, so it carries across pages.

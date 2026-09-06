@@ -10,9 +10,20 @@
   var buttons = {};
 
   function titleFor(win) {
+    // Prefer a translatable key, then a literal label, then the window's title text.
+    if (win.dataset.taskbarKey && window.t) return window.t(win.dataset.taskbarKey);
     if (win.dataset.taskbarLabel) return win.dataset.taskbarLabel;
     var el = win.querySelector(".title-bar-text");
     return el ? el.textContent.trim() : win.dataset.window;
+  }
+
+  function relabelButtons() {
+    windowEls.forEach(function (win) {
+      var btn = buttons[win.dataset.window];
+      if (!btn) return;
+      var span = btn.querySelector(".taskbar-label");
+      if (span) span.textContent = titleFor(win);
+    });
   }
 
   function iconFor(win) {
@@ -45,6 +56,8 @@
   function toggleMaximize(win) {
     win.classList.toggle("maximized");
   }
+
+  document.addEventListener("langchange", function () { relabelButtons(); });
 
   windowEls.forEach(function (win) {
     var id = win.dataset.window;

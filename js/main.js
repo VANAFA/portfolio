@@ -1,10 +1,13 @@
 // Renders the project icon grid from window.PROJECTS and drives the pop-up window.
+// All user-facing text comes from the project's `en` / `es` block, so the grid and
+// the open pop-up both re-render when the language changes.
 (function () {
   var grid = document.getElementById("project-grid");
   var overlay = document.getElementById("modal-overlay");
   var modalTitle = document.getElementById("modal-title");
   var modalBody = document.getElementById("modal-body");
   var lastFocused = null;
+  var openProject = null;
 
   function escapeHtml(str) {
     var div = document.createElement("div");
@@ -12,16 +15,21 @@
     return div.innerHTML;
   }
 
+  function L(project) {
+    return window.localizedProject ? window.localizedProject(project) : (project.en || {});
+  }
+
   function renderGrid() {
     var projects = window.PROJECTS || [];
     grid.innerHTML = "";
     projects.forEach(function (project) {
+      var text = L(project);
       var btn = document.createElement("button");
       btn.className = "project-icon";
       btn.type = "button";
       btn.innerHTML =
         '<span class="icon-glyph"><img src="' + escapeHtml(project.glyph || "images/icons/directory_closed-32.png") + '" alt=""></span>' +
-        '<span class="icon-label">' + escapeHtml(project.title) + "</span>";
+        '<span class="icon-label">' + escapeHtml(text.title || project.id) + "</span>";
       btn.addEventListener("click", function () {
         openModal(project);
       });
@@ -29,9 +37,9 @@
     });
   }
 
-  function openModal(project) {
-    lastFocused = document.activeElement;
-    modalTitle.textContent = project.title + " - " + (project.tagline || "");
+  function fillModal(project) {
+    var text = L(project);
+    modalTitle.textContent = (text.title || project.id) + (text.tagline ? " - " + text.tagline : "");
 
     var imagesHtml = "";
     if (project.images && project.images.length) {
@@ -39,7 +47,7 @@
         '<div class="modal-gallery">' +
         project.images
           .map(function (src) {
-            return '<img src="' + escapeHtml(src) + '" alt="' + escapeHtml(project.title) + ' screenshot">';
+            return '<img src="' + escapeHtml(src) + '" alt="' + escapeHtml(text.title || "") + '">';
           })
           .join("") +
         "</div>";
@@ -53,18 +61,21 @@
         "</div>";
     }
 
-    modalBody.innerHTML =
-      imagesHtml +
-      "<p>" + escapeHtml(project.summary || "") + "</p>" +
-      tagsHtml;
-
-    overlay.hidden = false;
+    modalBody.innerHTML = imagesHtml + "<p>" + escapeHtml(text.summary || "") + "</p>" + tagsHtml;
     document.getElementById("modal-blog-link").href = "blog.html?id=" + encodeURIComponent(project.id);
+  }
+
+  function openModal(project) {
+    lastFocused = document.activeElement;
+    openProject = project;
+    fillModal(project);
+    overlay.hidden = false;
     document.getElementById("modal-close-btn").focus();
   }
 
   function closeModal() {
     overlay.hidden = true;
+    openProject = null;
     if (lastFocused && typeof lastFocused.focus === "function") {
       lastFocused.focus();
     }
@@ -79,24 +90,10 @@
     if (e.key === "Escape" && !overlay.hidden) closeModal();
   });
 
-  // Compact list of the remaining public repositories, from window.REPOS.
-  function renderRepos() {
-    var list = document.getElementById("repo-list");
-    if (!list) return;
-    var repos = window.REPOS || [];
-    list.innerHTML = "";
-    repos.forEach(function (repo) {
-      var li = document.createElement("li");
-      li.className = "repo-item";
-      li.innerHTML =
-        '<a href="https://github.com/VANAFA/' + encodeURIComponent(repo.name) + '" target="_blank" rel="noopener">' +
-        escapeHtml(repo.name) + "</a>" +
-        (repo.lang ? ' <span class="tag">' + escapeHtml(repo.lang) + "</span>" : "") +
-        '<div class="repo-desc">' + escapeHtml(repo.desc || "") + "</div>";
-      list.appendChild(li);
-    });
-  }
+  document.addEventListener("langchange", function () {
+    renderGrid();
+    if (openProject) fillModal(openProject);
+  });
 
   renderGrid();
-  renderRepos();
 })();

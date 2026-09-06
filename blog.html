@@ -9,9 +9,9 @@
 </head>
 <body>
 
-  <section class="window raised" data-window="blog" data-taskbar-label="Project Blog">
+  <section class="window raised" data-window="blog" data-taskbar-key="tb.blog">
     <div class="title-bar">
-      <div class="title-bar-text"><img class="icon-inline" src="images/icons/notepad-16.png" alt=""> Project Blog</div>
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/notepad-16.png" alt=""> <span data-i18n="win.blog">Project Blog</span></div>
       <div class="title-bar-controls">
         <button aria-label="Minimize" data-action="minimize">_</button>
         <button aria-label="Maximize" data-action="maximize">□</button>
@@ -19,13 +19,13 @@
       </div>
     </div>
     <div class="window-body" id="blog-root">
-      <p>Loading…</p>
+      <p>…</p>
     </div>
   </section>
 
-  <section class="window raised contact-window" data-window="contact" data-taskbar-label="Contact">
+  <section class="window raised contact-window" data-window="contact" data-taskbar-key="tb.contact">
     <div class="title-bar">
-      <div class="title-bar-text"><img class="icon-inline" src="images/icons/world_phonereceiver-16.png" alt=""> Contact</div>
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/world_phonereceiver-16.png" alt=""> <span data-i18n="win.contact">Contact</span></div>
       <div class="title-bar-controls">
         <button aria-label="Minimize" data-action="minimize">_</button>
         <button aria-label="Maximize" data-action="maximize">□</button>
@@ -34,22 +34,24 @@
     </div>
     <div class="window-body">
       <div class="contact-grid">
-        <div class="contact-item"><strong>Email</strong><a href="mailto:nallibfadel@gmail.com">nallibfadel@gmail.com</a></div>
+        <div class="contact-item"><strong data-i18n="contact.email">Email</strong><a href="mailto:nallibfadel@gmail.com">nallibfadel@gmail.com</a></div>
         <div class="contact-item"><strong>GitHub</strong><a href="https://github.com/VANAFA" target="_blank" rel="noopener">github.com/VANAFA</a></div>
         <div class="contact-item"><strong>LinkedIn</strong><a href="https://www.linkedin.com/in/nallib-fadel-1b4332303/" target="_blank" rel="noopener">linkedin.com/in/nallib-fadel-1b4332303</a></div>
-        <div class="contact-item"><strong>Location</strong>Buenos Aires, Argentina</div>
+        <div class="contact-item"><strong data-i18n="contact.location">Location</strong><span data-i18n="contact.locationValue">Buenos Aires, Argentina</span></div>
       </div>
     </div>
   </section>
 
   <div class="taskbar">
-    <a class="start-btn btn98" href="index.html"><img class="icon-inline" src="images/icons/key_win-16.png" alt=""> <span class="start-label">Start</span></a>
+    <a class="start-btn btn98" href="index.html"><img class="icon-inline" src="images/icons/key_win-16.png" alt=""> <span class="start-label" data-i18n="start">Start</span></a>
     <div class="taskbar-windows" id="taskbar-windows"></div>
+    <button class="btn98 lang-btn" id="lang-btn" type="button">Español</button>
     <div class="taskbar-clock" id="taskbar-clock"></div>
     <a class="btn98 version-badge" id="version-badge" href="#" target="_blank" rel="noopener">v: …</a>
   </div>
 
   <script src="js/data.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/blog.js"></script>
   <script src="js/windows.js"></script>
   <script src="js/taskbar.js"></script>
