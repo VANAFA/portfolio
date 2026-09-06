@@ -4,17 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Valentino Nallib Fadel</title>
+<link rel="icon" type="image/x-icon" href="images/icons/computer.ico">
 <link rel="stylesheet" href="css/win98.css">
 </head>
 <body>
 
-  <section class="window raised">
+  <section class="window raised" data-window="about">
     <div class="title-bar">
-      <div class="title-bar-text"><img class="icon-inline" src="images/icons/computer.svg" alt=""> valentino.cv — About Me</div>
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/computer.ico" alt=""> valentino.cv — About Me</div>
       <div class="title-bar-controls">
-        <button aria-label="Minimize">_</button>
-        <button aria-label="Maximize">□</button>
-        <button aria-label="Close">✕</button>
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
       </div>
     </div>
     <div class="window-body">
@@ -36,22 +37,22 @@
             community service work.
           </p>
           <div class="profile-links">
-            <a class="btn98" href="mailto:nallibfadel@gmail.com"><img class="icon-inline" src="images/icons/mail.svg" alt=""> Email me</a>
-            <a class="btn98" href="https://github.com/VANAFA" target="_blank" rel="noopener"><img class="icon-inline" src="images/icons/link-code.svg" alt=""> GitHub</a>
-            <a class="btn98" href="https://www.linkedin.com/in/nallib-fadel-1b4332303/" target="_blank" rel="noopener"><img class="icon-inline" src="images/icons/link-card.svg" alt=""> LinkedIn</a>
+            <a class="btn98" href="mailto:nallibfadel@gmail.com"><img class="icon-inline" src="images/icons/envelope_closed.ico" alt=""> Email me</a>
+            <a class="btn98" href="https://github.com/VANAFA" target="_blank" rel="noopener"><img class="icon-inline" src="images/icons/connected_world.ico" alt=""> GitHub</a>
+            <a class="btn98" href="https://www.linkedin.com/in/nallib-fadel-1b4332303/" target="_blank" rel="noopener"><img class="icon-inline" src="images/icons/address_book_card.ico" alt=""> LinkedIn</a>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="window raised">
+  <section class="window raised" data-window="projects">
     <div class="title-bar">
-      <div class="title-bar-text"><img class="icon-inline" src="images/icons/folder.svg" alt=""> My Projects</div>
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/directory_closed.ico" alt=""> My Projects</div>
       <div class="title-bar-controls">
-        <button aria-label="Minimize">_</button>
-        <button aria-label="Maximize">□</button>
-        <button aria-label="Close">✕</button>
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
       </div>
     </div>
     <div class="window-body">
@@ -60,13 +61,13 @@
     </div>
   </section>
 
-  <section class="window raised contact-window">
+  <section class="window raised contact-window" data-window="contact">
     <div class="title-bar">
-      <div class="title-bar-text"><img class="icon-inline" src="images/icons/phone.svg" alt=""> Contact</div>
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/world_phonereceiver.ico" alt=""> Contact</div>
       <div class="title-bar-controls">
-        <button aria-label="Minimize">_</button>
-        <button aria-label="Maximize">□</button>
-        <button aria-label="Close">✕</button>
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
       </div>
     </div>
     <div class="window-body">
@@ -99,12 +100,14 @@
   </div>
 
   <div class="taskbar">
-    <div class="start-btn btn98"><img class="icon-inline" src="images/icons/flag.svg" alt=""> Start</div>
+    <a class="start-btn btn98" href="index.html"><img class="icon-inline" src="images/icons/key_win.ico" alt=""> Start</a>
+    <div class="taskbar-windows" id="taskbar-windows"></div>
     <div class="taskbar-clock" id="taskbar-clock"></div>
   </div>
 
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/windows.js"></script>
   <script src="js/taskbar.js"></script>
 </body>
 </html>

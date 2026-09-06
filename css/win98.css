@@ -59,6 +59,21 @@ a:visited{ color:#551a8b; }
 }
 .window.raised{ }
 
+.window.maximized{
+  position:fixed;
+  inset:12px 12px 46px 12px;
+  max-width:none;
+  margin:0;
+  z-index:150;
+  display:flex;
+  flex-direction:column;
+  box-shadow:2px 2px 12px rgba(0,0,0,0.4);
+}
+.window.maximized .window-body{
+  flex:1;
+  overflow-y:auto;
+}
+
 .title-bar{
   background:linear-gradient(90deg,var(--w98-titlebar),var(--w98-titlebar-2));
   color:var(--w98-titlebar-text);
@@ -356,6 +371,37 @@ hr.divider{
   display:flex;
   align-items:center;
   gap:4px;
+  text-decoration:none;
+  color:var(--w98-text);
+  flex-shrink:0;
+}
+.taskbar-windows{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  flex:1;
+  min-width:0;
+  overflow-x:auto;
+  height:100%;
+}
+.taskbar-btn{
+  min-width:120px;
+  max-width:180px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  justify-content:flex-start;
+}
+.taskbar-btn span{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.taskbar-btn.active{
+  border-top:2px solid var(--w98-face-darker);
+  border-left:2px solid var(--w98-face-darker);
+  border-right:2px solid var(--w98-face-lighter);
+  border-bottom:2px solid var(--w98-face-lighter);
 }
 .taskbar-clock{
   margin-left:auto;

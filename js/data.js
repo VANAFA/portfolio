@@ -29,7 +29,7 @@ window.PROJECTS = [
   {
     id: "noob",
     title: "N.O.O.B.",
-    glyph: "images/icons/gamepad.svg",
+    glyph: "images/icons/joystick.ico",
     tagline: "An LLM-narrated RPG, built full-stack",
     tech: ["React", "TypeScript", "FastAPI", "Qwen3-4B", "LoRA fine-tuning"],
     summary:
@@ -46,7 +46,7 @@ window.PROJECTS = [
   {
     id: "facelab",
     title: "Deep Learning Lab",
-    glyph: "images/icons/network.svg",
+    glyph: "images/icons/chip_ramdrive.ico",
     tagline: "Architecture search & unsupervised learning on faces",
     tech: ["PyTorch", "Autoencoders", "Clustering", "Unsupervised Learning"],
     summary:
@@ -63,7 +63,7 @@ window.PROJECTS = [
   {
     id: "road-rage",
     title: "R.O.A.D. R.A.G.E.",
-    glyph: "images/icons/car.svg",
+    glyph: "images/icons/camera3.ico",
     tagline: "Autonomous lane-keeping, running in real time",
     tech: ["PyTorch", "YOLOP", "OpenCV", "PID Control", "Comma2k19"],
     summary:

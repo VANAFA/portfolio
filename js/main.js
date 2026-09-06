@@ -20,7 +20,7 @@
       btn.className = "project-icon";
       btn.type = "button";
       btn.innerHTML =
-        '<span class="icon-glyph"><img src="' + escapeHtml(project.glyph || "images/icons/folder.svg") + '" alt=""></span>' +
+        '<span class="icon-glyph"><img src="' + escapeHtml(project.glyph || "images/icons/directory_closed.ico") + '" alt=""></span>' +
         '<span class="icon-label">' + escapeHtml(project.title) + "</span>";
       btn.addEventListener("click", function () {
         openModal(project);

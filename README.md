@@ -40,14 +40,33 @@ css/win98.css      All the Windows 98 styling
 js/data.js         <-- the file you edit to add/change projects
 js/main.js         Renders the project grid + pop-up on index.html
 js/blog.js         Renders a blog.html?id=... page from data.js
+js/windows.js      Minimize/maximize/close + taskbar buttons for each window
 js/taskbar.js      Decorative taskbar clock
+images/icons/      Real Windows 98 .ico icons used across the site
 images/            Photos/screenshots referenced from data.js
 ```
 
+## Windows behave like real windows
+
+Every top-level window (About Me, My Projects, Contact, Project Blog) has
+working minimize/maximize/close buttons and a matching button in the taskbar
+at the bottom of the screen:
+
+- **Minimize (_)** or **Close (✕)** hides the window; its taskbar button stays
+  so you can click it again to bring the window back.
+- **Maximize (□)** expands the window to fill the screen; click it again to
+  restore.
+- **Start** always goes back to `index.html`.
+
+This is handled generically by `js/windows.js` for any `.window` element that
+has a `data-window="some-id"` attribute — add that attribute to a new window
+section and it gets minimize/maximize/close + a taskbar button for free.
+
 ## Replacing the placeholder images
 
-`images/placeholder-*.svg` are stand-ins. Drop real screenshots/photos into
-`images/` and point each project's `images` array at them in `js/data.js`.
+`images/placeholder-*.svg` are stand-ins for project screenshots. Drop real
+screenshots/photos into `images/` and point each project's `images` array at
+them in `js/data.js`.
 
 ## Editing your name/bio/contact info
 

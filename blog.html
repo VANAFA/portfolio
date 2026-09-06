@@ -4,17 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Project Blog</title>
+<link rel="icon" type="image/x-icon" href="images/icons/computer.ico">
 <link rel="stylesheet" href="css/win98.css">
 </head>
 <body>
 
-  <section class="window raised">
+  <section class="window raised" data-window="blog">
     <div class="title-bar">
-      <div class="title-bar-text"><img class="icon-inline" src="images/icons/notepad.svg" alt=""> Project Blog</div>
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/notepad.ico" alt=""> Project Blog</div>
       <div class="title-bar-controls">
-        <button aria-label="Minimize">_</button>
-        <button aria-label="Maximize">□</button>
-        <button aria-label="Close">✕</button>
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
       </div>
     </div>
     <div class="window-body" id="blog-root">
@@ -22,13 +23,13 @@
     </div>
   </section>
 
-  <section class="window raised contact-window">
+  <section class="window raised contact-window" data-window="contact">
     <div class="title-bar">
-      <div class="title-bar-text"><img class="icon-inline" src="images/icons/phone.svg" alt=""> Contact</div>
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/world_phonereceiver.ico" alt=""> Contact</div>
       <div class="title-bar-controls">
-        <button aria-label="Minimize">_</button>
-        <button aria-label="Maximize">□</button>
-        <button aria-label="Close">✕</button>
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
       </div>
     </div>
     <div class="window-body">
@@ -42,12 +43,14 @@
   </section>
 
   <div class="taskbar">
-    <div class="start-btn btn98"><img class="icon-inline" src="images/icons/flag.svg" alt=""> Start</div>
+    <a class="start-btn btn98" href="index.html"><img class="icon-inline" src="images/icons/key_win.ico" alt=""> Start</a>
+    <div class="taskbar-windows" id="taskbar-windows"></div>
     <div class="taskbar-clock" id="taskbar-clock"></div>
   </div>
 
   <script src="js/data.js"></script>
   <script src="js/blog.js"></script>
+  <script src="js/windows.js"></script>
   <script src="js/taskbar.js"></script>
 </body>
 </html>
