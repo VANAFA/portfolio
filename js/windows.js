@@ -56,7 +56,7 @@
     var icon = iconFor(win);
     btn.innerHTML =
       (icon ? '<img class="icon-inline" src="' + icon + '" alt="">' : "") +
-      "<span>" + titleFor(win) + "</span>";
+      '<span class="taskbar-label">' + titleFor(win) + "</span>";
     btn.addEventListener("click", function () {
       if (win.hidden) {
         showWindow(win);

@@ -423,7 +423,16 @@ hr.divider{
   padding:3px 8px;
 }
 
-@media (max-width:520px){
+@media (max-width:600px){
   .profile{ flex-direction:column; align-items:center; text-align:center; }
   .modal-window{ margin-top:6px; }
+
+  /* Taskbar is too crowded at phone widths for full text labels - go icon-only */
+  .taskbar{ gap:4px; padding:2px; }
+  .start-label{ display:none; }
+  .start-btn{ padding:5px 8px; }
+  .taskbar-btn{ min-width:34px; max-width:34px; padding:5px; justify-content:center; }
+  .taskbar-btn .taskbar-label{ display:none; }
+  .taskbar-clock{ padding:4px 6px; font-size:11px; }
+  .version-badge{ padding:3px 5px; font-size:10px; }
 }
