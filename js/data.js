@@ -34,7 +34,7 @@ window.PROJECTS = [
     tech: ["React", "TypeScript", "FastAPI", "Qwen3-4B", "LoRA fine-tuning"],
     summary:
       "A chat-based narrative RPG where a fine-tuned language model plays the game master. Frontend in React/TypeScript talks to a FastAPI backend that serves Qwen3-4B as the story's narrator.",
-    images: ["images/placeholder-noob.svg"],
+    images: ["images/placeholder-noob.png"],
     blog: [
       "N.O.O.B. is a chat-based, narrative-driven RPG where the game master is a language model instead of a person. The frontend is built with React and TypeScript, and it talks to a FastAPI backend that serves Qwen3-4B as the narrator, generating the world, the NPCs and the consequences of the player's choices in real time.",
       "Getting a small model to behave like a consistent, engaging game master took more than prompting. I fine-tuned Qwen3-4B with LoRA on curated narrative data, and layered activation steering on top to nudge tone and pacing at inference time without retraining.",
@@ -51,7 +51,7 @@ window.PROJECTS = [
     tech: ["PyTorch", "Autoencoders", "Clustering", "Unsupervised Learning"],
     summary:
       "A deep learning lab project: neural networks implemented from scratch, autoencoders and clustering pipelines used to reconstruct and interpolate between facial images.",
-    images: ["images/placeholder-facelab.svg"],
+    images: ["images/placeholder-facelab.png"],
     blog: [
       "This project came out of a deep learning laboratory course focused on architecture search and unsupervised learning. Rather than relying on off-the-shelf layers, several core building blocks were implemented from scratch to really understand what's happening inside the network during training.",
       "The core of the project is a set of autoencoders trained on facial image datasets, used both for reconstruction and for latent-space interpolation — smoothly morphing between two faces by walking through the learned latent representation.",
@@ -68,7 +68,7 @@ window.PROJECTS = [
     tech: ["PyTorch", "YOLOP", "OpenCV", "PID Control", "Comma2k19"],
     summary:
       "A computer-vision pipeline for autonomous lane keeping, combining YOLOP with a PID controller, trained on the ~100GB Comma2k19 dataset and running in real time inside the BeamNG.tech simulator.",
-    images: ["images/placeholder-roadrage.svg"],
+    images: ["images/placeholder-roadrage.png"],
     blog: [
       "R.O.A.D. R.A.G.E. is an autonomous lane-keeping system built around a computer-vision pipeline in PyTorch, using YOLOP for joint lane and road-object perception, combined with OpenCV for pre/post-processing of the video stream.",
       "Perception alone doesn't drive a car: a PID controller takes the lane geometry estimated by the vision pipeline and turns it into steering corrections, closing the loop between what the model 'sees' and what the car does next.",

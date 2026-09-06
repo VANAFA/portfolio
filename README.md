@@ -64,7 +64,7 @@ section and it gets minimize/maximize/close + a taskbar button for free.
 
 ## Replacing the placeholder images
 
-`images/placeholder-*.svg` are stand-ins for project screenshots. Drop real
+`images/placeholder-*.png` are stand-ins for project screenshots. Drop real
 screenshots/photos into `images/` and point each project's `images` array at
 them in `js/data.js`.
 
