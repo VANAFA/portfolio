@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentino Nallib Fadel</title>
+<link rel="stylesheet" href="css/win98.css">
+</head>
+<body>
+
+  <section class="window raised">
+    <div class="title-bar">
+      <div class="title-bar-text">🖥️ valentino.cv — About Me</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize">_</button>
+        <button aria-label="Maximize">□</button>
+        <button aria-label="Close">✕</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="profile">
+        <img src="images/profile.png" alt="Photo of Valentino Nallib Fadel">
+        <div class="profile-info">
+          <h1>Valentino Nallib Fadel</h1>
+          <div class="tagline">AI Engineering student · Buenos Aires, Argentina</div>
+          <p>
+            Fourth-year Artificial Intelligence Engineering student at Universidad de San Andrés,
+            with hands-on project experience in computer vision, deep learning, and natural
+            language models (pre-training and fine-tuning). I like roles that mix research with
+            practical, applied AI development — and side projects that let me build the whole
+            stack myself.
+          </p>
+          <p>
+            Comfortable across Python, PyTorch, TensorFlow, OpenCV, C/C++, and Linux/Docker
+            environments. Outside of engineering, I've spent years in Scouts leadership and
+            community service work.
+          </p>
+          <div class="profile-links">
+            <a class="btn98" href="mailto:nallibfadel@gmail.com">✉ Email me</a>
+            <a class="btn98" href="https://github.com/VANAFA" target="_blank" rel="noopener">🔗 GitHub</a>
+            <a class="btn98" href="https://www.linkedin.com/in/nallib-fadel-1b4332303/" target="_blank" rel="noopener">🔗 LinkedIn</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="window raised">
+    <div class="title-bar">
+      <div class="title-bar-text">📁 My Projects</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize">_</button>
+        <button aria-label="Maximize">□</button>
+        <button aria-label="Close">✕</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p>Click a project to see the details. Each one links out to its own blog post.</p>
+      <div class="project-grid on-face" id="project-grid"></div>
+    </div>
+  </section>
+
+  <section class="window raised contact-window">
+    <div class="title-bar">
+      <div class="title-bar-text">☎ Contact</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize">_</button>
+        <button aria-label="Maximize">□</button>
+        <button aria-label="Close">✕</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="contact-grid">
+        <div class="contact-item"><strong>Email</strong><a href="mailto:nallibfadel@gmail.com">nallibfadel@gmail.com</a></div>
+        <div class="contact-item"><strong>GitHub</strong><a href="https://github.com/VANAFA" target="_blank" rel="noopener">github.com/VANAFA</a></div>
+        <div class="contact-item"><strong>LinkedIn</strong><a href="https://www.linkedin.com/in/nallib-fadel-1b4332303/" target="_blank" rel="noopener">linkedin.com/in/nallib-fadel-1b4332303</a></div>
+        <div class="contact-item"><strong>Location</strong>Buenos Aires, Argentina</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pop-up window for a clicked project -->
+  <div class="overlay" id="modal-overlay" hidden>
+    <div class="window raised modal-window" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="title-bar">
+        <div class="title-bar-text" id="modal-title">Project</div>
+        <div class="title-bar-controls">
+          <button aria-label="Close" id="modal-titlebar-close">✕</button>
+        </div>
+      </div>
+      <div class="window-body">
+        <div class="modal-body" id="modal-body"></div>
+        <div class="modal-actions">
+          <a class="btn98" id="modal-blog-link" href="#">To know more →</a>
+          <button class="btn98" id="modal-close-btn" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="taskbar">
+    <div class="start-btn btn98">🪟 Start</div>
+    <div class="taskbar-clock" id="taskbar-clock"></div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/taskbar.js"></script>
+</body>
+</html>
