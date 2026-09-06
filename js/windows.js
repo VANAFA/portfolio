@@ -10,6 +10,7 @@
   var buttons = {};
 
   function titleFor(win) {
+    if (win.dataset.taskbarLabel) return win.dataset.taskbarLabel;
     var el = win.querySelector(".title-bar-text");
     return el ? el.textContent.trim() : win.dataset.window;
   }

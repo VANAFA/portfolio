@@ -385,8 +385,10 @@ hr.divider{
   height:100%;
 }
 .taskbar-btn{
-  min-width:120px;
-  max-width:180px;
+  flex:0 1 150px;
+  min-width:70px;
+  max-width:150px;
+  padding:3px 8px;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
@@ -404,7 +406,7 @@ hr.divider{
   border-bottom:2px solid var(--w98-face-lighter);
 }
 .taskbar-clock{
-  margin-left:auto;
+  flex-shrink:0;
   background:var(--w98-face);
   border-top:1px solid var(--w98-face-darker);
   border-left:1px solid var(--w98-face-darker);
