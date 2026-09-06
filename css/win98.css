@@ -424,15 +424,34 @@ hr.divider{
 }
 
 @media (max-width:600px){
-  .profile{ flex-direction:column; align-items:center; text-align:center; }
+  /* Reclaim horizontal space and stop the page being three screens tall */
+  body{ padding:10px 8px 46px; }
+  .window{ margin:0 auto 12px; }
+  .window-body{ padding:10px; }
+
+  /* Photo beside the text, left-aligned - centred paragraphs read badly and
+     eat a lot of vertical space on a phone. */
+  .profile{ flex-direction:row; align-items:flex-start; text-align:left; gap:10px; }
+  .profile-photo{ width:64px; height:80px; }
+  .profile-info h1{ font-size:17px; }
+  .profile-info .tagline{ font-size:12px; }
+  p{ margin:0 0 6px; line-height:1.45; }
+  .profile-links{ gap:5px; }
+
+  /* Long URLs must wrap instead of stretching the layout */
+  .contact-grid{ grid-template-columns:1fr; gap:6px; }
+  .contact-item{ overflow-wrap:anywhere; }
+
+  .project-grid{ gap:10px; padding:2px; }
   .modal-window{ margin-top:6px; }
+  .overlay{ padding:12px 8px; }
 
   /* Taskbar is too crowded at phone widths for full text labels - go icon-only */
-  .taskbar{ gap:4px; padding:2px; }
+  .taskbar{ gap:4px; padding:2px; height:30px; }
   .start-label{ display:none; }
-  .start-btn{ padding:5px 8px; }
-  .taskbar-btn{ min-width:34px; max-width:34px; padding:5px; justify-content:center; }
+  .start-btn{ padding:4px 7px; }
+  .taskbar-btn{ min-width:32px; max-width:32px; padding:4px; justify-content:center; }
   .taskbar-btn .taskbar-label{ display:none; }
-  .taskbar-clock{ padding:4px 6px; font-size:11px; }
+  .taskbar-clock{ padding:3px 5px; font-size:11px; }
   .version-badge{ padding:3px 5px; font-size:10px; }
 }
