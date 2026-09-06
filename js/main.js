@@ -79,5 +79,24 @@
     if (e.key === "Escape" && !overlay.hidden) closeModal();
   });
 
+  // Compact list of the remaining public repositories, from window.REPOS.
+  function renderRepos() {
+    var list = document.getElementById("repo-list");
+    if (!list) return;
+    var repos = window.REPOS || [];
+    list.innerHTML = "";
+    repos.forEach(function (repo) {
+      var li = document.createElement("li");
+      li.className = "repo-item";
+      li.innerHTML =
+        '<a href="https://github.com/VANAFA/' + encodeURIComponent(repo.name) + '" target="_blank" rel="noopener">' +
+        escapeHtml(repo.name) + "</a>" +
+        (repo.lang ? ' <span class="tag">' + escapeHtml(repo.lang) + "</span>" : "") +
+        '<div class="repo-desc">' + escapeHtml(repo.desc || "") + "</div>";
+      list.appendChild(li);
+    });
+  }
+
   renderGrid();
+  renderRepos();
 })();

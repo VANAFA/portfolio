@@ -336,6 +336,32 @@ hr.divider{
   margin-bottom:10px;
 }
 
+/* ===== repo list ===== */
+.repo-list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:grid;
+  gap:6px;
+}
+.repo-item{
+  background:var(--w98-face-light);
+  border-top:1px solid var(--w98-face-lighter);
+  border-left:1px solid var(--w98-face-lighter);
+  border-right:1px solid var(--w98-face-dark);
+  border-bottom:1px solid var(--w98-face-dark);
+  padding:6px 8px;
+}
+.repo-item a{
+  font-weight:bold;
+  overflow-wrap:anywhere;
+}
+.repo-desc{
+  margin-top:2px;
+  color:#333;
+  line-height:1.4;
+}
+
 /* ===== contact panel ===== */
 .contact-window{
   max-width:760px;

@@ -41,7 +41,7 @@ window.PROJECTS = [
       "One of the harder constraints was context length: a long-running RPG session accumulates state fast (inventory, past choices, NPC relationships), and every extra token costs latency. By restructuring how history was summarized and fed back into the model, I cut context tokens by 36% without losing narrative coherence.",
       "The result is a full-stack project that touches product (what makes a game session feel alive), systems (serving an LLM with acceptable latency), and ML research (LoRA fine-tuning and activation steering) end to end."
     ],
-    links: []
+    links: [{ label: "Source on GitHub", url: "https://github.com/VANAFA/llm-narrated-rpg" }]
   },
   {
     id: "facelab",
@@ -75,6 +75,67 @@ window.PROJECTS = [
       "The model was trained on Comma2k19, a real-world driving dataset weighing in at roughly 100GB, which meant a fair amount of the engineering effort went into data loading and preprocessing efficiently rather than the model architecture itself.",
       "The whole pipeline runs inside the BeamNG.tech simulator in real time, at around 10Hz — fast enough to keep the car centered in its lane under varying road conditions without the perception loop becoming the bottleneck."
     ],
-    links: []
+    links: [{ label: "Source on GitHub", url: "https://github.com/VANAFA/beamng-lane-keeping-yolop" }]
+  }
+];
+
+/*
+ * ============================================================
+ *  OTHER REPOSITORIES
+ *
+ *  The compact list shown in the "More on GitHub" window. These are
+ *  repos that don't warrant a full project write-up. Add an entry and
+ *  it appears on the page automatically - no other file to touch.
+ *
+ *    name  (string)  repository name, also used as the link text
+ *    lang  (string)  primary language, shown as a tag
+ *    desc  (string)  one-line description
+ * ============================================================
+ */
+window.REPOS = [
+  {
+    name: "catholic-saints-calendar",
+    lang: "Python",
+    desc: "Daily Catholic saints calendar and gospel, scraped and published as a static site."
+  },
+  {
+    name: "scout-camp-blueprint-generator",
+    lang: "Python",
+    desc: "3-D engine that generates scout pioneering blueprints from presets, within real pole and crew constraints."
+  },
+  {
+    name: "filesystem-drivers-fat-ext-ntfs",
+    lang: "C++",
+    desc: "Read-only drivers for FAT32, EXT and NTFS disk images."
+  },
+  {
+    name: "phoneme-synthesis-estimation",
+    lang: "Python",
+    desc: "Synthesis of Spanish phonemes with all-pole filters, and estimation of the filter parameters back from audio."
+  },
+  {
+    name: "programming-paradigms-labs",
+    lang: "Haskell / Java",
+    desc: "Functional programming in Haskell and object-oriented design in Java."
+  },
+  {
+    name: "computer-architecture-os-labs-mirror",
+    lang: "C",
+    desc: "Architecture and OS labs: ARMv8 simulator, x86 bomb, filesystems, shell and thread pool."
+  },
+  {
+    name: "udesa-coursework-archive",
+    lang: "Python",
+    desc: "Archive of assorted AI and machine learning coursework."
+  },
+  {
+    name: "urinal-etiquette-game",
+    lang: "JavaScript",
+    desc: "A small browser game about the unwritten rules of picking a urinal."
+  },
+  {
+    name: "portfolio",
+    lang: "JavaScript",
+    desc: "The source of this website - dependency-free static HTML/CSS/JS."
   }
 ];
