@@ -340,33 +340,32 @@ window.PROJECTS = [
     }
   },
   {
-    id: "urinal-game",
-    glyph: "images/icons/game_solitaire-32.png",
-    images: ["images/preview-urinal-game.png"],
-    tech: ["JavaScript", "HTML", "CSS"],
-    repo: "https://github.com/VANAFA/urinal-etiquette-game",
+    id: "truequeba",
+    glyph: "images/icons/briefcase-32.png",
+    images: ["images/preview-truequeba.png"],
+    tech: ["React", "Node.js", "Docker", "nginx", "OAuth"],
     en: {
-      title: "Urinal Etiquette",
-      tagline: "A game about the unwritten rules",
+      title: "TruequeBA",
+      tagline: "A barter and second-hand marketplace for Argentina",
       summary:
-        "A small browser game about picking the socially correct urinal. Click the right spot to advance; click a wrong one and the game tells you exactly how badly you read the room.",
+        "A full-stack marketplace where people list used items for sale or for trade, propose swaps combining goods and cash, and run their own small storefront.",
       blog: [
-        "Every level shows a bathroom. There is one socially acceptable choice and a great many wrong ones, and the game has an opinion about each of them.",
-        "Levels are plain data: each image gets one correct trigger zone and a set of fail zones, all expressed as percentages so the hit areas scale with the image on any screen size. Adding a level means dropping in a photo and appending one entry to an array.",
-        "The fail messages are the actual content — each wrong zone has its own line of commentary, in Argentinian Spanish, escalating in judgement depending on how badly you chose.",
-        "No framework, no build step: an HTML file, a stylesheet and one script."
+        "TruequeBA is a marketplace built around a habit that is very common in Argentina: not just buying and selling second-hand goods, but trading them. A listing can be offered for money, for barter, or for both, and a buyer can propose an exchange that combines one of their own items with some cash to balance the difference.",
+        "Each user gets their own storefront: listings with multiple photos, prices in Argentine pesos, categories, condition and search filters, plus a notification system for incoming proposals and a profile with several ways to be contacted.",
+        "The stack is a React client and a Node backend, containerised with Docker Compose and served behind nginx, with Google OAuth for sign-in and image processing for the uploaded photos. There is a separate production compose file and deployment scripts, so the whole thing can be brought up on a server rather than only running locally.",
+        "The interesting part of this project wasn't any single algorithm — it was everything a real product needs around the core idea: authentication, image handling, deployment, end-to-end tests with Playwright, and the reality that a trade needs both sides to agree before anything happens."
       ]
     },
     es: {
-      title: "Etiqueta del Mingitorio",
-      tagline: "Un juego sobre las reglas no escritas",
+      title: "TruequeBA",
+      tagline: "Un marketplace de trueque y usados para Argentina",
       summary:
-        "Un jueguito de navegador sobre elegir el mingitorio socialmente correcto. Hacé clic en el lugar correcto para avanzar; si elegís mal, el juego te dice exactamente lo mal que leíste la situación.",
+        "Un marketplace full-stack donde la gente publica artículos usados para vender o intercambiar, propone trueques combinando productos y plata, y maneja su propia tienda.",
       blog: [
-        "Cada nivel muestra un baño. Hay una sola opción socialmente aceptable y muchísimas equivocadas, y el juego tiene una opinión sobre cada una.",
-        "Los niveles son datos planos: cada imagen tiene una zona correcta y un conjunto de zonas de error, todas expresadas en porcentajes para que las áreas escalen con la imagen en cualquier pantalla. Agregar un nivel es tirar una foto adentro y sumar una entrada al array.",
-        "Los mensajes de error son el verdadero contenido: cada zona equivocada tiene su propio comentario, en español rioplatense, escalando en juicio según lo mal que hayas elegido.",
-        "Sin framework ni build: un archivo HTML, una hoja de estilos y un script."
+        "TruequeBA es un marketplace armado alrededor de una costumbre bien argentina: no solo comprar y vender usados, sino cambiarlos. Una publicación se puede ofrecer por plata, por trueque o por las dos cosas, y quien compra puede proponer un intercambio que combine un producto propio más algo de plata para emparejar la diferencia.",
+        "Cada usuario tiene su propia tienda: publicaciones con varias fotos, precios en pesos, categorías, estado y filtros de búsqueda, más un sistema de notificaciones para las propuestas que le llegan y un perfil con varios métodos de contacto.",
+        "El stack es un cliente en React y un backend en Node, contenerizado con Docker Compose y servido detrás de nginx, con Google OAuth para el login y procesamiento de las imágenes que se suben. Hay un compose de producción aparte y scripts de deploy, así que se puede levantar en un servidor y no solo correr localmente.",
+        "Lo interesante de este proyecto no fue ningún algoritmo puntual, sino todo lo que un producto real necesita alrededor de la idea central: autenticación, manejo de imágenes, deploy, tests end-to-end con Playwright, y el hecho de que un trueque necesita que las dos partes estén de acuerdo antes de que pase algo."
       ]
     }
   },
