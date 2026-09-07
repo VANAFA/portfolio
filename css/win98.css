@@ -229,6 +229,54 @@ hr.divider{
   font-size:11px;
   color:#404040;
 }
+.quest-btn{
+  display:block;
+  width:100%;
+  margin-top:8px;
+  justify-content:center;
+}
+.quest-btn:disabled{
+  color:#808080;
+  text-shadow:1px 1px 0 #fff;
+  cursor:default;
+}
+.quest-text{
+  margin:8px 0 0;
+  min-height:2.6em;
+  padding:5px 6px;
+  background:#000;
+  color:#00ff66;
+  font-size:11px;
+  line-height:1.35;
+  border-top:2px solid var(--w98-face-darker);
+  border-left:2px solid var(--w98-face-darker);
+  border-right:2px solid var(--w98-face-lighter);
+  border-bottom:2px solid var(--w98-face-lighter);
+}
+
+/* ===== the chipa ===== */
+.chipa{
+  position:absolute;
+  width:46px;
+  height:46px;
+  z-index:80;
+  cursor:grab;
+  user-select:none;
+  -webkit-user-drag:none;
+  touch-action:none;
+  image-rendering:auto;
+  filter:drop-shadow(2px 2px 0 rgba(0,0,0,0.35));
+  transition:opacity 0.15s linear;
+}
+.chipa.held{
+  cursor:grabbing;
+  transform:scale(1.12) rotate(-6deg);
+  filter:drop-shadow(4px 5px 0 rgba(0,0,0,0.35));
+}
+.chipa.eaten{
+  opacity:0;
+  pointer-events:none;
+}
 
 /* Layered face rig: head + sliding jaw + angry expression, all the same
    390x608 canvas. The container keeps that aspect ratio so the jaw's

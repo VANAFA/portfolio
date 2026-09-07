@@ -24,30 +24,7 @@
   var revertTimer = null;
 
   function burst(x, y) {
-    var count = 11 + Math.floor(Math.random() * 7);
-    var spin = Math.random() * Math.PI * 2;
-    for (var i = 0; i < count; i++) {
-      var particle = document.createElement("span");
-      particle.className = "hit-particle";
-
-      var angle = spin + (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.6;
-      var distance = 38 + Math.random() * 46;
-      var size = 3 + Math.floor(Math.random() * 4);
-
-      particle.style.left = x + "px";
-      particle.style.top = y + "px";
-      particle.style.width = size + "px";
-      particle.style.height = size + "px";
-      particle.style.background = COLORS[i % COLORS.length];
-      particle.style.setProperty("--dx", Math.cos(angle) * distance + "px");
-      particle.style.setProperty("--dy", Math.sin(angle) * distance + "px");
-      particle.style.animationDelay = (Math.random() * 40) + "ms";
-
-      particle.addEventListener("animationend", function () {
-        if (this.parentNode) this.parentNode.removeChild(this);
-      });
-      document.body.appendChild(particle);
-    }
+    if (window.burstParticles) window.burstParticles(x, y, COLORS);
   }
 
   // Randomise the recoil so repeated hits never replay the same canned motion.
@@ -73,8 +50,9 @@
   }
 
   rig.addEventListener("click", function (e) {
+    if (window.SFX) window.SFX.hit();
     showAngry(true);
-    if (window.faceJawReset) window.faceJawReset();
+    if (window.faceJaw) window.faceJaw.reset();
 
     if (!reduceMotion) {
       // restart the recoil even on rapid repeat clicks, with fresh randomness
