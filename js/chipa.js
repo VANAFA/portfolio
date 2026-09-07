@@ -18,6 +18,7 @@
   var FAR_PX = 260;
   var EAT_PX = 62;
   var CRUMBS = ["#e8ba68", "#d6a04a", "#b3792a", "#f6dea0", "#8a5c1c"];
+  var SPARKS = ["#ffffff", "#fff3b0", "#ffe066", "#ffd43b", "#fab005"];
 
   var dragging = false;
   var pointerId = null;
@@ -160,6 +161,18 @@
       chipa.classList.remove("eaten");
       chipa.style.pointerEvents = "";
       reposition();
+
+      // sparks, so it is obvious where it just landed
+      var c = centre();
+      if (window.burstParticles) {
+        window.burstParticles(c.x, c.y, SPARKS, {
+          count: 14 + Math.floor(Math.random() * 5),
+          minDist: 26, maxDist: 66, minSize: 2, maxSize: 5
+        });
+      }
+      chipa.classList.remove("spawning");
+      void chipa.offsetWidth;
+      chipa.classList.add("spawning");
     },
     isOut: function () {
       return !chipa.hidden;
