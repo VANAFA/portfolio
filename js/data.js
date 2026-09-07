@@ -372,7 +372,7 @@ window.PROJECTS = [
   {
     id: "this-site",
     glyph: "images/icons/computer_explorer-32.png?v=cc0d052a",
-    images: ["images/preview-this-site.png?v=603d9058"],
+    images: ["images/preview-this-site.png?v=03fd4171"],
     tech: ["HTML", "CSS", "JavaScript"],
     repo: "https://github.com/VANAFA/portfolio",
     en: {
