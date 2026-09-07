@@ -208,6 +208,43 @@ hr.divider{
   height:120px;
   object-fit:cover;
   image-rendering:auto;
+  cursor:pointer;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+/* Recoil when the photo is clicked (see js/hitme.js) */
+.profile-photo.hit{
+  animation:photo-hit 0.42s ease-out;
+}
+@keyframes photo-hit{
+  0%   { transform:translate(0,0) rotate(0deg) scale(1); }
+  15%  { transform:translate(5px,-3px) rotate(3deg) scale(1.06); }
+  30%  { transform:translate(-4px,2px) rotate(-2.5deg) scale(1.04); }
+  50%  { transform:translate(3px,1px) rotate(1.5deg) scale(1.02); }
+  70%  { transform:translate(-2px,-1px) rotate(-1deg) scale(1.01); }
+  100% { transform:translate(0,0) rotate(0deg) scale(1); }
+}
+
+.hit-particle{
+  position:fixed;
+  z-index:500;
+  pointer-events:none;
+  border:1px solid rgba(0,0,0,0.55);
+  animation:hit-particle-fly 0.6s ease-out forwards;
+}
+@keyframes hit-particle-fly{
+  from{
+    transform:translate(-50%,-50%) translate(0,0) scale(1);
+    opacity:1;
+  }
+  to{
+    transform:translate(-50%,-50%) translate(var(--dx),var(--dy)) scale(0.3);
+    opacity:0;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  .profile-photo.hit{ animation:none; }
+  .hit-particle{ display:none; }
 }
 .profile-info h1{
   font-size:20px;
