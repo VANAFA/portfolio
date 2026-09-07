@@ -226,7 +226,7 @@ hr.divider{
 /* display:block above would defeat the [hidden] attribute, so restore it */
 .face-layer[hidden]{ display:none; }
 .face-jaw{
-  /* transform-origin is set from js/face.js so the pivot lives in one place */
+  /* slides straight down; the distance is set from js/face.js */
   will-change:transform;
 }
 /* Recoil when the photo is clicked (see js/hitme.js) */

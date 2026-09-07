@@ -1,24 +1,21 @@
-// Puppet jaw: the lower jaw is a separate layer hinged at the corner of the mouth.
-// It opens as the cursor approaches the mouth and closes as it moves away, eased
-// frame to frame so it never snaps.
+// Puppet jaw: the lower jaw is a separate layer that slides straight down, the
+// way a puppet mouth opens. It opens as the cursor approaches the mouth and
+// closes as it moves away, eased frame to frame so it never snaps.
 //
 // Tuning constants, all in one place:
-//   PIVOT_*    hinge point, as a fraction of the image (240,325 of 390x608)
-//   MOUTH_*    the point the cursor distance is measured to
-//   MAX_ANGLE  how far the jaw drops, in degrees
-//   NEAR_PX    distance at which the jaw is fully open
-//   FAR_PX     distance beyond which it is fully shut
+//   MOUTH_*   the point the cursor distance is measured to
+//   MAX_DROP  how far the jaw drops, as a fraction of the image height
+//   NEAR_PX   distance at which the jaw is fully open
+//   FAR_PX    distance beyond which it is fully shut
 (function () {
   var rig = document.getElementById("face-rig");
   if (!rig) return;
   var jaw = rig.querySelector(".face-jaw");
   if (!jaw) return;
 
-  var PIVOT_X = 240 / 390;
-  var PIVOT_Y = 325 / 608;
   var MOUTH_X = 180 / 390;
   var MOUTH_Y = 350 / 608;
-  var MAX_ANGLE = 16;
+  var MAX_DROP = 40 / 608;   // 40px of the 608px-tall source
   var NEAR_PX = 55;
   var FAR_PX = 230;
   var EASE = 0.2;
@@ -31,19 +28,17 @@
   }
   if (reduceMotion) return;
 
-  jaw.style.transformOrigin = (PIVOT_X * 100).toFixed(3) + "% " + (PIVOT_Y * 100).toFixed(3) + "%";
-
-  var angle = 0;
+  var drop = 0;      // current offset, as a fraction of rig height
   var target = 0;
   var running = false;
 
   function tick() {
-    angle += (target - angle) * EASE;
-    if (Math.abs(target - angle) < 0.05) {
-      angle = target;
+    drop += (target - drop) * EASE;
+    if (Math.abs(target - drop) < 0.0002) {
+      drop = target;
       running = false;
     }
-    jaw.style.transform = "rotate(" + (-angle).toFixed(2) + "deg)";
+    jaw.style.transform = "translateY(" + (drop * 100).toFixed(3) + "%)";
     if (running) requestAnimationFrame(tick);
   }
 
@@ -67,7 +62,7 @@
 
     var t = (FAR_PX - d) / (FAR_PX - NEAR_PX);
     t = t < 0 ? 0 : t > 1 ? 1 : t;
-    target = t * MAX_ANGLE;
+    target = t * MAX_DROP;
     start();
   }
 
@@ -83,13 +78,13 @@
     }
   });
   document.addEventListener("visibilitychange", function () {
-    if (document.hidden) { target = 0; angle = 0; jaw.style.transform = "rotate(0deg)"; }
+    if (document.hidden) { target = 0; drop = 0; jaw.style.transform = "translateY(0)"; }
   });
 
   // Let the hit effect slam the jaw shut while the angry face is showing.
   window.faceJawReset = function () {
     target = 0;
-    angle = 0;
-    jaw.style.transform = "rotate(0deg)";
+    drop = 0;
+    jaw.style.transform = "translateY(0)";
   };
 })();
