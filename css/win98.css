@@ -578,14 +578,14 @@ hr.divider{
 }
 .modal-gallery{
   display:flex;
+  flex-direction:column;
   gap:8px;
-  flex-wrap:wrap;
   margin-bottom:10px;
 }
 .modal-gallery img{
-  width:120px;
-  height:80px;
-  object-fit:cover;
+  display:block;
+  width:100%;
+  height:auto;
   border-top:2px solid var(--w98-face-darker);
   border-left:2px solid var(--w98-face-darker);
   border-right:2px solid var(--w98-face-lighter);
@@ -622,7 +622,6 @@ hr.divider{
 }
 .blog-hero-gallery img{
   width:100%;
-  max-width:340px;
   height:auto;
   border-top:2px solid var(--w98-face-darker);
   border-left:2px solid var(--w98-face-darker);
