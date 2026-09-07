@@ -128,6 +128,27 @@ a:visited{ color:#551a8b; }
   border-right:1px solid var(--w98-face-lighter);
   border-bottom:1px solid var(--w98-face-lighter);
 }
+/* The "_" glyph sits on the text baseline, hard against the bottom bevel, so at
+   1x it visually disappears. Draw the minimise bar instead - the aria-label on
+   the button still carries the meaning. */
+.title-bar-controls button[data-action="minimize"]{
+  position:relative;
+  font-size:0;
+}
+.title-bar-controls button[data-action="minimize"]::after{
+  content:"";
+  position:absolute;
+  left:3px;
+  right:3px;
+  bottom:3px;
+  height:2px;
+  background:#000;
+}
+.title-bar-controls button[data-action="minimize"]:active::after{
+  left:4px;
+  right:2px;
+  bottom:2px;
+}
 
 .window-body{
   padding:12px;
