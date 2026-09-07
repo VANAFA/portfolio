@@ -32,8 +32,8 @@
 window.PROJECTS = [
   {
     id: "noob",
-    glyph: "images/icons/joystick-32.png",
-    images: ["images/placeholder-noob.png"],
+    glyph: "images/icons/joystick-32.png?v=b8e0fc2d",
+    images: ["images/placeholder-noob.png?v=f6a55949"],
     tech: ["React", "TypeScript", "FastAPI", "Qwen3-4B", "LoRA"],
     repo: "https://github.com/VANAFA/llm-narrated-rpg",
     en: {
@@ -63,8 +63,8 @@ window.PROJECTS = [
   },
   {
     id: "facelab",
-    glyph: "images/icons/chip_ramdrive-32.png",
-    images: ["images/placeholder-facelab.png"],
+    glyph: "images/icons/chip_ramdrive-32.png?v=e433ab3c",
+    images: ["images/placeholder-facelab.png?v=b7dbee9a"],
     tech: ["PyTorch", "Autoencoders", "Clustering", "Unsupervised"],
     en: {
       title: "Deep Learning Lab",
@@ -93,8 +93,8 @@ window.PROJECTS = [
   },
   {
     id: "road-rage",
-    glyph: "images/icons/camera3-32.png",
-    images: ["images/placeholder-roadrage.png"],
+    glyph: "images/icons/camera3-32.png?v=6ed7094c",
+    images: ["images/placeholder-roadrage.png?v=948c10ee"],
     tech: ["PyTorch", "YOLOP", "OpenCV", "PID", "Comma2k19"],
     repo: "https://github.com/VANAFA/beamng-lane-keeping-yolop",
     en: {
@@ -124,8 +124,8 @@ window.PROJECTS = [
   },
   {
     id: "saints-calendar",
-    glyph: "images/icons/time_and_date-32.png",
-    images: ["images/preview-saints-calendar.png"],
+    glyph: "images/icons/time_and_date-32.png?v=08a436bb",
+    images: ["images/preview-saints-calendar.png?v=afadfba4"],
     tech: ["Python", "Scraping", "Static site"],
     repo: "https://github.com/VANAFA/catholic-saints-calendar",
     en: {
@@ -155,8 +155,8 @@ window.PROJECTS = [
   },
   {
     id: "scout-blueprints",
-    glyph: "images/icons/paint_file-32.png",
-    images: ["images/preview-scout-blueprints.png"],
+    glyph: "images/icons/paint_file-32.png?v=24d31d57",
+    images: ["images/preview-scout-blueprints.png?v=45d74f24"],
     tech: ["Python", "3-D geometry", "Scouting"],
     repo: "https://github.com/VANAFA/scout-camp-blueprint-generator",
     en: {
@@ -186,8 +186,8 @@ window.PROJECTS = [
   },
   {
     id: "filesystem-drivers",
-    glyph: "images/icons/hard_disk_drive-32.png",
-    images: ["images/preview-filesystem-drivers.png"],
+    glyph: "images/icons/hard_disk_drive-32.png?v=b08d7b6a",
+    images: ["images/preview-filesystem-drivers.png?v=8693f362"],
     tech: ["C++", "FAT32", "EXT", "NTFS"],
     repo: "https://github.com/VANAFA/filesystem-drivers-fat-ext-ntfs",
     en: {
@@ -217,8 +217,8 @@ window.PROJECTS = [
   },
   {
     id: "phoneme-synthesis",
-    glyph: "images/icons/microphone-32.png",
-    images: ["images/preview-phoneme-synthesis.png"],
+    glyph: "images/icons/microphone-32.png?v=cc1ae2ae",
+    images: ["images/preview-phoneme-synthesis.png?v=0e58d59e"],
     tech: ["Python", "SciPy", "DSP", "LPC"],
     repo: "https://github.com/VANAFA/phoneme-synthesis-estimation",
     en: {
@@ -248,8 +248,8 @@ window.PROJECTS = [
   },
   {
     id: "arch-os-labs",
-    glyph: "images/icons/computer_taskmgr-32.png",
-    images: ["images/preview-arch-os-labs.png"],
+    glyph: "images/icons/computer_taskmgr-32.png?v=e7a2dac0",
+    images: ["images/preview-arch-os-labs.png?v=b47aad6b"],
     tech: ["C", "ARMv8", "x86-64", "Concurrency"],
     repo: "https://github.com/VANAFA/computer-architecture-os-labs-mirror",
     en: {
@@ -279,8 +279,8 @@ window.PROJECTS = [
   },
   {
     id: "paradigms",
-    glyph: "images/icons/notepad_file-32.png",
-    images: ["images/preview-paradigms.png"],
+    glyph: "images/icons/notepad_file-32.png?v=9efaa362",
+    images: ["images/preview-paradigms.png?v=7a8839b3"],
     tech: ["Haskell", "Java", "OOP", "Functional"],
     repo: "https://github.com/VANAFA/programming-paradigms-labs",
     en: {
@@ -310,8 +310,8 @@ window.PROJECTS = [
   },
   {
     id: "coursework-archive",
-    glyph: "images/icons/directory_open_file_mydocs-32.png",
-    images: ["images/preview-coursework-archive.png"],
+    glyph: "images/icons/directory_open_file_mydocs-32.png?v=d2e0e15b",
+    images: ["images/preview-coursework-archive.png?v=c072ef13"],
     tech: ["Python", "Machine Learning", "AI"],
     repo: "https://github.com/VANAFA/udesa-coursework-archive",
     en: {
@@ -341,8 +341,8 @@ window.PROJECTS = [
   },
   {
     id: "truequeba",
-    glyph: "images/icons/briefcase-32.png",
-    images: ["images/preview-truequeba.png"],
+    glyph: "images/icons/briefcase-32.png?v=f483e348",
+    images: ["images/preview-truequeba.png?v=1036afda"],
     tech: ["React", "Node.js", "Docker", "nginx", "OAuth"],
     en: {
       title: "TruequeBA",
@@ -371,8 +371,8 @@ window.PROJECTS = [
   },
   {
     id: "this-site",
-    glyph: "images/icons/computer_explorer-32.png",
-    images: ["images/preview-this-site.png"],
+    glyph: "images/icons/computer_explorer-32.png?v=cc0d052a",
+    images: ["images/preview-this-site.png?v=603d9058"],
     tech: ["HTML", "CSS", "JavaScript"],
     repo: "https://github.com/VANAFA/portfolio",
     en: {
