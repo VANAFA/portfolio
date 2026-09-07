@@ -51,8 +51,9 @@
   });
 
   // Called by js/chipa.js once the chipa has been swallowed.
-  window.questComplete = function () {
-    say("quest.done");
+  // `burp` is true every 3rd chipa, and gets its own line.
+  window.questComplete = function (burp) {
+    say(burp ? "quest.doneBurp" : "quest.done");
   };
 
   // If the language is switched mid-sentence, restart in the new language.

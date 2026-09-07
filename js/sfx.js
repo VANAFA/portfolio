@@ -74,6 +74,12 @@
     drop: function () {
       tone(520, 240, 0.11, "square", 0.045);
     },
+    // A comedic burp: a wavering low tone plus a breathy noise tail.
+    burp: function () {
+      tone(150, 55, 0.38, "sawtooth", 0.1);
+      setTimeout(function () { tone(110, 70, 0.22, "sawtooth", 0.06); }, 90);
+      noise(0.32, 280, 0.6, 0.05);
+    },
     // A single chomp — noise crunch plus a soft low body.
     chew: function () {
       noise(0.11, 900 + Math.random() * 700, 3, 0.16);

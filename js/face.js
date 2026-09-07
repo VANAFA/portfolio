@@ -134,6 +134,38 @@
       target = 0;
       drop = 0;
       apply();
+    },
+
+    // A big open-mouth beat with a shake and a puff, then closes and calls back.
+    burp: function (done) {
+      if (reduceMotion) {
+        if (done) done();
+        return;
+      }
+      chewing = true;
+      talking = false;
+      target = MAX_DROP;
+      start();
+
+      rig.classList.remove("burp");
+      void rig.offsetWidth;
+      rig.classList.add("burp");
+      if (window.SFX) window.SFX.burp();
+      if (window.burstParticles) {
+        var m = mouthPoint();
+        window.burstParticles(m.x, m.y - 8, ["rgba(220,220,220,0.55)", "rgba(190,205,195,0.5)", "rgba(235,235,225,0.6)"], {
+          count: 6, minDist: 30, maxDist: 70, minSize: 7, maxSize: 13,
+          spread: Math.PI * 0.55, facing: -Math.PI / 2
+        });
+      }
+
+      setTimeout(function () {
+        target = 0;
+        chewing = false;
+        rig.classList.remove("burp");
+        start();
+        if (done) done();
+      }, 420);
     }
   };
 

@@ -20,6 +20,8 @@
   var CRUMBS = ["#e8ba68", "#d6a04a", "#b3792a", "#f6dea0", "#8a5c1c"];
   var SPARKS = ["#ffffff", "#fff3b0", "#ffe066", "#ffd43b", "#fab005"];
 
+  var eatenCount = 0;   // every 3rd chipa swallowed gets a burp instead of just "thanks"
+
   var dragging = false;
   var pointerId = null;
   var grabDX = 0;
@@ -73,14 +75,31 @@
     chipa.classList.add("eaten");
     chipa.style.pointerEvents = "none";
 
+    // Keep Quest disabled for the whole eat -> (maybe burp) -> thank-you
+    // sequence, not just while a line is actively typing. Otherwise a click
+    // in that gap abandons the pending sequence mid-flight (its callback -
+    // spawning a fresh chipa, or a burp's own thank-you line - never runs).
+    var questBtn = document.getElementById("quest-btn");
+    if (questBtn) questBtn.disabled = true;
+
     window.faceJaw.chew(4, function () {
       if (window.SFX) window.SFX.swallow();
+      eatenCount++;
+      var burpTime = eatenCount % 3 === 0;
+
       setTimeout(function () {
         // The chipa is gone for good until the quest is taken again.
         chipa.hidden = true;
         chipa.classList.remove("eaten");
         chipa.style.pointerEvents = "";
-        if (window.questComplete) window.questComplete();
+
+        if (burpTime && window.faceJaw.burp) {
+          window.faceJaw.burp(function () {
+            if (window.questComplete) window.questComplete(true);
+          });
+        } else if (window.questComplete) {
+          window.questComplete(false);
+        }
       }, 350);
     });
 

@@ -334,6 +334,18 @@ hr.divider{
   100% { transform:translate(0,0) rotate(0deg) scale(1); }
 }
 
+/* Every third chipa swallowed triggers this instead of a plain thank-you. */
+.face-rig.burp{
+  animation:face-burp 0.42s ease-out;
+}
+@keyframes face-burp{
+  0%   { transform:scale(1,1) translateY(0); }
+  25%  { transform:scale(1.05,0.94) translateY(3px); }
+  50%  { transform:scale(0.97,1.05) translateY(-4px); }
+  75%  { transform:scale(1.02,0.98) translateY(1px); }
+  100% { transform:scale(1,1) translateY(0); }
+}
+
 .hit-particle{
   position:fixed;
   z-index:500;
@@ -353,6 +365,7 @@ hr.divider{
 }
 @media (prefers-reduced-motion:reduce){
   .face-rig.hit{ animation:none; }
+  .face-rig.burp{ animation:none; }
   .hit-particle{ display:none; }
 }
 
