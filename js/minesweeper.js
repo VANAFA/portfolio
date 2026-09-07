@@ -1,5 +1,6 @@
-// Classic Minesweeper: three difficulties, flood-fill reveal, flagging (right
-// click, or a "Flag Mode" toggle for touch), mine counter and timer.
+// Classic Minesweeper: three difficulties, flood-fill reveal, flagging via
+// right-click or a press-and-hold (works the same on touch), mine counter
+// and timer.
 (function () {
   var boardEl = document.getElementById("ms-board");
   if (!boardEl) return;
@@ -9,7 +10,6 @@
   var faceBtn = document.getElementById("ms-face");
   var statusEl = document.getElementById("ms-status");
   var levelsEl = document.getElementById("ms-levels");
-  var flagModeBtn = document.getElementById("ms-flagmode");
 
   var LEVELS = {
     beginner: { rows: 9, cols: 9, mines: 10 },
@@ -25,7 +25,9 @@
   var revealedSafeCount;
   var timerHandle;
   var seconds;
-  var flagMode = false;
+
+  var HOLD_MS = 450;
+  var MOVE_TOLERANCE = 10;
 
   function idx(r, c) { return r * cols + c; }
 
@@ -231,7 +233,8 @@
       });
     }
 
-    boardEl.style.gridTemplateColumns = "repeat(" + cols + ", 20px)";
+    boardEl.style.setProperty("--ms-cols", cols);
+    boardEl.style.gridTemplateColumns = "repeat(" + cols + ", 1fr)";
     boardEl.innerHTML = "";
     cells = [];
     for (var r = 0; r < rows; r++) {
@@ -240,9 +243,42 @@
         el.type = "button";
         el.className = "ms-cell";
         (function (rr, cc) {
-          el.addEventListener("click", function () {
-            if (flagMode) handleFlag(rr, cc); else handleReveal(rr, cc);
+          var holdTimer = null;
+          var longPressFired = false;
+          var startX = 0, startY = 0;
+
+          function clearHold() {
+            clearTimeout(holdTimer);
+            holdTimer = null;
+          }
+
+          el.addEventListener("pointerdown", function (e) {
+            if (e.pointerType === "mouse" && e.button !== 0) return; // right-click: contextmenu handles it
+            startX = e.clientX; startY = e.clientY;
+            longPressFired = false;
+            el.classList.add("pressing");
+            holdTimer = setTimeout(function () {
+              longPressFired = true;
+              el.classList.remove("pressing");
+              handleFlag(rr, cc);
+            }, HOLD_MS);
           });
+          el.addEventListener("pointermove", function (e) {
+            if (!holdTimer) return;
+            if (Math.hypot(e.clientX - startX, e.clientY - startY) > MOVE_TOLERANCE) {
+              clearHold();
+              el.classList.remove("pressing");
+            }
+          });
+          el.addEventListener("pointerup", function () {
+            el.classList.remove("pressing");
+            if (holdTimer) {
+              clearHold();
+              if (!longPressFired) handleReveal(rr, cc);
+            }
+          });
+          el.addEventListener("pointerleave", function () { clearHold(); el.classList.remove("pressing"); });
+          el.addEventListener("pointercancel", function () { clearHold(); el.classList.remove("pressing"); });
           el.addEventListener("contextmenu", function (e) {
             e.preventDefault();
             handleFlag(rr, cc);
@@ -260,12 +296,6 @@
     });
   }
   if (faceBtn) faceBtn.addEventListener("click", function () { newGame(); });
-  if (flagModeBtn) {
-    flagModeBtn.addEventListener("click", function () {
-      flagMode = !flagMode;
-      flagModeBtn.classList.toggle("selected", flagMode);
-    });
-  }
 
   document.addEventListener("langchange", function () {
     if (state === "won") setStatus("ms.win");

@@ -639,8 +639,7 @@ hr.divider{
   gap:4px;
   margin-bottom:8px;
 }
-.ms-levels .btn98.selected,
-.ms-flagmode.selected{
+.ms-levels .btn98.selected{
   border-top:2px solid var(--w98-face-darker);
   border-left:2px solid var(--w98-face-darker);
   border-right:2px solid var(--w98-face-lighter);
@@ -679,36 +678,40 @@ hr.divider{
 .ms-board{
   display:grid;
   gap:0;
-  width:max-content;
-  max-width:100%;
-  overflow:auto;
-  margin:0 auto;
+  width:100%;
+  container-type:inline-size;
   background:var(--w98-face-dark);
   padding:3px;
+  touch-action:manipulation;
 }
 .ms-cell{
-  width:20px;
-  height:20px;
+  aspect-ratio:1;
+  min-width:0;
   padding:0;
   margin:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   font-family:inherit;
-  font-size:11px;
+  font-size:calc(58cqw / var(--ms-cols, 9));
   font-weight:bold;
-  line-height:16px;
-  text-align:center;
   cursor:pointer;
+  touch-action:none;
+  -webkit-user-select:none;
+  user-select:none;
   background:var(--w98-face);
   border-top:2px solid var(--w98-face-lighter);
   border-left:2px solid var(--w98-face-lighter);
   border-right:2px solid var(--w98-face-darker);
   border-bottom:2px solid var(--w98-face-darker);
 }
+.ms-cell.pressing{ filter:brightness(0.92); }
 .ms-cell.revealed{
   border:1px solid var(--w98-face-dark);
 }
 .ms-cell.revealed.mine{ background:#ff9999; }
 .ms-cell.revealed.mine.exploded{ background:#ff0000; }
-.ms-cell.revealed.mine img{ width:14px; height:14px; vertical-align:middle; image-rendering:pixelated; }
+.ms-cell.revealed.mine img{ width:65%; height:65%; image-rendering:pixelated; }
 .ms-cell[data-n="1"]{ color:#0000ff; }
 .ms-cell[data-n="2"]{ color:#008000; }
 .ms-cell[data-n="3"]{ color:#ff0000; }
@@ -718,8 +721,8 @@ hr.divider{
 .ms-cell[data-n="7"]{ color:#000; }
 .ms-cell[data-n="8"]{ color:#808080; }
 
-.ms-flag{ position:relative; display:inline-block; width:12px; height:14px; vertical-align:middle; }
-.ms-flag::before{ content:""; position:absolute; left:5px; top:0; width:2px; height:14px; background:#000; }
+.ms-flag{ position:relative; display:inline-block; width:0.85em; height:1em; }
+.ms-flag::before{ content:""; position:absolute; left:0.38em; top:0; width:2px; height:1em; background:#000; }
 .ms-flag::after{
   content:"";
   position:absolute;
@@ -749,13 +752,18 @@ hr.divider{
 }
 
 /* ===== Solitaire ===== */
+/* Classic green felt table - only the play area, the title bar and borders
+   stay standard Win98 chrome. */
+[data-window="solitaire"] .window-body{
+  background:#008000;
+}
 .sol-toolbar{
   display:flex;
   align-items:center;
   gap:12px;
   margin-bottom:10px;
 }
-.sol-status{ margin:0; font-weight:bold; }
+.sol-status{ margin:0; font-weight:bold; color:#fff; text-shadow:1px 1px 0 rgba(0,0,0,0.5); }
 
 .sol-top-row{
   display:flex;
@@ -815,7 +823,7 @@ hr.divider{
   width:52px;
   height:74px;
   box-sizing:border-box;
-  border:1px dashed rgba(0,0,0,0.35);
+  border:1px dashed rgba(255,255,255,0.55);
   border-radius:3px;
 }
 .sol-foundation-slot{
@@ -823,8 +831,8 @@ hr.divider{
   align-items:center;
   justify-content:center;
   font-size:22px;
-  color:rgba(0,0,0,0.3);
-  background:rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.5);
+  background:rgba(255,255,255,0.12);
 }
 .sol-stock, .sol-waste{ cursor:pointer; }
 
@@ -986,7 +994,6 @@ hr.divider{
   .sol-tableau-col .sol-card:not(:first-child){ margin-top:-44px; }
   .sol-rank{ font-size:11px; }
   .sol-suit{ font-size:12px; }
-  .ms-cell{ width:18px; height:18px; line-height:14px; font-size:10px; }
 
   /* Taskbar is too crowded at phone widths for full text labels - go icon-only */
   .taskbar{ gap:4px; padding:2px; height:30px; }
