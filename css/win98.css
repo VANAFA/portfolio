@@ -257,8 +257,8 @@ hr.divider{
 /* ===== the chipa ===== */
 .chipa{
   position:absolute;
-  width:46px;
-  height:46px;
+  width:54px;
+  height:auto;
   z-index:80;
   cursor:grab;
   user-select:none;
