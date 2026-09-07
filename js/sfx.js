@@ -1,8 +1,14 @@
 /*
- * Sound effects, synthesised with the Web Audio API — no audio files, nothing to
- * download, nothing to license. Every sound is triggered by a user gesture, so
- * the audio context is created lazily on first use and resumed if suspended
- * (browsers block audio that starts without interaction).
+ * Sound effects. Each one first tries a real recording from sounds/<name>.mp3;
+ * if that file is still the untouched placeholder (see
+ * tools/make_sound_placeholders.py), it falls back to a sound synthesised with
+ * the Web Audio API instead — no audio files required to get a working site,
+ * but dropping a real recording in under the same filename is picked up
+ * automatically, with nothing to wire up.
+ *
+ * Every sound is triggered by a user gesture, so the audio context is created
+ * lazily on first use and resumed if suspended (browsers block audio that
+ * starts without interaction).
  */
 (function () {
   var ctx = null;
@@ -65,7 +71,7 @@
     osc.stop(ac.currentTime + duration);
   }
 
-  window.SFX = {
+  var synth = {
     // Picking something up: a short upward blip.
     pick: function () {
       tone(420, 780, 0.09, "square", 0.05);
@@ -98,5 +104,50 @@
     speak: function () {
       tone(200 + Math.random() * 120, 150 + Math.random() * 90, 0.06, "square", 0.022);
     }
+  };
+
+  // --- custom recordings, if any have replaced their placeholder ---------
+
+  // Placeholders from tools/make_sound_placeholders.py are 593 bytes; anything
+  // this small is assumed to still be the placeholder. Any real recording,
+  // even a very short one, comes in well above this.
+  var PLACEHOLDER_MAX_BYTES = 3000;
+
+  var custom = {};   // name -> HTMLAudioElement, once confirmed to be a real file
+
+  Object.keys(synth).forEach(function (name) {
+    var path = "sounds/" + name + ".mp3";
+    fetch(path)
+      .then(function (res) { return res.ok ? res.blob() : null; })
+      .then(function (blob) {
+        if (blob && blob.size > PLACEHOLDER_MAX_BYTES) {
+          var el = new Audio(path);
+          el.preload = "auto";
+          custom[name] = el;
+        }
+      })
+      .catch(function () {
+        /* no sounds/ folder, blocked by file:// CORS, offline, etc. - synth stays the fallback */
+      });
+  });
+
+  function play(name) {
+    var el = custom[name];
+    if (el) {
+      el.currentTime = 0;
+      el.play().catch(function () { /* autoplay/decoding hiccup - not fatal */ });
+      return;
+    }
+    synth[name]();
+  }
+
+  window.SFX = {
+    pick: function () { play("pick"); },
+    drop: function () { play("drop"); },
+    burp: function () { play("burp"); },
+    chew: function () { play("chew"); },
+    swallow: function () { play("swallow"); },
+    hit: function () { play("hit"); },
+    speak: function () { play("speak"); }
   };
 })();

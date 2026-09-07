@@ -64,8 +64,7 @@
 
     var btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "btn98 taskbar-btn active";
-    btn.setAttribute("aria-pressed", "true");
+    btn.className = "btn98 taskbar-btn";
     var icon = iconFor(win);
     btn.innerHTML =
       (icon ? '<img class="icon-inline" src="' + icon + '" alt="">' : "") +
@@ -79,6 +78,9 @@
     });
     taskbarWindows.appendChild(btn);
     buttons[id] = btn;
+    // Reflect the window's actual starting state (most start visible; a window
+    // like "My Computer" starts hidden until opened from its desktop icon).
+    updateButton(win);
 
     var controls = win.querySelectorAll(".title-bar-controls button[data-action]");
     controls.forEach(function (ctrlBtn) {
@@ -92,4 +94,11 @@
       });
     });
   });
+
+  // Lets other scripts (e.g. a desktop icon) open a window that starts hidden,
+  // through the same path a taskbar click would use.
+  window.openAppWindow = function (id) {
+    var win = document.querySelector('.window[data-window="' + id + '"]');
+    if (win && win.hidden) showWindow(win);
+  };
 })();

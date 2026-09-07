@@ -86,3 +86,39 @@ lives in `js/i18n.js` — add a key there and reference it from HTML with
 
 The button in the taskbar toggles between them and remembers the choice in
 `localStorage`, so it carries across pages.
+
+## Desktop backgrounds
+
+Click the "My Computer" icon on the left of the desktop to pick a wallpaper.
+The choice is saved in the browser and carries over to every page, the same
+way the language toggle does.
+
+To add a new one:
+
+1. Drop the original photo into `images/bgs/`.
+2. Run `python3 tools/make_bg_variants.py` - it generates a resized copy used
+   as the actual wallpaper plus a small thumbnail for the picker, so a
+   multi-megabyte photo is never downloaded just to preview it.
+3. Add one entry to `js/backgrounds.js` (id, English/Spanish label, and the
+   two paths the script just created).
+
+## Custom sounds
+
+Every sound effect (`sounds/*.mp3`) starts as a tiny silent placeholder.
+Replace any of them with a real recording under the same filename and the
+site picks it up automatically - no code change needed:
+
+```
+sounds/pick.mp3       picking up the chipa
+sounds/drop.mp3       dropping it without feeding it to him
+sounds/chew.mp3       one chomp (plays several times per chipa)
+sounds/swallow.mp3    finishing the mouthful
+sounds/hit.mp3        getting hit
+sounds/speak.mp3      one syllable while the quest line types out
+sounds/burp.mp3       the burp, every 3rd chipa
+```
+
+`js/sfx.js` checks each file's size at load: anything at or below the
+placeholder size falls back to a synthesised sound, so the site always has
+something even before you've recorded your own. To reset one back to the
+placeholder: `python3 tools/make_sound_placeholders.py`.

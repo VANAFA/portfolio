@@ -11,7 +11,7 @@
 
   <section class="window raised face-window" data-window="face" data-taskbar-key="tb.face">
     <div class="title-bar">
-      <div class="title-bar-text"><img class="icon-inline" src="images/icons/computer-16.png?v=18debb4f" alt=""> <span data-i18n="win.face">Hit me!</span></div>
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/smiley-16.png" alt=""> <span data-i18n="win.face">Hit me!</span></div>
       <div class="title-bar-controls">
         <button aria-label="Minimize" data-action="minimize">_</button>
         <button aria-label="Maximize" data-action="maximize">□</button>
@@ -100,6 +100,21 @@
     </div>
   </section>
 
+  <section class="window raised" data-window="mycomputer" data-taskbar-key="tb.mycomputer" hidden>
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/my_computer-16.png" alt=""> <span data-i18n="win.mycomputer">My Computer</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p data-i18n="mycomputer.hint">Pick a desktop background.</p>
+      <div class="bg-grid" id="bg-grid"></div>
+    </div>
+  </section>
+
   <!-- Pop-up window for a clicked project -->
   <div class="overlay" id="modal-overlay" hidden>
     <div class="window raised modal-window" role="dialog" aria-modal="true" aria-labelledby="modal-title">
@@ -121,6 +136,8 @@
 
   <img class="chipa" id="chipa" src="images/chipa.png?v=9d1a121c" alt="Chipa" draggable="false" hidden>
 
+  <div class="desktop-icons" id="desktop-icons"></div>
+
   <div class="desktop-trash" aria-hidden="true">
     <img src="images/icons/recycle_bin-48.png?v=4bbfcd87" alt="">
     <span data-i18n="trash.label">Recycle Bin</span>
@@ -136,8 +153,12 @@
 
   <script src="js/data.js?v=a339898"></script>
   <script src="js/i18n.js?v=a339898"></script>
+  <script src="js/backgrounds.js"></script>
+  <script src="js/background.js"></script>
   <script src="js/main.js?v=a339898"></script>
   <script src="js/windows.js?v=a339898"></script>
+  <script src="js/desktopicons.js"></script>
+  <script src="js/mycomputer.js"></script>
   <script src="js/taskbar.js?v=a339898"></script>
   <script src="js/particles.js?v=a339898"></script>
   <script src="js/sfx.js?v=a339898"></script>

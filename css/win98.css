@@ -391,6 +391,100 @@ hr.divider{
   image-rendering:pixelated;
 }
 
+/* ===== decorative desktop icons (left edge, behind the windows) =====
+   Only "My Computer" is functional - it opens the background picker below. */
+.desktop-icons{
+  position:fixed;
+  top:20px;
+  left:18px;
+  z-index:0;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+.desktop-icon{
+  background:none;
+  border:none;
+  padding:0;
+  width:76px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  color:#fff;
+  font-size:11px;
+  font-family:inherit;
+  text-shadow:1px 1px 0 rgba(0,0,0,0.7);
+  user-select:none;
+  pointer-events:none;
+}
+.desktop-icon img{
+  display:block;
+  width:48px;
+  height:48px;
+  margin:0 auto 3px;
+  image-rendering:pixelated;
+}
+.desktop-icon.functional{
+  pointer-events:auto;
+  cursor:pointer;
+}
+.desktop-icon.functional .desktop-icon-label{
+  padding:1px 3px;
+}
+.desktop-icon.functional:hover .desktop-icon-label,
+.desktop-icon.functional:focus .desktop-icon-label{
+  background:#000080;
+  outline:1px dotted #fff;
+  text-shadow:none;
+}
+.desktop-icon.functional:focus{ outline:none; }
+
+/* ===== "My Computer" background picker ===== */
+.bg-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(112px,1fr));
+  gap:10px;
+  padding:4px;
+}
+.bg-choice{
+  background:var(--w98-face);
+  border-top:2px solid var(--w98-face-lighter);
+  border-left:2px solid var(--w98-face-lighter);
+  border-right:2px solid var(--w98-face-darker);
+  border-bottom:2px solid var(--w98-face-darker);
+  padding:6px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:5px;
+  cursor:pointer;
+  font-family:inherit;
+  font-size:11px;
+  color:#000;
+}
+.bg-choice img,
+.bg-choice .bg-swatch{
+  width:100%;
+  height:64px;
+  display:block;
+  object-fit:cover;
+  border:1px solid var(--w98-face-darker);
+}
+.bg-choice .bg-swatch{
+  background:var(--w98-desktop);
+}
+.bg-choice.selected{
+  border-top:2px solid var(--w98-face-darker);
+  border-left:2px solid var(--w98-face-darker);
+  border-right:2px solid var(--w98-face-lighter);
+  border-bottom:2px solid var(--w98-face-lighter);
+}
+.bg-choice.selected .bg-label{
+  background:#000080;
+  color:#fff;
+  padding:1px 4px;
+}
+
 .profile-info h1{
   font-size:20px;
 }
@@ -669,6 +763,10 @@ hr.divider{
   .face-window{ width:150px; }
   .desktop-trash{ right:10px; bottom:40px; width:64px; font-size:10px; }
   .desktop-trash img{ width:38px; height:38px; }
+  /* No free desktop space at this width for icons to sit without being
+     covered by a window - My Computer stays reachable from its taskbar
+     button either way. */
+  .desktop-icons{ display:none; }
   .profile-info h1{ font-size:17px; }
   .profile-info .tagline{ font-size:12px; }
   p{ margin:0 0 6px; line-height:1.45; }
