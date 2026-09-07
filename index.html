@@ -9,6 +9,25 @@
 </head>
 <body data-title-key="page.title">
 
+  <section class="window raised face-window" data-window="face" data-taskbar-key="tb.face">
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/computer-16.png" alt=""> <span data-i18n="win.face">Hit me!</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="face-rig" id="face-rig">
+        <img class="face-layer face-head" src="images/expresions/head.png" alt="Valentino Nallib Fadel">
+        <img class="face-layer face-jaw" src="images/expresions/jaw.png" alt="">
+        <img class="face-layer face-angry" src="images/expresions/angry.png" alt="" hidden>
+      </div>
+      <p class="face-hint" data-i18n="face.hint">Go on, click.</p>
+    </div>
+  </section>
+
   <section class="window raised" data-window="about" data-taskbar-key="tb.about">
     <div class="title-bar">
       <div class="title-bar-text"><img class="icon-inline" src="images/icons/computer-16.png" alt=""> <span data-i18n="win.about">valentino.cv — About Me</span></div>
@@ -20,11 +39,6 @@
     </div>
     <div class="window-body">
       <div class="profile">
-        <div class="profile-photo face-rig" id="face-rig">
-          <img class="face-layer face-head" src="images/expresions/head.png" alt="Valentino Nallib Fadel">
-          <img class="face-layer face-jaw" src="images/expresions/jaw.png" alt="">
-          <img class="face-layer face-angry" src="images/expresions/angry.png" alt="" hidden>
-        </div>
         <div class="profile-info">
           <h1>Valentino Nallib Fadel</h1>
           <div class="tagline" data-i18n="about.tagline">AI Engineering student · Buenos Aires, Argentina</div>
@@ -101,6 +115,11 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="desktop-trash" aria-hidden="true">
+    <img src="images/icons/recycle_bin-48.png" alt="">
+    <span data-i18n="trash.label">Recycle Bin</span>
   </div>
 
   <div class="taskbar">

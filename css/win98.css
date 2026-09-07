@@ -53,6 +53,8 @@ a:visited{ color:#551a8b; }
 
 /* window chrome */
 .window{
+  position:relative;
+  z-index:1;
   background:var(--w98-face);
   max-width:760px;
   margin:0 auto 20px;
@@ -203,14 +205,38 @@ hr.divider{
   gap:16px;
   align-items:flex-start;
 }
-/* Layered face rig: head + hinged jaw + angry expression, all the same 390x608
-   canvas. The container keeps that aspect ratio so the jaw's percentage
-   transform-origin lands exactly on the pixel the hinge was measured at. */
-.profile-photo{
+/* ===== face banner ===================================================
+   The face lives in its own window. On a wide screen it is pinned to the
+   right of the page like a banner ad; below 1200px there isn't room beside
+   the 760px content column, so it falls back into normal flow at the top. */
+.face-window{
+  width:184px;
+  max-width:100%;
+  margin:0 auto 20px;
+}
+@media (min-width:1200px){
+  .face-window{
+    position:fixed;
+    top:24px;
+    right:24px;
+    margin:0;
+    z-index:60;
+  }
+}
+.face-hint{
+  margin:6px 0 0;
+  text-align:center;
+  font-size:11px;
+  color:#404040;
+}
+
+/* Layered face rig: head + sliding jaw + angry expression, all the same
+   390x608 canvas. The container keeps that aspect ratio so the jaw's
+   percentage offsets map exactly onto source pixels. */
+.face-rig{
   position:relative;
-  width:96px;
+  width:100%;
   aspect-ratio:390 / 608;
-  flex-shrink:0;
   cursor:pointer;
   user-select:none;
 }
@@ -229,16 +255,23 @@ hr.divider{
   /* slides straight down; the distance is set from js/face.js */
   will-change:transform;
 }
-/* Recoil when the photo is clicked (see js/hitme.js) */
-.profile-photo.hit{
-  animation:photo-hit 0.42s ease-out;
+
+/* Recoil when the face is clicked. The kick direction, distance, rotation and
+   duration are randomised per hit in js/hitme.js, so spam-clicking doesn't
+   replay one identical canned animation. */
+.face-rig.hit{
+  animation:photo-hit var(--hit-dur,0.4s) ease-out;
 }
 @keyframes photo-hit{
   0%   { transform:translate(0,0) rotate(0deg) scale(1); }
-  15%  { transform:translate(5px,-3px) rotate(3deg) scale(1.06); }
-  30%  { transform:translate(-4px,2px) rotate(-2.5deg) scale(1.04); }
-  50%  { transform:translate(3px,1px) rotate(1.5deg) scale(1.02); }
-  70%  { transform:translate(-2px,-1px) rotate(-1deg) scale(1.01); }
+  15%  { transform:translate(var(--hit-x,5px),var(--hit-y,-3px))
+                   rotate(var(--hit-rot,3deg)) scale(var(--hit-scale,1.06)); }
+  32%  { transform:translate(calc(var(--hit-x,5px) * -0.62),calc(var(--hit-y,-3px) * -0.5))
+                   rotate(calc(var(--hit-rot,3deg) * -0.7)) scale(1.03); }
+  52%  { transform:translate(calc(var(--hit-x,5px) * 0.4),calc(var(--hit-y,-3px) * 0.28))
+                   rotate(calc(var(--hit-rot,3deg) * 0.42)) scale(1.02); }
+  74%  { transform:translate(calc(var(--hit-x,5px) * -0.18),calc(var(--hit-y,-3px) * -0.12))
+                   rotate(calc(var(--hit-rot,3deg) * -0.18)) scale(1.005); }
   100% { transform:translate(0,0) rotate(0deg) scale(1); }
 }
 
@@ -260,9 +293,32 @@ hr.divider{
   }
 }
 @media (prefers-reduced-motion:reduce){
-  .profile-photo.hit{ animation:none; }
+  .face-rig.hit{ animation:none; }
   .hit-particle{ display:none; }
 }
+
+/* ===== decorative desktop trash (bottom right, behind the windows) ===== */
+.desktop-trash{
+  position:fixed;
+  right:18px;
+  bottom:46px;
+  width:76px;
+  text-align:center;
+  color:#fff;
+  font-size:11px;
+  text-shadow:1px 1px 0 rgba(0,0,0,0.7);
+  pointer-events:none;
+  user-select:none;
+  z-index:0;
+}
+.desktop-trash img{
+  display:block;
+  width:48px;
+  height:48px;
+  margin:0 auto 3px;
+  image-rendering:pixelated;
+}
+
 .profile-info h1{
   font-size:20px;
 }
@@ -538,7 +594,9 @@ hr.divider{
   /* Photo beside the text, left-aligned - centred paragraphs read badly and
      eat a lot of vertical space on a phone. */
   .profile{ flex-direction:row; align-items:flex-start; text-align:left; gap:10px; }
-  .profile-photo{ width:64px; }
+  .face-window{ width:150px; }
+  .desktop-trash{ right:10px; bottom:40px; width:64px; font-size:10px; }
+  .desktop-trash img{ width:38px; height:38px; }
   .profile-info h1{ font-size:17px; }
   .profile-info .tagline{ font-size:12px; }
   p{ margin:0 0 6px; line-height:1.45; }
