@@ -1,9 +1,10 @@
 /*
- * The chipa: a draggable snack that lives at a random spot on the page.
+ * The chipa: a draggable snack that appears at a random spot on the page when
+ * the quest is accepted.
  *
  * Drag it towards the face and the jaw opens as it gets close. Let go with the
  * chipa over the mouth and it gets eaten — chomping, crumbs and a swallow —
- * then a fresh one appears somewhere else.
+ * which completes the quest. It only ever appears via the Quest button.
  *
  * Tuning:
  *   NEAR_PX / FAR_PX   distance over which the jaw opens as the chipa approaches
@@ -74,9 +75,11 @@
     window.faceJaw.chew(4, function () {
       if (window.SFX) window.SFX.swallow();
       setTimeout(function () {
+        // The chipa is gone for good until the quest is taken again.
+        chipa.hidden = true;
         chipa.classList.remove("eaten");
         chipa.style.pointerEvents = "";
-        reposition();
+        if (window.questComplete) window.questComplete();
       }, 350);
     });
 
@@ -149,5 +152,17 @@
     }, 200);
   });
 
-  reposition();
+  // Only the Quest button brings a chipa into the world. Taking the quest again
+  // while one is already out just moves it somewhere new.
+  window.chipaQuest = {
+    spawn: function () {
+      chipa.hidden = false;
+      chipa.classList.remove("eaten");
+      chipa.style.pointerEvents = "";
+      reposition();
+    },
+    isOut: function () {
+      return !chipa.hidden;
+    }
+  };
 })();

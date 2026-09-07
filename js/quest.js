@@ -10,6 +10,7 @@
   var CHAR_MS = 55;
   var timer = null;
   var speaking = false;
+  var lastKey = "quest.line";
 
   function stop() {
     clearTimeout(timer);
@@ -18,7 +19,9 @@
     btn.disabled = false;
   }
 
-  function say(line) {
+  function say(key, onDone) {
+    var line = window.t ? window.t(key) : key;
+    lastKey = key;
     clearTimeout(timer);
     out.textContent = "";
     speaking = true;
@@ -29,6 +32,7 @@
     (function step() {
       if (i >= line.length) {
         stop();
+        if (onDone) onDone();
         return;
       }
       var ch = line.charAt(i);
@@ -41,15 +45,22 @@
   }
 
   btn.addEventListener("click", function () {
-    say(window.t ? window.t("quest.line") : "Bring me the chipa.");
+    say("quest.line", function () {
+      if (window.chipaQuest) window.chipaQuest.spawn();
+    });
   });
+
+  // Called by js/chipa.js once the chipa has been swallowed.
+  window.questComplete = function () {
+    say("quest.done");
+  };
 
   // If the language is switched mid-sentence, restart in the new language.
   document.addEventListener("langchange", function () {
     if (speaking) {
-      say(window.t ? window.t("quest.line") : "Bring me the chipa.");
+      say(lastKey);
     } else if (out.textContent) {
-      out.textContent = window.t ? window.t("quest.line") : out.textContent;
+      out.textContent = window.t ? window.t(lastKey) : out.textContent;
     }
   });
 })();
