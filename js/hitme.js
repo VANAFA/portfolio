@@ -8,7 +8,8 @@
   var NORMAL_SRC = photo.getAttribute("src");
   var ANGRY_SRC = "images/expresions/angry.png";
   var REVERT_MS = 700;
-  var COLORS = ["#f03e3e", "#f2c200", "#1971c2", "#37b24d", "#ffffff"];
+  // Damage colours: bright arterial red through to dark clotted red.
+  var COLORS = ["#ff2d2d", "#e00000", "#b00000", "#7a0000", "#ff5a5a"];
 
   var reduceMotion = false;
   try {
