@@ -203,14 +203,31 @@ hr.divider{
   gap:16px;
   align-items:flex-start;
 }
+/* Layered face rig: head + hinged jaw + angry expression, all the same 390x608
+   canvas. The container keeps that aspect ratio so the jaw's percentage
+   transform-origin lands exactly on the pixel the hinge was measured at. */
 .profile-photo{
+  position:relative;
   width:96px;
-  height:120px;
-  object-fit:cover;
-  image-rendering:auto;
+  aspect-ratio:390 / 608;
+  flex-shrink:0;
   cursor:pointer;
   user-select:none;
+}
+.face-layer{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  image-rendering:auto;
   -webkit-user-drag:none;
+}
+/* display:block above would defeat the [hidden] attribute, so restore it */
+.face-layer[hidden]{ display:none; }
+.face-jaw{
+  /* transform-origin is set from js/face.js so the pivot lives in one place */
+  will-change:transform;
 }
 /* Recoil when the photo is clicked (see js/hitme.js) */
 .profile-photo.hit{
@@ -521,7 +538,7 @@ hr.divider{
   /* Photo beside the text, left-aligned - centred paragraphs read badly and
      eat a lot of vertical space on a phone. */
   .profile{ flex-direction:row; align-items:flex-start; text-align:left; gap:10px; }
-  .profile-photo{ width:64px; height:80px; }
+  .profile-photo{ width:64px; }
   .profile-info h1{ font-size:17px; }
   .profile-info .tagline{ font-size:12px; }
   p{ margin:0 0 6px; line-height:1.45; }

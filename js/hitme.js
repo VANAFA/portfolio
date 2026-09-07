@@ -1,12 +1,15 @@
-// Easter egg: clicking the profile photo "hits" it — the expression switches to
-// images/expresions/angry.png, the photo recoils, and particles burst out of the
-// point of impact. Everything reverts after a moment.
+// Easter egg: clicking the face "hits" it — the head/jaw rig is swapped for the
+// angry expression, the whole thing recoils, and red damage particles burst out
+// of the point of impact. Everything reverts after a moment.
 (function () {
-  var photo = document.querySelector(".profile-photo");
-  if (!photo) return;
+  var rig = document.getElementById("face-rig");
+  if (!rig) return;
 
-  var NORMAL_SRC = photo.getAttribute("src");
-  var ANGRY_SRC = "images/expresions/angry.png";
+  var head = rig.querySelector(".face-head");
+  var jaw = rig.querySelector(".face-jaw");
+  var angry = rig.querySelector(".face-angry");
+  if (!head || !jaw || !angry) return;
+
   var REVERT_MS = 700;
   // Damage colours: bright arterial red through to dark clotted red.
   var COLORS = ["#ff2d2d", "#e00000", "#b00000", "#7a0000", "#ff5a5a"];
@@ -17,10 +20,6 @@
   } catch (e) {
     /* matchMedia unavailable - assume motion is fine */
   }
-
-  // Preload so the first hit doesn't flash an empty frame.
-  var preload = new Image();
-  preload.src = ANGRY_SRC;
 
   var revertTimer = null;
 
@@ -50,21 +49,28 @@
     }
   }
 
-  photo.addEventListener("click", function (e) {
-    photo.src = ANGRY_SRC;
+  function showAngry(on) {
+    head.hidden = on;
+    jaw.hidden = on;
+    angry.hidden = !on;
+  }
+
+  rig.addEventListener("click", function (e) {
+    showAngry(true);
+    if (window.faceJawReset) window.faceJawReset();
 
     if (!reduceMotion) {
       // restart the recoil animation even on rapid repeat clicks
-      photo.classList.remove("hit");
-      void photo.offsetWidth;
-      photo.classList.add("hit");
+      rig.classList.remove("hit");
+      void rig.offsetWidth;
+      rig.classList.add("hit");
       burst(e.clientX, e.clientY);
     }
 
     clearTimeout(revertTimer);
     revertTimer = setTimeout(function () {
-      photo.src = NORMAL_SRC;
-      photo.classList.remove("hit");
+      showAngry(false);
+      rig.classList.remove("hit");
     }, REVERT_MS);
   });
 })();
