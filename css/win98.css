@@ -633,6 +633,202 @@ hr.divider{
   margin-bottom:10px;
 }
 
+/* ===== Minesweeper ===== */
+.ms-levels{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin-bottom:8px;
+}
+.ms-levels .btn98.selected,
+.ms-flagmode.selected{
+  border-top:2px solid var(--w98-face-darker);
+  border-left:2px solid var(--w98-face-darker);
+  border-right:2px solid var(--w98-face-lighter);
+  border-bottom:2px solid var(--w98-face-lighter);
+}
+.ms-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:6px;
+  margin-bottom:8px;
+  background:var(--w98-face);
+}
+.ms-counter{
+  background:#000;
+  color:#ff2020;
+  font-family:"Courier New",monospace;
+  font-weight:bold;
+  font-size:18px;
+  letter-spacing:2px;
+  padding:2px 6px;
+  min-width:48px;
+  text-align:center;
+  border:1px solid var(--w98-face-darker);
+}
+.ms-face{
+  width:28px;
+  height:28px;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.ms-face img{ width:16px; height:16px; image-rendering:pixelated; }
+
+.ms-board{
+  display:grid;
+  gap:0;
+  width:max-content;
+  max-width:100%;
+  overflow:auto;
+  margin:0 auto;
+  background:var(--w98-face-dark);
+  padding:3px;
+}
+.ms-cell{
+  width:20px;
+  height:20px;
+  padding:0;
+  margin:0;
+  font-family:inherit;
+  font-size:11px;
+  font-weight:bold;
+  line-height:16px;
+  text-align:center;
+  cursor:pointer;
+  background:var(--w98-face);
+  border-top:2px solid var(--w98-face-lighter);
+  border-left:2px solid var(--w98-face-lighter);
+  border-right:2px solid var(--w98-face-darker);
+  border-bottom:2px solid var(--w98-face-darker);
+}
+.ms-cell.revealed{
+  border:1px solid var(--w98-face-dark);
+}
+.ms-cell.revealed.mine{ background:#ff9999; }
+.ms-cell.revealed.mine.exploded{ background:#ff0000; }
+.ms-cell.revealed.mine img{ width:14px; height:14px; vertical-align:middle; image-rendering:pixelated; }
+.ms-cell[data-n="1"]{ color:#0000ff; }
+.ms-cell[data-n="2"]{ color:#008000; }
+.ms-cell[data-n="3"]{ color:#ff0000; }
+.ms-cell[data-n="4"]{ color:#000080; }
+.ms-cell[data-n="5"]{ color:#800000; }
+.ms-cell[data-n="6"]{ color:#008080; }
+.ms-cell[data-n="7"]{ color:#000; }
+.ms-cell[data-n="8"]{ color:#808080; }
+
+.ms-flag{ position:relative; display:inline-block; width:12px; height:14px; vertical-align:middle; }
+.ms-flag::before{ content:""; position:absolute; left:5px; top:0; width:2px; height:14px; background:#000; }
+.ms-flag::after{
+  content:"";
+  position:absolute;
+  left:2px;
+  top:0;
+  width:0;
+  height:0;
+  border-style:solid;
+  border-width:5px 0 5px 6px;
+  border-color:transparent transparent transparent #cc0000;
+}
+.ms-cell.wrong-flag{ position:relative; }
+.ms-cell.wrong-flag::after{
+  content:"✕";
+  position:absolute;
+  inset:0;
+  color:#ff0000;
+  font-size:14px;
+  line-height:20px;
+}
+
+.ms-status{
+  text-align:center;
+  font-weight:bold;
+  min-height:1.2em;
+  margin:8px 0 0;
+}
+
+/* ===== Solitaire ===== */
+.sol-toolbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:10px;
+}
+.sol-status{ margin:0; font-weight:bold; }
+
+.sol-top-row{
+  display:flex;
+  gap:8px;
+  margin-bottom:14px;
+}
+.sol-foundations{
+  display:flex;
+  gap:6px;
+  margin-left:auto;
+}
+
+.sol-pile{ width:56px; min-height:78px; }
+.sol-tableau{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding-bottom:6px;
+}
+.sol-tableau-col{
+  width:56px;
+  min-height:78px;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  cursor:pointer;
+}
+
+.sol-card{
+  width:52px;
+  height:74px;
+  box-sizing:border-box;
+  position:relative;
+  font-family:Arial,Helvetica,sans-serif;
+  border-radius:3px;
+}
+.sol-card.face-up{
+  background:#fff;
+  border:1px solid #000;
+}
+.sol-card.face-down{
+  background:repeating-linear-gradient(45deg,#000080,#000080 4px,#1084d0 4px,#1084d0 8px);
+  border:1px solid #000;
+}
+.sol-card.red{ color:#cc0000; }
+.sol-card.black{ color:#000; }
+.sol-rank{ position:absolute; top:2px; left:3px; font-size:13px; font-weight:bold; }
+.sol-suit{ position:absolute; bottom:2px; right:3px; font-size:15px; }
+.sol-card.selected{
+  outline:2px solid #ffcc00;
+  outline-offset:-2px;
+  box-shadow:0 0 4px 1px rgba(255,204,0,0.85);
+}
+.sol-tableau-col .sol-card:not(:first-child){ margin-top:-56px; }
+
+.sol-empty-pile{
+  width:52px;
+  height:74px;
+  box-sizing:border-box;
+  border:1px dashed rgba(0,0,0,0.35);
+  border-radius:3px;
+}
+.sol-foundation-slot{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  color:rgba(0,0,0,0.3);
+  background:rgba(255,255,255,0.15);
+}
+.sol-stock, .sol-waste{ cursor:pointer; }
+
 /* ===== repo list ===== */
 .repo-list{
   list-style:none;
@@ -779,6 +975,19 @@ hr.divider{
   .project-grid{ gap:10px; padding:2px; }
   .modal-window{ margin-top:6px; }
   .overlay{ padding:12px 8px; }
+
+  /* Smaller cards so all 7 tableau columns have a chance of fitting without
+     scrolling; the board itself already scrolls horizontally as a fallback. */
+  .sol-pile,
+  .sol-tableau-col,
+  .sol-card,
+  .sol-empty-pile{ width:40px; }
+  .sol-card, .sol-empty-pile{ height:58px; }
+  .sol-tableau{ gap:4px; }
+  .sol-tableau-col .sol-card:not(:first-child){ margin-top:-44px; }
+  .sol-rank{ font-size:11px; }
+  .sol-suit{ font-size:12px; }
+  .ms-cell{ width:18px; height:18px; line-height:14px; font-size:10px; }
 
   /* Taskbar is too crowded at phone widths for full text labels - go icon-only */
   .taskbar{ gap:4px; padding:2px; height:30px; }

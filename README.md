@@ -122,3 +122,16 @@ sounds/burp.mp3       the burp, every 3rd chipa
 placeholder size falls back to a synthesised sound, so the site always has
 something even before you've recorded your own. To reset one back to the
 placeholder: `python3 tools/make_sound_placeholders.py`.
+
+## Games
+
+Minesweeper and Solitaire live behind their own desktop icons, next to My
+Computer. Both are plain JS, no libraries:
+
+- **Minesweeper** (`js/minesweeper.js`) - Beginner/Intermediate/Expert, safe
+  first click, flood-fill reveal, right-click to flag (or the "Flag Mode"
+  toggle button, for touch).
+- **Solitaire** (`js/solitaire.js`) - Klondike, draw-one. Click a card (or the
+  exposed run below it) to select, then click a pile to move it there -
+  no drag-and-drop, so it works the same on touch. Double-click sends a card
+  to a foundation if that's legal.

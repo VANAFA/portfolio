@@ -8,7 +8,9 @@
   var ICONS = [
     { key: "desktop.mycomputer", icon: "images/icons/my_computer-48.png", open: "mycomputer" },
     { key: "desktop.mydocs", icon: "images/icons/mydocs-48.png" },
-    { key: "desktop.network", icon: "images/icons/network_two_pcs-48.png" }
+    { key: "desktop.network", icon: "images/icons/network_two_pcs-48.png" },
+    { key: "win.minesweeper", icon: "images/icons/minesweeper-48.png", open: "minesweeper" },
+    { key: "win.solitaire", icon: "images/icons/solitaire-48.png", open: "solitaire" }
   ];
 
   function label(key) {

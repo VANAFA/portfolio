@@ -115,6 +115,62 @@
     </div>
   </section>
 
+  <section class="window raised" data-window="minesweeper" data-taskbar-key="tb.minesweeper" hidden>
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/minesweeper-16.png" alt=""> <span data-i18n="win.minesweeper">Minesweeper</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="ms-levels" id="ms-levels">
+        <button class="btn98" type="button" data-level="beginner" data-i18n="ms.beginner">Beginner</button>
+        <button class="btn98" type="button" data-level="intermediate" data-i18n="ms.intermediate">Intermediate</button>
+        <button class="btn98" type="button" data-level="expert" data-i18n="ms.expert">Expert</button>
+        <button class="btn98 ms-flagmode" type="button" id="ms-flagmode" data-i18n="ms.flagMode">Flag Mode</button>
+      </div>
+      <div class="ms-toolbar sunken">
+        <div class="ms-counter" id="ms-mine-count">010</div>
+        <button class="ms-face" id="ms-face" type="button" data-i18n-title="ms.newGame">
+          <img src="images/icons/smiley-16.png" alt="">
+        </button>
+        <div class="ms-counter" id="ms-timer">000</div>
+      </div>
+      <div class="ms-board sunken" id="ms-board"></div>
+      <p class="ms-status" id="ms-status"></p>
+    </div>
+  </section>
+
+  <section class="window raised" data-window="solitaire" data-taskbar-key="tb.solitaire" hidden>
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/solitaire-16.png" alt=""> <span data-i18n="win.solitaire">Solitaire</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="sol-toolbar">
+        <button class="btn98" type="button" id="sol-newgame" data-i18n="sol.newGame">New Game</button>
+        <p class="sol-status" id="sol-status"></p>
+      </div>
+      <div class="sol-top-row">
+        <div class="sol-pile sol-stock" id="sol-stock"></div>
+        <div class="sol-pile sol-waste" id="sol-waste"></div>
+        <div class="sol-foundations" id="sol-foundations">
+          <div class="sol-pile sol-foundation" data-suit="S"></div>
+          <div class="sol-pile sol-foundation" data-suit="H"></div>
+          <div class="sol-pile sol-foundation" data-suit="D"></div>
+          <div class="sol-pile sol-foundation" data-suit="C"></div>
+        </div>
+      </div>
+      <div class="sol-tableau" id="sol-tableau"></div>
+    </div>
+  </section>
+
   <!-- Pop-up window for a clicked project -->
   <div class="overlay" id="modal-overlay" hidden>
     <div class="window raised modal-window" role="dialog" aria-modal="true" aria-labelledby="modal-title">
@@ -159,6 +215,8 @@
   <script src="js/windows.js?v=a87ad86"></script>
   <script src="js/desktopicons.js?v=a87ad86"></script>
   <script src="js/mycomputer.js?v=a87ad86"></script>
+  <script src="js/minesweeper.js"></script>
+  <script src="js/solitaire.js"></script>
   <script src="js/taskbar.js?v=a87ad86"></script>
   <script src="js/particles.js?v=a87ad86"></script>
   <script src="js/sfx.js?v=a87ad86"></script>
