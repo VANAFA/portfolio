@@ -226,28 +226,9 @@
         <button aria-label="Close" data-action="close">✕</button>
       </div>
     </div>
-    <div class="window-body">
-      <div class="pin-toolbar sunken">
-        <div class="pin-counter-group">
-          <span class="pin-label" data-i18n="pin.score">Score</span>
-          <div class="pin-counter" id="pin-score">000000</div>
-        </div>
-        <button class="btn98" type="button" id="pin-newgame" data-i18n="pin.newGame">New Game</button>
-        <div class="pin-counter-group">
-          <span class="pin-label" data-i18n="pin.balls">Balls</span>
-          <div class="pin-counter" id="pin-balls">3</div>
-        </div>
-      </div>
-      <div class="pin-table-wrap">
-        <canvas id="pin-canvas" width="300" height="500"></canvas>
-      </div>
-      <p class="pin-status" id="pin-status"></p>
-      <div class="pin-controls">
-        <button class="btn98 pin-btn" type="button" id="pin-left" data-i18n="pin.left">◄ Flipper</button>
-        <button class="btn98 pin-btn" type="button" id="pin-launch" data-i18n="pin.launchBtn">Launch</button>
-        <button class="btn98 pin-btn" type="button" id="pin-right" data-i18n="pin.right">Flipper ►</button>
-      </div>
-      <p class="pin-help" data-i18n="pin.help">Z / ← and / / → flip, hold Space to launch — or use the buttons.</p>
+    <div class="window-body pinball-body">
+      <iframe class="pinball-frame" src="https://98.js.org/programs/pinball/space-cadet.html" title="3D Pinball: Space Cadet" loading="lazy" allow="autoplay; fullscreen"></iframe>
+      <p class="pinball-credit" data-i18n="pin.credit">3D Pinball: Space Cadet, embedded from 98.js.org (a Windows 98 emulator running in the browser) - not built by me, just framed here so it lives on this desktop too.</p>
     </div>
   </section>
 
@@ -299,7 +280,6 @@
   <script src="js/mycomputer.js?v=fece6df"></script>
   <script src="js/minesweeper.js?v=fece6df"></script>
   <script src="js/solitaire.js?v=fece6df"></script>
-  <script src="js/pinball.js?v=fece6df"></script>
   <script src="js/taskbar.js?v=fece6df"></script>
   <script src="js/particles.js?v=fece6df"></script>
   <script src="js/sfx.js?v=fece6df"></script>

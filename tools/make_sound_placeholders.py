@@ -24,7 +24,6 @@ OUT_DIR = HERE / "sounds"
 EFFECTS = [
     "pick", "drop", "chew", "swallow", "hit", "speak", "burp",
     "place", "invalid", "shuffle", "win",
-    "bumper", "flipper", "launch", "drain", "gameover",
 ]
 
 DURATION_S = "0.3"

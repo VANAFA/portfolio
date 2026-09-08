@@ -1052,77 +1052,25 @@ hr.divider{
   .sol-shake{ animation:none; }
 }
 
-/* ===== Pinball ===== */
-.pin-toolbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  padding:6px;
-  margin-bottom:8px;
+/* ===== Pinball (embedded, not built here - see the credit line) ======= */
+.pinball-body{
+  padding:0;
 }
-.pin-counter-group{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:2px;
-}
-.pin-label{ font-size:10px; color:var(--w98-face-darker); }
-.pin-counter{
-  background:#000;
-  color:#ff2020;
-  font-family:"Courier New",monospace;
-  font-weight:bold;
-  font-size:18px;
-  letter-spacing:2px;
-  padding:2px 8px;
-  border:1px solid var(--w98-face-darker);
-  min-width:70px;
-  text-align:center;
-}
-.pin-table-wrap{
-  background:#000;
-  border-top:2px solid var(--w98-face-darker);
-  border-left:2px solid var(--w98-face-darker);
-  border-right:2px solid var(--w98-face-lighter);
-  border-bottom:2px solid var(--w98-face-lighter);
-  display:flex;
-  justify-content:center;
-  padding:2px;
-}
-#pin-canvas{
-  width:100%;
-  max-width:340px;
-  height:auto;
-  aspect-ratio:3 / 5;
+.pinball-frame{
   display:block;
-  touch-action:none;
+  width:100%;
+  height:70vh;
+  max-height:640px;
+  min-height:420px;
+  border:none;
 }
-.pin-status{
-  text-align:center;
-  font-weight:bold;
-  min-height:1.2em;
-  margin:8px 0 4px;
-}
-.pin-controls{
-  display:flex;
-  gap:8px;
-  justify-content:center;
-  margin-top:4px;
-}
-.pin-btn{
-  flex:1;
-  max-width:130px;
-  padding:10px 6px;
-  font-weight:bold;
-  user-select:none;
-  -webkit-touch-callout:none;
-}
-.pin-help{
-  text-align:center;
+.pinball-credit{
+  margin:0;
+  padding:6px 10px;
   font-size:11px;
   color:#333;
-  margin:8px 0 0;
+  background:var(--w98-face-light);
+  border-top:1px solid var(--w98-face-dark);
 }
 
 /* ===== repo list ===== */
