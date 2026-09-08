@@ -30,6 +30,16 @@
     var text = window.localizedProject ? window.localizedProject(project) : (project.en || {});
     document.title = (text.title || project.id) + " - " + t("page.blogTitle");
 
+    var liveLinkHtml = "";
+    if (project.liveUrl) {
+      var displayUrl = project.liveUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
+      liveLinkHtml =
+        '<a class="live-link" href="' + escapeHtml(project.liveUrl) + '" target="_blank" rel="noopener">' +
+        '<img class="icon-inline" src="images/icons/computer_explorer-1.png" alt="">' +
+        "<span>" + escapeHtml(t("blog.tryLive")) + ": " + escapeHtml(displayUrl) + " →</span>" +
+        "</a>";
+    }
+
     var imagesHtml = "";
     if (project.images && project.images.length) {
       imagesHtml =
@@ -65,6 +75,7 @@
       '<p class="breadcrumb"><a href="index.html">' + escapeHtml(t("blog.back")) + "</a></p>" +
       "<h1>" + escapeHtml(text.title || project.id) + "</h1>" +
       (text.tagline ? '<p class="tagline">' + escapeHtml(text.tagline) + "</p>" : "") +
+      liveLinkHtml +
       imagesHtml +
       tagsHtml +
       '<hr class="divider">' +

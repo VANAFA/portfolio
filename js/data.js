@@ -17,6 +17,9 @@
  *    images  (string[]) image paths for the pop-up + blog gallery
  *    tech    (string[]) short list of tags/technologies
  *    repo    (string)   optional GitHub URL, shown as a button
+ *    liveUrl (string)   optional deployed URL, shown as a prominent banner
+ *                        link near the top of the blog page (only for
+ *                        projects that actually have one)
  *
  *  Per-language fields, inside `en` and `es`:
  *    title    project name
@@ -128,6 +131,7 @@ window.PROJECTS = [
     images: ["images/preview-saints-calendar.png?v=afadfba4"],
     tech: ["Python", "Scraping", "Static site"],
     repo: "https://github.com/VANAFA/catholic-saints-calendar",
+    liveUrl: "https://vanafa.github.io/catholic-saints-calendar/",
     en: {
       title: "Saints Calendar",
       tagline: "The daily saints and gospel, scraped and published",
@@ -375,6 +379,7 @@ window.PROJECTS = [
     images: ["images/preview-this-site.png?v=03fd4171"],
     tech: ["HTML", "CSS", "JavaScript"],
     repo: "https://github.com/VANAFA/portfolio",
+    liveUrl: "https://nallib.ar",
     en: {
       title: "This Website",
       tagline: "The Windows 98 desktop you're looking at",

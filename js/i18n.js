@@ -77,6 +77,7 @@
       "blog.notFound": "Project not found",
       "blog.noSuchId": "There is no project with id",
       "blog.source": "Source on GitHub",
+      "blog.tryLive": "Try it live",
       "start": "Start",
       "lang.button": "Español",
       "lang.title": "Cambiar a español"
@@ -147,6 +148,7 @@
       "blog.notFound": "Proyecto no encontrado",
       "blog.noSuchId": "No hay ningún proyecto con el id",
       "blog.source": "Código en GitHub",
+      "blog.tryLive": "Probalo en vivo",
       "start": "Inicio",
       "lang.button": "English",
       "lang.title": "Switch to English"

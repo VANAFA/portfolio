@@ -414,15 +414,27 @@ hr.divider{
   font-size:11px;
   font-family:inherit;
   text-shadow:1px 1px 0 rgba(0,0,0,0.7);
+  text-decoration:none;
   user-select:none;
   pointer-events:none;
 }
+/* A desktop icon that's really a link (e.g. Travel Blog) still needs its
+   :visited color pinned - a:visited's specificity otherwise beats this
+   class's color and turns the label purple once clicked. */
+.desktop-icon:visited{ color:#fff; }
 .desktop-icon img{
   display:block;
   width:48px;
   height:48px;
   margin:0 auto 3px;
   image-rendering:pixelated;
+}
+.desktop-icon-label{
+  /* <button> centers text by default; <div>/<a> don't - without this, only
+     the button-based icons (My Computer, Minesweeper, Solitaire) ended up
+     centered and the div/anchor ones (My Documents, Network Neighborhood,
+     Travel Blog) didn't. */
+  text-align:center;
 }
 .desktop-icon.functional{
   pointer-events:auto;
@@ -624,6 +636,25 @@ hr.divider{
 }
 
 /* ===== blog page ===== */
+.live-link{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  width:fit-content;
+  margin:4px 0 14px;
+  padding:8px 14px;
+  background:linear-gradient(90deg,var(--w98-titlebar),var(--w98-titlebar-2));
+  color:#fff;
+  font-weight:bold;
+  text-decoration:none;
+  border-top:2px solid var(--w98-face-lighter);
+  border-left:2px solid var(--w98-face-lighter);
+  border-right:2px solid var(--w98-face-darker);
+  border-bottom:2px solid var(--w98-face-darker);
+}
+.live-link:visited{ color:#fff; }
+.live-link:hover{ filter:brightness(1.15); }
+.live-link img{ width:18px; height:18px; image-rendering:pixelated; }
 .blog-hero-gallery{
   display:flex;
   gap:8px;
