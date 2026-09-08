@@ -14,6 +14,7 @@
 
   var SUITS = ["S", "H", "D", "C"];
   var SUIT_SYMBOL = { S: "♠", H: "♥", D: "♦", C: "♣" };
+  var SUIT_FILE = { S: "spades", H: "hearts", D: "diamonds", C: "clubs" };
   var RED = { H: true, D: true };
   var RANK_LABEL = { 1: "A", 11: "J", 12: "Q", 13: "K" };
 
@@ -21,6 +22,13 @@
   var selection = null; // { pile: "tableau"|"waste", col: number|null, index: number }
 
   function rankLabel(r) { return RANK_LABEL[r] || String(r); }
+
+  // Kenney's card pack (CC0, images/cards/CREDIT.txt) numbers 2-10 as
+  // zero-padded strings ("02".."10") and spells suits out in full.
+  function cardImgSrc(card) {
+    var rank = RANK_LABEL[card.rank] || (card.rank < 10 ? "0" + card.rank : String(card.rank));
+    return "images/cards/card_" + SUIT_FILE[card.suit] + "_" + rank + ".png";
+  }
 
   function freshDeck() {
     var deck = [];
@@ -60,13 +68,11 @@
   }
 
   function cardEl(card, faceDown) {
-    var el = document.createElement("div");
-    el.className = "sol-card" + (faceDown ? " face-down" : " face-up " + (RED[card.suit] ? "red" : "black"));
-    if (!faceDown) {
-      el.innerHTML =
-        '<span class="sol-rank">' + rankLabel(card.rank) + "</span>" +
-        '<span class="sol-suit">' + SUIT_SYMBOL[card.suit] + "</span>";
-    }
+    var el = document.createElement("img");
+    el.className = "sol-card" + (faceDown ? " face-down" : " face-up");
+    el.src = faceDown ? "images/cards/card_back.png" : cardImgSrc(card);
+    el.draggable = false;
+    el.alt = faceDown ? "" : rankLabel(card.rank) + " of " + SUIT_FILE[card.suit];
     return el;
   }
 
@@ -273,8 +279,10 @@
     tableau.forEach(function (pile, col) {
       var colEl = document.createElement("div");
       colEl.className = "sol-pile sol-tableau-col";
-      colEl.addEventListener("click", function (e) {
-        if (e.target === colEl) onTableauColumnClick(col);
+      colEl.addEventListener("click", function () {
+        // Card clicks call stopPropagation, so anything reaching here - the
+        // empty-slot placeholder included - is a click on the column itself.
+        onTableauColumnClick(col);
       });
       if (!pile.length) {
         var slot = document.createElement("div");

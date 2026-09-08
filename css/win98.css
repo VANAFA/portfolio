@@ -646,6 +646,7 @@ hr.divider{
   border-bottom:2px solid var(--w98-face-lighter);
 }
 .ms-toolbar{
+  container-type:inline-size;
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -658,22 +659,23 @@ hr.divider{
   color:#ff2020;
   font-family:"Courier New",monospace;
   font-weight:bold;
-  font-size:18px;
+  font-size:clamp(14px, 6cqw, 32px);
   letter-spacing:2px;
-  padding:2px 6px;
-  min-width:48px;
+  padding:clamp(2px,1cqw,6px) clamp(4px,2cqw,10px);
+  min-width:clamp(42px,18cqw,96px);
   text-align:center;
   border:1px solid var(--w98-face-darker);
 }
 .ms-face{
-  width:28px;
-  height:28px;
+  width:clamp(26px,10cqw,58px);
+  height:clamp(26px,10cqw,58px);
   padding:0;
   display:flex;
   align-items:center;
   justify-content:center;
+  flex-shrink:0;
 }
-.ms-face img{ width:16px; height:16px; image-rendering:pixelated; }
+.ms-face img{ width:60%; height:60%; image-rendering:pixelated; }
 
 .ms-board{
   display:grid;
@@ -699,6 +701,10 @@ hr.divider{
   touch-action:none;
   -webkit-user-select:none;
   user-select:none;
+  /* iOS Safari shows its own long-press callout (magnifier/context menu) on a
+     sustained touch unless this is set - it would otherwise hijack the hold
+     gesture before our own timer ever completes. */
+  -webkit-touch-callout:none;
   background:var(--w98-face);
   border-top:2px solid var(--w98-face-lighter);
   border-left:2px solid var(--w98-face-lighter);
@@ -721,18 +727,15 @@ hr.divider{
 .ms-cell[data-n="7"]{ color:#000; }
 .ms-cell[data-n="8"]{ color:#808080; }
 
-.ms-flag{ position:relative; display:inline-block; width:0.85em; height:1em; }
-.ms-flag::before{ content:""; position:absolute; left:0.38em; top:0; width:2px; height:1em; background:#000; }
-.ms-flag::after{
-  content:"";
-  position:absolute;
-  left:2px;
-  top:0;
-  width:0;
-  height:0;
-  border-style:solid;
-  border-width:5px 0 5px 6px;
-  border-color:transparent transparent transparent #cc0000;
+.ms-flag{
+  display:inline-block;
+  width:70%;
+  height:70%;
+  background-image:url("../images/icons/ms-flag-16.png");
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  image-rendering:pixelated;
 }
 .ms-cell.wrong-flag{ position:relative; }
 .ms-cell.wrong-flag::after{
@@ -776,7 +779,7 @@ hr.divider{
   margin-left:auto;
 }
 
-.sol-pile{ width:56px; min-height:78px; }
+.sol-pile{ width:56px; min-height:56px; }
 .sol-tableau{
   display:flex;
   gap:8px;
@@ -785,43 +788,31 @@ hr.divider{
 }
 .sol-tableau-col{
   width:56px;
-  min-height:78px;
+  min-height:56px;
   flex-shrink:0;
   display:flex;
   flex-direction:column;
   cursor:pointer;
 }
 
+/* Real card graphics (Kenney's CC0 pack, images/cards/CREDIT.txt) - square
+   source images with the card shape already inset, so they display correctly
+   at a 1:1 box with no extra cropping or drawn border needed. */
 .sol-card{
-  width:52px;
-  height:74px;
-  box-sizing:border-box;
-  position:relative;
-  font-family:Arial,Helvetica,sans-serif;
-  border-radius:3px;
+  display:block;
+  width:56px;
+  height:56px;
+  image-rendering:pixelated;
+  filter:drop-shadow(1px 1px 1px rgba(0,0,0,0.4));
 }
-.sol-card.face-up{
-  background:#fff;
-  border:1px solid #000;
-}
-.sol-card.face-down{
-  background:repeating-linear-gradient(45deg,#000080,#000080 4px,#1084d0 4px,#1084d0 8px);
-  border:1px solid #000;
-}
-.sol-card.red{ color:#cc0000; }
-.sol-card.black{ color:#000; }
-.sol-rank{ position:absolute; top:2px; left:3px; font-size:13px; font-weight:bold; }
-.sol-suit{ position:absolute; bottom:2px; right:3px; font-size:15px; }
 .sol-card.selected{
-  outline:2px solid #ffcc00;
-  outline-offset:-2px;
-  box-shadow:0 0 4px 1px rgba(255,204,0,0.85);
+  filter:drop-shadow(0 0 3px #ffcc00) drop-shadow(0 0 3px #ffcc00);
 }
-.sol-tableau-col .sol-card:not(:first-child){ margin-top:-56px; }
+.sol-tableau-col .sol-card:not(:first-child){ margin-top:-38px; }
 
 .sol-empty-pile{
-  width:52px;
-  height:74px;
+  width:56px;
+  height:56px;
   box-sizing:border-box;
   border:1px dashed rgba(255,255,255,0.55);
   border-radius:3px;
@@ -989,11 +980,9 @@ hr.divider{
   .sol-tableau-col,
   .sol-card,
   .sol-empty-pile{ width:40px; }
-  .sol-card, .sol-empty-pile{ height:58px; }
+  .sol-card, .sol-empty-pile{ height:40px; }
   .sol-tableau{ gap:4px; }
-  .sol-tableau-col .sol-card:not(:first-child){ margin-top:-44px; }
-  .sol-rank{ font-size:11px; }
-  .sol-suit{ font-size:12px; }
+  .sol-tableau-col .sol-card:not(:first-child){ margin-top:-27px; }
 
   /* Taskbar is too crowded at phone widths for full text labels - go icon-only */
   .taskbar{ gap:4px; padding:2px; height:30px; }

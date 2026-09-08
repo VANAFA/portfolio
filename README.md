@@ -134,4 +134,6 @@ Computer. Both are plain JS, no libraries:
 - **Solitaire** (`js/solitaire.js`) - Klondike, draw-one. Click a card (or the
   exposed run below it) to select, then click a pile to move it there -
   no drag-and-drop, so it works the same on touch. Double-click sends a card
-  to a foundation if that's legal.
+  to a foundation if that's legal. Card faces are the CC0 pixel-art deck from
+  Kenney (`images/cards/CREDIT.txt`), not the real Microsoft Solitaire
+  graphics - those are proprietary and can't legally be redistributed here.
