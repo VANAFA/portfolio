@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Travel Blog</title>
-<link rel="icon" type="image/x-icon" href="images/icons/computer.ico?v=40320a87">
-<link rel="stylesheet" href="css/win98.css?v=5c02f57">
+<link rel="icon" type="image/x-icon" href="images/icons/computer.ico">
+<link rel="stylesheet" href="css/win98.css">
 </head>
 <body data-title-key="page.travelTitle">
 
   <section class="window raised" data-window="travel" data-taskbar-key="tb.travel">
     <div class="title-bar">
-      <div class="title-bar-text"><img class="icon-inline" src="images/icons/globe_map-1.png?v=3d579dcb" alt=""> <span data-i18n="win.travel">Travel Blog</span></div>
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/globe_map-1.png" alt=""> <span data-i18n="win.travel">Travel Blog</span></div>
       <div class="title-bar-controls">
         <button aria-label="Minimize" data-action="minimize">_</button>
         <button aria-label="Maximize" data-action="maximize">□</button>
@@ -22,7 +22,7 @@
       <p class="breadcrumb"><a href="index.html" data-i18n="travel.back">« Back to the desktop</a></p>
 
       <div class="travel-lock" id="travel-lock">
-        <img class="travel-lock-icon" src="images/icons/file_sorted_lock-1.png?v=ee6593c8" alt="">
+        <img class="travel-lock-icon" src="images/icons/file_sorted_lock-1.png" alt="">
         <p class="travel-question" data-i18n="travel.question">Security question: what brand of watch do I wear?</p>
         <form id="travel-unlock-form" class="travel-form" autocomplete="off">
           <input type="text" id="travel-answer" data-i18n-placeholder="travel.placeholder" placeholder="Your answer" autocomplete="off" spellcheck="false">
@@ -37,21 +37,241 @@
     </div>
   </section>
 
+  <!-- Everything below is the same desktop as index.html - opening the
+       travel blog shouldn't make the rest of the site vanish, so it's still
+       here, reachable the same way it always is (open by default, or via
+       the taskbar/desktop icons for the ones that start hidden). -->
+
+  <section class="window raised face-window" data-window="face" data-taskbar-key="tb.face">
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/smiley-16.png" alt=""> <span data-i18n="win.face">Hit me!</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="face-rig" id="face-rig">
+        <img class="face-layer face-head" src="images/expresions/head.png" alt="Valentino Nallib Fadel">
+        <img class="face-layer face-jaw" src="images/expresions/jaw.png" alt="">
+        <img class="face-layer face-angry" src="images/expresions/angry.png" alt="" hidden>
+      </div>
+      <p class="face-hint" data-i18n="face.hint">Go on, click.</p>
+      <button class="btn98 quest-btn" id="quest-btn" type="button" data-i18n="quest.button">Quest</button>
+      <p class="quest-text" id="quest-text"></p>
+    </div>
+  </section>
+
+  <section class="window raised" data-window="about" data-taskbar-key="tb.about">
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/computer-16.png" alt=""> <span data-i18n="win.about">valentino.cv — About Me</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="profile">
+        <div class="profile-info">
+          <h1>Valentino Nallib Fadel</h1>
+          <div class="tagline" data-i18n="about.tagline">AI Engineering student · Buenos Aires, Argentina</div>
+          <p data-i18n="about.p1">
+            Fourth-year Artificial Intelligence Engineering student at Universidad de San Andrés,
+            with hands-on project experience in computer vision, deep learning, and natural
+            language models (pre-training and fine-tuning). I like roles that mix research with
+            practical, applied AI development — and side projects that let me build the whole
+            stack myself.
+          </p>
+          <p data-i18n="about.p2">
+            Comfortable across Python, PyTorch, TensorFlow, OpenCV, C/C++, and Linux/Docker
+            environments. Outside of engineering, I've spent years in Scouts leadership and
+            community service work.
+          </p>
+          <div class="profile-links">
+            <a class="btn98" href="mailto:nallibfadel@gmail.com" data-i18n="about.email">Email me</a>
+            <a class="btn98" href="https://github.com/VANAFA" target="_blank" rel="noopener">GitHub</a>
+            <a class="btn98" href="https://www.linkedin.com/in/nallib-fadel-1b4332303/" target="_blank" rel="noopener">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="window raised" data-window="projects" data-taskbar-key="tb.projects">
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/directory_closed-16.png" alt=""> <span data-i18n="win.projects">My Projects</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p data-i18n="projects.help">Click a project to see the details. Each one links out to its own blog post.</p>
+      <div class="project-grid on-face" id="project-grid"></div>
+      <p class="travel-link-row"><a href="travel.html"><img class="icon-inline" src="images/icons/globe_map-1.png" alt=""> <span data-i18n="travel.linkText">Encrypted Travel Blog →</span></a></p>
+    </div>
+  </section>
+
+  <section class="window raised contact-window" data-window="contact" data-taskbar-key="tb.contact">
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/world_phonereceiver-16.png" alt=""> <span data-i18n="win.contact">Contact</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="contact-grid">
+        <div class="contact-item"><strong data-i18n="contact.email">Email</strong><a href="mailto:nallibfadel@gmail.com">nallibfadel@gmail.com</a></div>
+        <div class="contact-item"><strong>GitHub</strong><a href="https://github.com/VANAFA" target="_blank" rel="noopener">github.com/VANAFA</a></div>
+        <div class="contact-item"><strong>LinkedIn</strong><a href="https://www.linkedin.com/in/nallib-fadel-1b4332303/" target="_blank" rel="noopener">linkedin.com/in/nallib-fadel-1b4332303</a></div>
+        <div class="contact-item"><strong data-i18n="contact.location">Location</strong><span data-i18n="contact.locationValue">Buenos Aires, Argentina</span></div>
+        <div class="contact-item phone-item">
+          <strong data-i18n="contact.phone">Phone</strong>
+          <a class="phone-banner" href="tel:+5401135694552" aria-label="+54 011 3569-4552">
+            <span class="phone-banner-track">
+              <span class="phone-banner-seg">
+                <span>☎ +54 011 3569-4552</span><span class="star" aria-hidden="true">★</span><span>+54 011 FLOW-ILLA</span><span class="star" aria-hidden="true">★</span><span>¡LLAMAME! CALL ME!</span><span class="star" aria-hidden="true">★</span>
+              </span>
+              <span class="phone-banner-seg" aria-hidden="true">
+                <span>☎ +54 011 3569-4552</span><span class="star">★</span><span>+54 011 FLOW-ILLA</span><span class="star">★</span><span>¡LLAMAME! CALL ME!</span><span class="star">★</span>
+              </span>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="window raised" data-window="mycomputer" data-taskbar-key="tb.mycomputer" hidden>
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/my_computer-16.png" alt=""> <span data-i18n="win.mycomputer">My Computer</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p data-i18n="mycomputer.hint">Pick a desktop background.</p>
+      <div class="bg-grid" id="bg-grid"></div>
+    </div>
+  </section>
+
+  <section class="window raised" data-window="minesweeper" data-taskbar-key="tb.minesweeper" hidden>
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/minesweeper-16.png" alt=""> <span data-i18n="win.minesweeper">Minesweeper</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="ms-levels" id="ms-levels">
+        <button class="btn98" type="button" data-level="beginner" data-i18n="ms.beginner">Beginner</button>
+        <button class="btn98" type="button" data-level="intermediate" data-i18n="ms.intermediate">Intermediate</button>
+        <button class="btn98" type="button" data-level="expert" data-i18n="ms.expert">Expert</button>
+      </div>
+      <div class="ms-toolbar sunken">
+        <div class="ms-counter" id="ms-mine-count">010</div>
+        <button class="ms-face" id="ms-face" type="button" data-i18n-title="ms.newGame">
+          <img src="images/icons/smiley-16.png" alt="">
+        </button>
+        <div class="ms-counter" id="ms-timer">000</div>
+      </div>
+      <div class="ms-board sunken" id="ms-board"></div>
+      <p class="ms-status" id="ms-status"></p>
+    </div>
+  </section>
+
+  <section class="window raised" data-window="solitaire" data-taskbar-key="tb.solitaire" hidden>
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/solitaire-16.png" alt=""> <span data-i18n="win.solitaire">Solitaire</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="sol-toolbar">
+        <button class="btn98" type="button" id="sol-newgame" data-i18n="sol.newGame">New Game</button>
+        <p class="sol-status" id="sol-status"></p>
+      </div>
+      <div class="sol-top-row">
+        <div class="sol-pile sol-stock" id="sol-stock"></div>
+        <div class="sol-pile sol-waste" id="sol-waste"></div>
+        <div class="sol-foundations" id="sol-foundations">
+          <div class="sol-pile sol-foundation" data-suit="S"></div>
+          <div class="sol-pile sol-foundation" data-suit="H"></div>
+          <div class="sol-pile sol-foundation" data-suit="D"></div>
+          <div class="sol-pile sol-foundation" data-suit="C"></div>
+        </div>
+      </div>
+      <div class="sol-tableau" id="sol-tableau"></div>
+    </div>
+  </section>
+
+  <!-- Pop-up window for a clicked project -->
+  <div class="overlay" id="modal-overlay" hidden>
+    <div class="window raised modal-window" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="title-bar">
+        <div class="title-bar-text" id="modal-title">Project</div>
+        <div class="title-bar-controls">
+          <button aria-label="Close" id="modal-titlebar-close">✕</button>
+        </div>
+      </div>
+      <div class="window-body">
+        <div class="modal-body" id="modal-body"></div>
+        <div class="modal-actions">
+          <a class="btn98" id="modal-blog-link" href="#" data-i18n="modal.more">To know more →</a>
+          <button class="btn98" id="modal-close-btn" type="button" data-i18n="modal.close">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <img class="chipa" id="chipa" src="images/chipa.png" alt="Chipa" draggable="false" hidden>
+
+  <div class="desktop-icons" id="desktop-icons"></div>
+
+  <div class="desktop-trash" aria-hidden="true">
+    <img src="images/icons/recycle_bin-48.png" alt="">
+    <span data-i18n="trash.label">Recycle Bin</span>
+  </div>
+
   <div class="taskbar">
-    <a class="start-btn btn98" href="index.html"><img class="icon-inline" src="images/icons/key_win-16.png?v=62b1f34d" alt=""> <span class="start-label" data-i18n="start">Start</span></a>
+    <a class="start-btn btn98" href="index.html"><img class="icon-inline" src="images/icons/key_win-16.png" alt=""> <span class="start-label" data-i18n="start">Start</span></a>
     <div class="taskbar-windows" id="taskbar-windows"></div>
     <button class="btn98 lang-btn" id="lang-btn" type="button">Español</button>
     <div class="taskbar-clock" id="taskbar-clock"></div>
     <a class="btn98 version-badge" id="version-badge" href="#" target="_blank" rel="noopener">v: …</a>
   </div>
 
-  <script src="js/i18n.js?v=5c02f57"></script>
-  <script src="js/backgrounds.js?v=5c02f57"></script>
-  <script src="js/background.js?v=5c02f57"></script>
-  <script src="js/traveldata.js?v=5c02f57"></script>
-  <script src="js/travel.js?v=5c02f57"></script>
-  <script src="js/windows.js?v=5c02f57"></script>
-  <script src="js/taskbar.js?v=5c02f57"></script>
-  <script src="js/version.js?v=5c02f57"></script>
+  <script src="js/data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/backgrounds.js"></script>
+  <script src="js/background.js"></script>
+  <script src="js/traveldata.js"></script>
+  <script src="js/travel.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/windows.js"></script>
+  <script src="js/desktopicons.js"></script>
+  <script src="js/mycomputer.js"></script>
+  <script src="js/minesweeper.js"></script>
+  <script src="js/solitaire.js"></script>
+  <script src="js/taskbar.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/face.js"></script>
+  <script src="js/chipa.js"></script>
+  <script src="js/quest.js"></script>
+  <script src="js/hitme.js"></script>
+  <script src="js/version.js"></script>
 </body>
 </html>

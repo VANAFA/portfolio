@@ -872,6 +872,14 @@ hr.divider{
    stay standard Win98 chrome. */
 [data-window="solitaire"] .window-body{
   background:#008000;
+  /* Cards scale with the window itself (e.g. maximized) via this one
+     variable, instead of a fixed pixel size - everything below just reads
+     it, so a bigger window means a bigger table, not empty green felt. */
+  container-type:inline-size;
+  /* 7.65cqw lands on exactly 56px (the original fixed card size) at the
+     window's normal ~730px width, so the default look is unchanged - cards
+     only grow past that once the window is wider, e.g. maximized. */
+  --sol-card:clamp(56px, 7.65cqw, 160px);
 }
 .sol-toolbar{
   display:flex;
@@ -892,7 +900,7 @@ hr.divider{
   margin-left:auto;
 }
 
-.sol-pile{ width:56px; min-height:56px; }
+.sol-pile{ width:var(--sol-card); min-height:var(--sol-card); }
 .sol-tableau{
   display:flex;
   gap:8px;
@@ -900,8 +908,8 @@ hr.divider{
   padding-bottom:6px;
 }
 .sol-tableau-col{
-  width:56px;
-  min-height:56px;
+  width:var(--sol-card);
+  min-height:var(--sol-card);
   flex-shrink:0;
   display:flex;
   flex-direction:column;
@@ -913,19 +921,21 @@ hr.divider{
    at a 1:1 box with no extra cropping or drawn border needed. */
 .sol-card{
   display:block;
-  width:56px;
-  height:56px;
+  width:var(--sol-card);
+  height:var(--sol-card);
   image-rendering:pixelated;
   filter:drop-shadow(1px 1px 1px rgba(0,0,0,0.4));
 }
 .sol-card.selected{
   filter:drop-shadow(0 0 3px #ffcc00) drop-shadow(0 0 3px #ffcc00);
 }
-.sol-tableau-col .sol-card:not(:first-child){ margin-top:-38px; }
+/* -0.68x card height keeps the same fraction of each stacked card visible
+   (a run of face-up cards) no matter how big --sol-card grows. */
+.sol-tableau-col .sol-card:not(:first-child){ margin-top:calc(var(--sol-card) * -0.68); }
 
 .sol-empty-pile{
-  width:56px;
-  height:56px;
+  width:var(--sol-card);
+  height:var(--sol-card);
   box-sizing:border-box;
   border:1px dashed rgba(255,255,255,0.55);
   border-radius:3px;
@@ -934,7 +944,7 @@ hr.divider{
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:22px;
+  font-size:calc(var(--sol-card) * 0.39);
   color:rgba(255,255,255,0.5);
   background:rgba(255,255,255,0.12);
 }
@@ -978,6 +988,12 @@ hr.divider{
 .contact-item{
   background:var(--w98-face-light);
   padding:6px 8px;
+  /* Without this, a grid item won't shrink below its content's natural
+     size - so the phone banner's nowrap marquee (much wider than any
+     column) forced this whole row, and the page, to overflow horizontally
+     even though overflow:hidden on .phone-banner looked like it should
+     have clipped it. */
+  min-width:0;
 }
 .contact-item strong{ display:block; font-size:11px; color:#000080; }
 
@@ -1137,15 +1153,12 @@ hr.divider{
   .modal-window{ margin-top:6px; }
   .overlay{ padding:12px 8px; }
 
-  /* Smaller cards so all 7 tableau columns have a chance of fitting without
-     scrolling; the board itself already scrolls horizontally as a fallback. */
-  .sol-pile,
-  .sol-tableau-col,
-  .sol-card,
-  .sol-empty-pile{ width:40px; }
-  .sol-card, .sol-empty-pile{ height:40px; }
+  /* Smaller floor so all 7 tableau columns have a chance of fitting without
+     scrolling on a phone-width window; still scales up via --sol-card if
+     that window gets maximized. The board itself already scrolls
+     horizontally as a fallback. */
+  [data-window="solitaire"] .window-body{ --sol-card:clamp(40px, 7.65cqw, 160px); }
   .sol-tableau{ gap:4px; }
-  .sol-tableau-col .sol-card:not(:first-child){ margin-top:-27px; }
 
   /* Taskbar is too crowded at phone widths for full text labels - go icon-only */
   .taskbar{ gap:4px; padding:2px; height:30px; }
