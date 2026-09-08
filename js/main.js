@@ -86,6 +86,17 @@
   });
   document.getElementById("modal-close-btn").addEventListener("click", closeModal);
   document.getElementById("modal-titlebar-close").addEventListener("click", closeModal);
+  document.getElementById("modal-blog-link").addEventListener("click", function (e) {
+    // Plain left-click: open the blog post as a window on this same page, like
+    // Minesweeper/Solitaire. Ctrl/Cmd/middle-click etc. still follow the href
+    // (blog.html?id=...) so the link can be opened in a new tab or shared.
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    if (!openProject || !window.showProjectBlog) return;
+    var project = openProject;
+    closeModal();
+    window.showProjectBlog(project);
+  });
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && !overlay.hidden) closeModal();
   });

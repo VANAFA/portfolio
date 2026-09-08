@@ -12,7 +12,7 @@
     { key: "win.minesweeper", icon: "images/icons/minesweeper-48.png", open: "minesweeper" },
     { key: "win.solitaire", icon: "images/icons/solitaire-48.png", open: "solitaire" },
     { key: "win.pinball", icon: "images/icons/pinball-48.png", open: "pinball" },
-    { key: "desktop.travel", icon: "images/icons/globe_map-0.png", href: "travel.html" }
+    { key: "desktop.travel", icon: "images/icons/globe_map-0.png", href: "travel.html", feature: "travel" }
   ];
 
   function label(key) {
@@ -22,6 +22,7 @@
   function render() {
     root.innerHTML = "";
     ICONS.forEach(function (item) {
+      if (item.feature && window.isFeatureHidden && window.isFeatureHidden(item.feature)) return;
       var isFunctional = !!(item.open || item.href);
       var el = document.createElement(item.href ? "a" : isFunctional ? "button" : "div");
       el.className = "desktop-icon" + (isFunctional ? " functional" : "");

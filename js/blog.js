@@ -1,6 +1,8 @@
-// Renders a single project's blog page from window.PROJECTS, based on ?id=... in the URL.
-// This is the ONLY blog template — every project shares it, so adding a project to
-// js/data.js is enough to get a working subpage at blog.html?id=<that id>.
+// Renders a project's blog post into the "blog" window (#blog-root), the same
+// window on every page (index.html, blog.html, travel.html). window.showProjectBlog(project)
+// is how a click on "To know more" opens it in place, the same way a desktop icon
+// opens Minesweeper — no navigation to a subpage.
+// blog.html also supports a direct ?id=... link for sharing/bookmarking a single post.
 (function () {
   function escapeHtml(str) {
     var div = document.createElement("div");
@@ -12,18 +14,18 @@
     return window.t ? window.t(key) : key;
   }
 
-  var params = new URLSearchParams(window.location.search);
-  var id = params.get("id");
-  var project = (window.PROJECTS || []).find(function (p) { return p.id === id; });
   var root = document.getElementById("blog-root");
+  var shown = false; // nothing requested yet -> leave the window's placeholder markup alone
+  var requestedId = null;
+  var project = null;
 
   function render() {
+    if (!root || !shown) return;
     if (!project) {
       document.title = t("blog.notFound");
       root.innerHTML =
         "<h1>" + escapeHtml(t("blog.notFound")) + "</h1>" +
-        "<p>" + escapeHtml(t("blog.noSuchId")) + ' "' + escapeHtml(id || "") + '".</p>' +
-        '<p><a href="index.html">' + escapeHtml(t("blog.back")) + "</a></p>";
+        "<p>" + escapeHtml(t("blog.noSuchId")) + ' "' + escapeHtml(requestedId || "") + '".</p>';
       return;
     }
 
@@ -72,7 +74,6 @@
     }
 
     root.innerHTML =
-      '<p class="breadcrumb"><a href="index.html">' + escapeHtml(t("blog.back")) + "</a></p>" +
       "<h1>" + escapeHtml(text.title || project.id) + "</h1>" +
       (text.tagline ? '<p class="tagline">' + escapeHtml(text.tagline) + "</p>" : "") +
       liveLinkHtml +
@@ -83,6 +84,22 @@
       linksHtml;
   }
 
+  // Opens the "blog" window on the current page and renders `project` into it,
+  // the same path a desktop icon uses for Minesweeper/Solitaire/Pinball.
+  window.showProjectBlog = function (proj, idForDisplay) {
+    shown = true;
+    project = proj || null;
+    requestedId = proj ? proj.id : (idForDisplay || null);
+    render();
+    if (window.openAppWindow) window.openAppWindow("blog");
+  };
+
   document.addEventListener("langchange", render);
-  render();
+
+  // Direct link support, e.g. blog.html?id=some-project shared/bookmarked on its own.
+  var params = new URLSearchParams(window.location.search);
+  var idParam = params.get("id");
+  if (idParam) {
+    window.showProjectBlog((window.PROJECTS || []).find(function (p) { return p.id === idParam; }), idParam);
+  }
 })();

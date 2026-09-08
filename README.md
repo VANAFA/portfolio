@@ -4,6 +4,33 @@ A tiny, dependency-free static site (no build step, no framework) styled like
 Windows 98. Open `index.html` directly in a browser, or host the folder as-is
 on any static host (GitHub Pages, Netlify, etc.).
 
+## Previewing before you deploy
+
+`./serve.sh` starts a local server (`http://localhost:8000`) so you can click
+around and test changes before they go live — this is the same "dev build"
+you'll see once deployed, except any feature listed in
+`js/features.js` is visible here even though it's hidden on the live site
+(see below). Run `./deploy.sh` only once you're happy with what you see
+locally.
+
+## Hiding a work-in-progress feature
+
+Some features (currently: the Travel Blog) aren't ready to be publicly
+discoverable yet but are still worth testing locally. `js/features.js`
+hides a feature's nav entry points — desktop icon, "Encrypted Travel Blog"
+link, etc. — whenever the page isn't running on `localhost`/`file://`, i.e.
+only on the deployed site. The exact same files are served in both places;
+nothing is stripped out at deploy time.
+
+This is a soft hide, not a security boundary: `travel.html` still works over
+a direct link even on the live site — that's the point, since it's meant to
+be shared with friends directly (see "Travel blog (encrypted)" below).
+
+To hide a new feature: add its name to `HIDDEN_IN_PROD` in `js/features.js`,
+then either tag its static nav entry with `data-feature="that-name"` (auto-
+hidden), or check `window.isFeatureHidden("that-name")` if the entry is
+built from JS (like the desktop icons in `js/desktopicons.js`).
+
 ## Adding a new project / blog post
 
 Everything lives in one place: **`js/data.js`**.
@@ -29,19 +56,26 @@ That's it — no other file needs to change:
   `index.html`.
 - Clicking it opens the pop-up with your summary/photos and a
   "To know more →" link.
-- That link opens `blog.html?id=your-id`, which is a single shared template
-  (`blog.html` + `js/blog.js`) that renders itself from the same `data.js`
-  entry — so every project gets its own working subpage for free.
+- That link opens the post as a window on the same page — no navigation,
+  same as Minesweeper or Solitaire — rendered by the shared `js/blog.js`
+  template from the same `data.js` entry, so every project gets a working
+  post for free. It's also directly linkable/shareable at
+  `blog.html?id=your-id` if you ever need a bare URL to one post.
 
 ## Structure
 
 ```
 index.html        Home page: about me + auto-generated project list + contact
-blog.html          Shared template for every project's blog subpage
+blog.html          blog.html?id=... is a direct/shareable link to one post
+travel.html        The encrypted travel blog
+serve.sh           Local preview server - run before deploy.sh
+deploy.sh          Stamps assets, commits, and pushes to the live site
 css/win98.css      All the Windows 98 styling
 js/data.js         <-- the file you edit to add/change projects
 js/main.js         Renders the project grid + pop-up on index.html
-js/blog.js         Renders a blog.html?id=... page from data.js
+js/blog.js         Renders a project's post into the shared "blog" window -
+                   opened in place from the pop-up, on whichever page you're on
+js/features.js     Hides work-in-progress features on the live site only
 js/windows.js      Minimize/maximize/close + taskbar buttons for each window
 js/i18n.js         English / Argentinian Spanish strings + language toggle
 js/taskbar.js      Decorative taskbar clock
