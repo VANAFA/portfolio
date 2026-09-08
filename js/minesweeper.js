@@ -242,7 +242,7 @@
         var el = document.createElement("button");
         el.type = "button";
         el.className = "ms-cell";
-        (function (rr, cc) {
+        (function (rr, cc, el) {
           var holdTimer = null;
           var longPressFired = false;
           var startX = 0, startY = 0;
@@ -283,7 +283,7 @@
             e.preventDefault();
             handleFlag(rr, cc);
           });
-        })(r, c);
+        })(r, c, el);
         boardEl.appendChild(el);
         cells.push({ mine: false, revealed: false, flagged: false, adjacent: 0, el: el });
       }

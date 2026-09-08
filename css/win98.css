@@ -65,6 +65,7 @@ a:visited{ color:#551a8b; }
   position:fixed;
   inset:12px 12px 46px 12px;
   max-width:none;
+  width:auto; /* .face-window sets a fixed width; this must win over it (higher specificity) */
   margin:0;
   z-index:150;
   display:flex;
@@ -223,6 +224,45 @@ hr.divider{
     z-index:60;
   }
 }
+
+/* ===== pinned corners, desktop only ===================================
+   On a wide enough screen there's leftover space beside the centered
+   content column - park a few windows there in their own corners (like the
+   face banner above) instead of letting them just pile up in the normal
+   document flow. Below 1200px there isn't room, so all of these fall back
+   into normal flow like any other window. A maximized window overrides
+   this via .window.maximized's higher specificity. */
+@media (min-width:1200px){
+  /* A fixed-position box with no explicit width shrink-wraps to its
+     content's minimum rather than filling available space the way it did
+     in normal flow - for a flex board/tableau that can wrap, that minimum
+     is tiny, so without a real width here these collapse into a narrow,
+     badly-wrapped column instead of showing their normal layout. */
+  [data-window="mycomputer"]{
+    position:fixed;
+    right:18px;
+    bottom:46px; /* same spot as .desktop-trash - opening this covers it, same as a real desktop */
+    width:420px;
+    margin:0;
+    z-index:55;
+  }
+  [data-window="minesweeper"]{
+    position:fixed;
+    top:24px;
+    left:120px; /* clears the desktop icon column instead of sitting under it */
+    width:460px;
+    margin:0;
+    z-index:55;
+  }
+  [data-window="solitaire"]{
+    position:fixed;
+    bottom:24px;
+    left:120px;
+    width:490px;
+    margin:0;
+    z-index:55;
+  }
+}
 .face-hint{
   margin:6px 0 0;
   text-align:center;
@@ -295,6 +335,12 @@ hr.divider{
 .face-rig{
   position:relative;
   width:100%;
+  /* Without this, a maximized (so: very wide) window scales the rig's
+     width to match and the 390:608 ratio then forces its height to
+     something far taller than the window itself - the photo blows up
+     to giant size and only its top sliver fits on screen. */
+  max-width:360px;
+  margin:0 auto;
   aspect-ratio:390 / 608;
   cursor:pointer;
   user-select:none;
@@ -928,7 +974,6 @@ hr.divider{
 .sol-foundations{
   display:flex;
   gap:6px;
-  margin-left:auto;
 }
 
 .sol-pile{ width:var(--sol-card); min-height:var(--sol-card); }

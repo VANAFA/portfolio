@@ -163,6 +163,7 @@ window.PROJECTS = [
     images: ["images/preview-scout-blueprints.png?v=45d74f24"],
     tech: ["Python", "3-D geometry", "Scouting"],
     repo: "https://github.com/VANAFA/scout-camp-blueprint-generator",
+    liveUrl: "https://vanafa.github.io/scout-camp-blueprint-generator/",
     en: {
       title: "Scout Blueprints",
       tagline: "3-D construction plans for scout pioneering",

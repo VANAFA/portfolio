@@ -156,27 +156,41 @@
 
   // --- custom recordings, if any have replaced their placeholder ---------
 
-  // Placeholders from tools/make_sound_placeholders.py are 593 bytes; anything
-  // this small is assumed to still be the placeholder. Any real recording,
-  // even a very short one, comes in well above this.
+  // Placeholders from tools/make_sound_placeholders.py are .mp3 files, 593
+  // bytes; anything that small is assumed to still be the placeholder. Any
+  // real recording, even a very short one, comes in well above this.
   var PLACEHOLDER_MAX_BYTES = 3000;
+
+  // .m4a is the format voice-memo apps actually hand you, so a real
+  // recording dropped in under that extension should just work without
+  // needing to be converted to .mp3 first - if it fetches at all, it's
+  // real (no placeholder concept for it, unlike .mp3).
+  var EXTENSIONS = ["m4a", "mp3"];
 
   var custom = {};   // name -> HTMLAudioElement, once confirmed to be a real file
 
   Object.keys(synth).forEach(function (name) {
-    var path = "sounds/" + name + ".mp3";
-    fetch(path)
-      .then(function (res) { return res.ok ? res.blob() : null; })
-      .then(function (blob) {
-        if (blob && blob.size > PLACEHOLDER_MAX_BYTES) {
-          var el = new Audio(path);
-          el.preload = "auto";
-          custom[name] = el;
-        }
-      })
-      .catch(function () {
-        /* no sounds/ folder, blocked by file:// CORS, offline, etc. - synth stays the fallback */
-      });
+    function tryExt(i) {
+      if (i >= EXTENSIONS.length) return;
+      var ext = EXTENSIONS[i];
+      var path = "sounds/" + name + "." + ext;
+      fetch(path)
+        .then(function (res) { return res.ok ? res.blob() : null; })
+        .then(function (blob) {
+          if (blob && (ext !== "mp3" || blob.size > PLACEHOLDER_MAX_BYTES)) {
+            var el = new Audio(path);
+            el.preload = "auto";
+            custom[name] = el;
+          } else {
+            tryExt(i + 1);
+          }
+        })
+        .catch(function () {
+          /* no sounds/ folder, blocked by file:// CORS, offline, etc. */
+          tryExt(i + 1);
+        });
+    }
+    tryExt(0);
   });
 
   function play(name) {
