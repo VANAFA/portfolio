@@ -128,7 +128,7 @@ window.PROJECTS = [
   {
     id: "saints-calendar",
     glyph: "images/icons/time_and_date-32.png?v=08a436bb",
-    images: ["images/preview-saints-calendar.png?v=afadfba4"],
+    images: ["images/preview-saints-calendar.png?v=df6bea6b"],
     tech: ["Python", "Scraping", "Static site"],
     repo: "https://github.com/VANAFA/catholic-saints-calendar",
     liveUrl: "https://vanafa.github.io/catholic-saints-calendar/",
