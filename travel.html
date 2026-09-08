@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Travel Blog</title>
+<link rel="icon" type="image/x-icon" href="images/icons/computer.ico">
+<link rel="stylesheet" href="css/win98.css">
+</head>
+<body data-title-key="page.travelTitle">
+
+  <section class="window raised" data-window="travel" data-taskbar-key="tb.travel">
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/globe_map-1.png" alt=""> <span data-i18n="win.travel">Travel Blog</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body" id="travel-root">
+      <p class="breadcrumb"><a href="index.html" data-i18n="travel.back">« Back to the desktop</a></p>
+
+      <div class="travel-lock" id="travel-lock">
+        <img class="travel-lock-icon" src="images/icons/file_sorted_lock-1.png" alt="">
+        <p class="travel-question" data-i18n="travel.question">Security question: what brand of watch do I wear?</p>
+        <form id="travel-unlock-form" class="travel-form" autocomplete="off">
+          <input type="text" id="travel-answer" data-i18n-placeholder="travel.placeholder" placeholder="Your answer" autocomplete="off" spellcheck="false">
+          <button type="submit" class="btn98" id="travel-submit" data-i18n="travel.unlock">Unlock</button>
+        </form>
+        <p class="travel-error" id="travel-error" role="alert"></p>
+        <p class="travel-hint" data-i18n="travel.hint">This is real client-side encryption, not a trick — only someone who knows the answer can decrypt it. Ask a friend.</p>
+        <div class="travel-locked-list" id="travel-locked-list"></div>
+      </div>
+
+      <div class="travel-content" id="travel-content" hidden></div>
+    </div>
+  </section>
+
+  <div class="taskbar">
+    <a class="start-btn btn98" href="index.html"><img class="icon-inline" src="images/icons/key_win-16.png" alt=""> <span class="start-label" data-i18n="start">Start</span></a>
+    <div class="taskbar-windows" id="taskbar-windows"></div>
+    <button class="btn98 lang-btn" id="lang-btn" type="button">Español</button>
+    <div class="taskbar-clock" id="taskbar-clock"></div>
+    <a class="btn98 version-badge" id="version-badge" href="#" target="_blank" rel="noopener">v: …</a>
+  </div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/backgrounds.js"></script>
+  <script src="js/background.js"></script>
+  <script src="js/traveldata.js"></script>
+  <script src="js/travel.js"></script>
+  <script src="js/windows.js"></script>
+  <script src="js/taskbar.js"></script>
+  <script src="js/version.js"></script>
+</body>
+</html>

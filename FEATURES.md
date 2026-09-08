@@ -3,28 +3,30 @@
 Ideas the user wants to add next. Not started unless noted. Ordered roughly by
 dependency (later items build on earlier ones), not by priority.
 
-## 1. Travel blog section ("blog de viajes")
+## 1. Travel blog section ("blog de viajes") — v1 shipped
 
-- New content type alongside the existing project blog (`js/data.js` /
-  `blog.html`), or its own page — needs a decision on which once we start.
-- **Encrypted behind a shared-secret question.** The unlock key is the answer
-  to a question only the user's friends would know (confirmed: *"¿qué marca
-  de reloj uso?"* — what brand of watch does the user wear). Entering the
-  right answer decrypts the content client-side.
-- Both the text **and the images** should look encrypted/scrambled until
-  unlocked — text as ciphertext-looking characters, images with their pixels
-  visibly shuffled (a client-side pixel-shuffle filter, not real crypto on
-  the image format).
-- **Honest caveat to raise with the user before building this:** this is a
-  static site with no server, so "encryption" here can only ever be
-  *client-side obfuscation* — the ciphertext, the shuffled pixels, and the
-  unlock logic all ship in the page source. A motivated visitor could read
-  the unscrambling code and recover the content without knowing the answer.
-  That's fine for "keep casual visitors out and make it a fun puzzle for
-  friends" — it is **not** real confidentiality. Worth confirming that's the
-  actual goal before writing it, so expectations match what's actually
-  deliverable.
-- Sub-sections planned inside the travel blog once it exists:
+- Live at `travel.html` (linked from "My Projects" and a desktop icon).
+  Gated behind the question *"¿qué marca de reloj uso?"* — what brand of
+  watch does the user wear.
+- Turned out better than the original caveat below assumed: it's **real
+  AES-256-GCM encryption**, keyed by PBKDF2 over the answer
+  (`tools/encrypt_travel.js` encrypts at authoring time, `js/travel.js`
+  decrypts in-browser via WebCrypto). `js/traveldata.js` contains only
+  ciphertext — there is no plaintext shipped anywhere, and a wrong answer
+  just fails the AES-GCM auth tag, same as any other AEAD decrypt. ~~The
+  obfuscation-only caveat originally written here no longer applies.~~ The
+  real remaining caveat: the ciphertext and salt are public, so the answer's
+  own strength is the actual security boundary — an offline dictionary
+  attack against a short list of guesses is the realistic risk, not reading
+  the JS.
+- Text does a decode-scramble reveal animation and photos reveal via a
+  canvas tile-shuffle — both cosmetic flourishes on top of the real crypto,
+  not the security mechanism itself (satisfies "todo el texto se vea
+  encriptado... que los píxeles se mezclen").
+- Ships with one placeholder `demo-trip` entry (answer: `demo`) so the
+  mechanism has something real to decrypt. See the README's "Travel blog
+  (encrypted)" section for how to add real trips.
+- Sub-sections still to build inside the travel blog:
   - **Games log**, connected to Backloggd (games played/backlog tracking).
   - **Cars** blog/log.
   - **Music**, connected to the user's Tidal listening.
@@ -63,14 +65,13 @@ dependency (later items build on earlier ones), not by priority.
   form-backend service (e.g. Formspree/Getform-style), a `mailto:` fallback,
   or a small serverless function. Needs a decision on which before building.
 
-## 5. 90s-style phone number banner
+## 5. 90s-style phone number banner — shipped
 
-- Show the contact phone number the way phone keypad "vanity numbers" were
-  advertised in the 90s: mixing digits and letters, animated like an old
-  marquee/banner ad. Format given: `+54 011 FLOW-####`.
-- Depends on picking the actual vanity letters for the last 4 digits — in
-  progress separately (see `vanitygen.py` in the repo root and the filtered
-  shortlist from it).
+- Live in the Contact window: a scrolling LED-ticker marquee alternating
+  `+54 011 3569-4552` / `+54 011 FLOW-ILLA` (the vanity letters found via
+  `vanitygen.py` — `FLOWILLA` spells FLOW *and* contains WILL/WILLA) /
+  "¡LLAMAME! CALL ME!", all wrapped in a `tel:` link. Respects
+  `prefers-reduced-motion`.
 
 ## 6. Console collection window
 

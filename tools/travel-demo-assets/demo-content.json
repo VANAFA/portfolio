@@ -1,0 +1,27 @@
+{
+  "entries": [
+    {
+      "id": "demo-trip",
+      "title": {
+        "en": "Placeholder Trip",
+        "es": "Viaje de Ejemplo"
+      },
+      "location": {
+        "en": "Nowhere, Demo Country",
+        "es": "Ningún Lugar, País de Ejemplo"
+      },
+      "date": "2026-01-01",
+      "body": {
+        "en": [
+          "This is a placeholder entry so the encrypted travel blog has something real to decrypt while there's no real trip written up yet.",
+          "Replace this by editing a copy of this JSON file with real trips and photos, then running tools/encrypt_travel.js with the real answer to regenerate js/traveldata.js."
+        ],
+        "es": [
+          "Esta es una entrada de ejemplo para que el blog de viajes encriptado tenga algo real para desencriptar mientras todavía no hay ningún viaje real escrito.",
+          "Reemplazá esto editando una copia de este JSON con viajes y fotos reales, y después corré tools/encrypt_travel.js con la respuesta real para regenerar js/traveldata.js."
+        ]
+      },
+      "images": ["placeholder-trip.png"]
+    }
+  ]
+}

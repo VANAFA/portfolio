@@ -129,11 +129,54 @@ Minesweeper and Solitaire live behind their own desktop icons, next to My
 Computer. Both are plain JS, no libraries:
 
 - **Minesweeper** (`js/minesweeper.js`) - Beginner/Intermediate/Expert, safe
-  first click, flood-fill reveal, right-click to flag (or the "Flag Mode"
-  toggle button, for touch).
+  first click, flood-fill reveal, right-click to flag (or press-and-hold,
+  which works the same on touch).
 - **Solitaire** (`js/solitaire.js`) - Klondike, draw-one. Click a card (or the
   exposed run below it) to select, then click a pile to move it there -
   no drag-and-drop, so it works the same on touch. Double-click sends a card
   to a foundation if that's legal. Card faces are the CC0 pixel-art deck from
   Kenney (`images/cards/CREDIT.txt`), not the real Microsoft Solitaire
   graphics - those are proprietary and can't legally be redistributed here.
+
+## Travel blog (encrypted)
+
+`travel.html` is a separate page (linked from "My Projects" and from a
+desktop icon) gated behind a question only friends should be able to answer.
+This is **real encryption**, not a cosmetic effect: everything - every
+title, paragraph, and photo - is AES-256-GCM ciphertext sitting in
+`js/traveldata.js`, keyed by PBKDF2 over the answer. Nobody, including this
+repo's own source code, has the plaintext until a visitor's browser derives
+the right key and WebCrypto decrypts it locally. What you see before
+unlocking really is the raw ciphertext (shown as the "encrypted" preview);
+after unlocking, text does a short decode-scramble animation and photos
+reveal via a tile-shuffle animation on canvas - both purely cosmetic, since
+the real security already happened by that point.
+
+The one thing this can't protect against: the ciphertext and salt are public
+(they're sitting right there in the page source), so someone could try an
+offline dictionary attack against a short list of likely answers. Pick an
+answer a stranger couldn't easily guess or brute-force from a small set of
+options, even if it's obvious to friends who know you.
+
+**Adding a real entry:**
+
+1. Copy `tools/travel-demo-assets/demo-content.json` somewhere outside the
+   repo (or to a gitignored path like `tools/travel-content.json`) and fill
+   in real trips: `title`, `location`, `date`, `body` paragraphs (`en`/`es`),
+   and `images` (paths relative to that JSON file).
+2. Run:
+
+   ```sh
+   node tools/encrypt_travel.js tools/travel-content.json
+   ```
+
+   and type the real answer when prompted - the prompt is hidden (nothing
+   echoed, nothing in shell history). This overwrites `js/traveldata.js`
+   with fresh ciphertext.
+3. Commit and deploy as usual. The plaintext JSON and source photos should
+   **not** be committed - `.gitignore` already excludes the conventional
+   `tools/travel-content.json` / `tools/travel-photos/` paths.
+
+The bundled `demo-trip` entry exists just so the mechanism has something
+real to decrypt out of the box - its answer is literally `demo`. Replace it
+the same way once there's real content.

@@ -510,6 +510,16 @@ hr.divider{
   gap:14px;
   padding:6px;
 }
+.travel-link-row{
+  margin:4px 0 0;
+  padding:6px;
+  border-top:1px solid var(--w98-face-dark);
+}
+.travel-link-row a{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
 .project-icon{
   background:transparent;
   border:none;
@@ -630,6 +640,109 @@ hr.divider{
 }
 .breadcrumb{
   margin-bottom:10px;
+}
+
+/* ===== travel blog (encrypted) ===== */
+.travel-lock{
+  max-width:520px;
+  margin:0 auto;
+  text-align:center;
+  padding:12px 8px 20px;
+}
+.travel-lock-icon{
+  width:32px;
+  height:32px;
+  image-rendering:pixelated;
+  margin-bottom:6px;
+}
+.travel-question{
+  font-weight:bold;
+  color:#000080;
+  margin-bottom:10px;
+}
+.travel-form{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  margin-bottom:6px;
+}
+.travel-form input{
+  flex:1;
+  max-width:260px;
+  padding:4px 6px;
+  border-top:2px solid var(--w98-face-darker);
+  border-left:2px solid var(--w98-face-darker);
+  border-right:2px solid var(--w98-face-lighter);
+  border-bottom:2px solid var(--w98-face-lighter);
+  font-family:inherit;
+  font-size:13px;
+}
+.travel-error{
+  min-height:16px;
+  color:#a00000;
+  font-weight:bold;
+  font-size:12px;
+  margin:4px 0 10px;
+}
+.travel-hint{
+  font-size:11px;
+  color:#333;
+  margin-bottom:16px;
+}
+@keyframes travel-shake{
+  0%,100%{ transform:translateX(0); }
+  20%{ transform:translateX(-6px); }
+  40%{ transform:translateX(6px); }
+  60%{ transform:translateX(-4px); }
+  80%{ transform:translateX(4px); }
+}
+.travel-lock.shake{ animation:travel-shake 0.4s; }
+
+.travel-locked-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.travel-card-locked{
+  background:#000;
+  padding:10px;
+  text-align:left;
+}
+.travel-cipher-block{
+  font-family:"Courier New",monospace;
+  font-size:11px;
+  color:#39ff14;
+  word-break:break-all;
+  line-height:1.5;
+}
+.travel-cipher-dim{
+  color:#1e8a0c;
+  margin-top:6px;
+}
+
+.travel-content{
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+}
+.travel-card h2{
+  color:#000080;
+  margin:0 0 4px;
+}
+.travel-meta{
+  font-size:12px;
+  color:#333;
+  margin:0 0 10px;
+}
+.travel-image-wrap{
+  margin-bottom:10px;
+}
+.travel-canvas{
+  max-width:100%;
+  border-top:2px solid var(--w98-face-darker);
+  border-left:2px solid var(--w98-face-darker);
+  border-right:2px solid var(--w98-face-lighter);
+  border-bottom:2px solid var(--w98-face-lighter);
 }
 
 /* ===== Minesweeper ===== */
@@ -868,6 +981,54 @@ hr.divider{
 }
 .contact-item strong{ display:block; font-size:11px; color:#000080; }
 
+.phone-item{ grid-column:1 / -1; }
+.phone-banner{
+  display:block;
+  margin-top:4px;
+  overflow:hidden;
+  background:#000;
+  text-decoration:none;
+  border-top:2px solid var(--w98-face-darker);
+  border-left:2px solid var(--w98-face-darker);
+  border-right:2px solid var(--w98-face-lighter);
+  border-bottom:2px solid var(--w98-face-lighter);
+  padding:5px 0;
+}
+.phone-banner-track{
+  display:inline-flex;
+  white-space:nowrap;
+  animation:phone-scroll 16s linear infinite;
+}
+.phone-banner-seg{
+  display:inline-flex;
+  font-family:"Courier New",monospace;
+  font-weight:bold;
+  font-size:14px;
+  letter-spacing:1px;
+  color:#39ff14;
+  text-shadow:0 0 4px rgba(57,255,20,0.65);
+}
+.phone-banner-seg span{ padding:0 10px; }
+.phone-banner-seg .star{
+  color:#ffcc00;
+  text-shadow:0 0 4px rgba(255,204,0,0.7);
+  animation:phone-blink 0.8s steps(1) infinite;
+  padding:0 6px;
+}
+@keyframes phone-scroll{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(-50%); }
+}
+@keyframes phone-blink{
+  0%,49%{ opacity:1; }
+  50%,100%{ opacity:0.15; }
+}
+@media (prefers-reduced-motion: reduce){
+  .phone-banner-track{ animation:none; }
+  .phone-banner-seg[aria-hidden]{ display:none; }
+  .phone-banner-seg .star{ animation:none; }
+}
+
 /* ===== taskbar ===== */
 .taskbar{
   position:fixed;
@@ -969,6 +1130,8 @@ hr.divider{
   /* Long URLs must wrap instead of stretching the layout */
   .contact-grid{ grid-template-columns:1fr; gap:6px; }
   .contact-item{ overflow-wrap:anywhere; }
+  .phone-banner-seg{ font-size:12px; }
+  .phone-banner-seg span{ padding:0 8px; }
 
   .project-grid{ gap:10px; padding:2px; }
   .modal-window{ margin-top:6px; }

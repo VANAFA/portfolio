@@ -14,6 +14,7 @@
     en: {
       "page.title": "Valentino Nallib Fadel",
       "page.blogTitle": "Project Blog",
+      "page.travelTitle": "Travel Blog",
       "win.about": "valentino.cv — About Me",
       "win.face": "Hit me!",
       "tb.face": "Hit me!",
@@ -22,6 +23,7 @@
       "desktop.mycomputer": "My Computer",
       "desktop.mydocs": "My Documents",
       "desktop.network": "Network Neighborhood",
+      "desktop.travel": "Travel Blog",
       "mycomputer.hint": "Pick a desktop background.",
       "win.minesweeper": "Minesweeper",
       "tb.minesweeper": "Minesweeper",
@@ -44,10 +46,20 @@
       "win.projects": "My Projects",
       "win.contact": "Contact",
       "win.blog": "Project Blog",
+      "win.travel": "Travel Blog",
       "tb.about": "About Me",
       "tb.projects": "My Projects",
       "tb.contact": "Contact",
       "tb.blog": "Project Blog",
+      "tb.travel": "Travel Blog",
+      "travel.question": "Security question: what brand of watch do I wear?",
+      "travel.hint": "This is real client-side encryption, not a trick — only someone who knows the answer can decrypt it. Ask a friend.",
+      "travel.placeholder": "Your answer",
+      "travel.unlock": "Unlock",
+      "travel.checking": "Checking…",
+      "travel.wrong": "That's not it.",
+      "travel.back": "« Back to the desktop",
+      "travel.linkText": "Encrypted Travel Blog →",
       "about.tagline": "AI Engineering student · Buenos Aires, Argentina",
       "about.p1":
         "Fourth-year Artificial Intelligence Engineering student at Universidad de San Andrés, with hands-on project experience in computer vision, deep learning, and natural language models (pre-training and fine-tuning). I like roles that mix research with practical, applied AI development — and side projects that let me build the whole stack myself.",
@@ -56,6 +68,7 @@
       "about.email": "Email me",
       "projects.help": "Click a project to see the details. Each one links out to its own blog post.",
       "contact.email": "Email",
+      "contact.phone": "Phone",
       "contact.location": "Location",
       "contact.locationValue": "Buenos Aires, Argentina",
       "modal.more": "To know more →",
@@ -71,6 +84,7 @@
     es: {
       "page.title": "Valentino Nallib Fadel",
       "page.blogTitle": "Blog del Proyecto",
+      "page.travelTitle": "Blog de Viajes",
       "win.about": "valentino.cv — Sobre mí",
       "win.face": "¡Pegame!",
       "tb.face": "¡Pegame!",
@@ -79,6 +93,7 @@
       "desktop.mycomputer": "Mi PC",
       "desktop.mydocs": "Mis Documentos",
       "desktop.network": "Entorno de Red",
+      "desktop.travel": "Blog de Viajes",
       "mycomputer.hint": "Elegí un fondo de escritorio.",
       "win.minesweeper": "Buscaminas",
       "tb.minesweeper": "Buscaminas",
@@ -101,8 +116,18 @@
       "win.projects": "Mis Proyectos",
       "win.contact": "Contacto",
       "win.blog": "Blog del Proyecto",
+      "win.travel": "Blog de Viajes",
       "tb.about": "Sobre mí",
       "tb.projects": "Mis Proyectos",
+      "tb.travel": "Blog de Viajes",
+      "travel.question": "Pregunta de seguridad: ¿qué marca de reloj uso?",
+      "travel.hint": "Esto es encriptación real del lado del cliente, no un truco — solo alguien que sepa la respuesta puede desencriptarlo. Preguntale a algún amigo.",
+      "travel.placeholder": "Tu respuesta",
+      "travel.unlock": "Desbloquear",
+      "travel.checking": "Verificando…",
+      "travel.wrong": "No es esa.",
+      "travel.back": "« Volver al escritorio",
+      "travel.linkText": "Blog de Viajes Encriptado →",
       "tb.contact": "Contacto",
       "tb.blog": "Blog",
       "about.tagline": "Estudiante de Ingeniería en IA · Buenos Aires, Argentina",
@@ -113,6 +138,7 @@
       "about.email": "Escribime",
       "projects.help": "Hacé clic en un proyecto para ver los detalles. Cada uno enlaza a su propia entrada del blog.",
       "contact.email": "Mail",
+      "contact.phone": "Teléfono",
       "contact.location": "Ubicación",
       "contact.locationValue": "Buenos Aires, Argentina",
       "modal.more": "Ver más →",
@@ -154,6 +180,9 @@
     });
     document.querySelectorAll("[data-i18n-title]").forEach(function (el) {
       el.setAttribute("title", t(el.getAttribute("data-i18n-title")));
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
+      el.setAttribute("placeholder", t(el.getAttribute("data-i18n-placeholder")));
     });
 
     var titleKey = document.body.getAttribute("data-title-key");

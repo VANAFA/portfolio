@@ -10,7 +10,8 @@
     { key: "desktop.mydocs", icon: "images/icons/mydocs-48.png" },
     { key: "desktop.network", icon: "images/icons/network_two_pcs-48.png" },
     { key: "win.minesweeper", icon: "images/icons/minesweeper-48.png", open: "minesweeper" },
-    { key: "win.solitaire", icon: "images/icons/solitaire-48.png", open: "solitaire" }
+    { key: "win.solitaire", icon: "images/icons/solitaire-48.png", open: "solitaire" },
+    { key: "desktop.travel", icon: "images/icons/globe_map-0.png", href: "travel.html" }
   ];
 
   function label(key) {
@@ -20,9 +21,12 @@
   function render() {
     root.innerHTML = "";
     ICONS.forEach(function (item) {
-      var el = document.createElement(item.open ? "button" : "div");
-      el.className = "desktop-icon" + (item.open ? " functional" : "");
-      if (item.open) {
+      var isFunctional = !!(item.open || item.href);
+      var el = document.createElement(item.href ? "a" : isFunctional ? "button" : "div");
+      el.className = "desktop-icon" + (isFunctional ? " functional" : "");
+      if (item.href) {
+        el.href = item.href;
+      } else if (isFunctional) {
         el.type = "button";
       } else {
         el.setAttribute("aria-hidden", "true");

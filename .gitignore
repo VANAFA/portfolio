@@ -1,0 +1,7 @@
+# Real travel-blog content, pre-encryption - never commit plaintext.
+# (tools/travel-demo-assets/ is the placeholder demo and stays tracked.)
+tools/travel-content.json
+tools/travel-photos/
+
+node_modules/
+.DS_Store
