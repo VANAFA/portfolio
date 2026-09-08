@@ -30,6 +30,18 @@
     return "images/cards/card_" + SUIT_FILE[card.suit] + "_" + rank + ".png";
   }
 
+  // Without this, each of the 53 faces only gets requested the first time
+  // render() happens to draw it - one request-per-card, spread out as the
+  // game is played, which reads as "cards take a moment to appear". Fetching
+  // them all up front means they're already in the browser cache by then.
+  function preloadCardImages() {
+    var srcs = ["images/cards/card_back.png"];
+    SUITS.forEach(function (s) {
+      for (var r = 1; r <= 13; r++) srcs.push(cardImgSrc({ suit: s, rank: r }));
+    });
+    srcs.forEach(function (src) { new Image().src = src; });
+  }
+
   function freshDeck() {
     var deck = [];
     SUITS.forEach(function (s) {
@@ -318,5 +330,6 @@
     if (statusEl.textContent) checkWin();
   });
 
+  preloadCardImages();
   deal();
 })();
