@@ -43,7 +43,7 @@ def stamp_images(text):
     return IMG_RE.sub(repl, text)
 
 # HTML: css/js by commit, images by content
-for name in ("index.html", "blog.html"):
+for name in ("index.html", "blog.html", "travel.html"):
     p = pathlib.Path(name)
     s = p.read_text()
     s = re.sub(r'(href="css/[^"?]+\.css)(\?v=[^"]*)?"', rf'\1?v={stamp}"', s)
@@ -69,7 +69,7 @@ PY
 if git diff --quiet; then
   echo "nothing to stamp"
 else
-  git add index.html blog.html js/data.js js/version.js
+  git add index.html blog.html travel.html js/data.js js/version.js
   git commit -q -m "Stamp assets and version badge as $STAMP"
   echo "committed stamp $STAMP"
 fi
