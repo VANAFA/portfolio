@@ -11,6 +11,7 @@
     { key: "desktop.network", icon: "images/icons/network_two_pcs-48.png" },
     { key: "win.minesweeper", icon: "images/icons/minesweeper-48.png", open: "minesweeper" },
     { key: "win.solitaire", icon: "images/icons/solitaire-48.png", open: "solitaire" },
+    { key: "win.pinball", icon: "images/icons/pinball-48.png", open: "pinball" },
     { key: "desktop.travel", icon: "images/icons/globe_map-0.png", href: "travel.html" }
   ];
 

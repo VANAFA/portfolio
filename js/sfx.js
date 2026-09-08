@@ -126,6 +126,31 @@
       notes.forEach(function (freq, i) {
         setTimeout(function () { tone(freq, freq, 0.16, "square", 0.05); }, i * 90);
       });
+    },
+    // Pinball bumper: a bright electronic zap.
+    bumper: function () {
+      tone(950, 250, 0.09, "square", 0.06);
+      noise(0.05, 2200, 3, 0.05);
+    },
+    // Pinball flipper: a quick mechanical snap.
+    flipper: function () {
+      noise(0.03, 1200, 4, 0.05);
+      tone(300, 150, 0.04, "square", 0.04);
+    },
+    // Pinball plunger launch: a rising whoosh.
+    launch: function () {
+      tone(150, 700, 0.22, "sawtooth", 0.05);
+    },
+    // Pinball ball drained.
+    drain: function () {
+      tone(320, 70, 0.4, "sine", 0.08);
+    },
+    // Pinball game over: a short descending jingle.
+    gameover: function () {
+      var notes = [523, 440, 349, 262];
+      notes.forEach(function (freq, i) {
+        setTimeout(function () { tone(freq, freq, 0.2, "sawtooth", 0.06); }, i * 130);
+      });
     }
   };
 
@@ -175,6 +200,11 @@
     place: function () { play("place"); },
     invalid: function () { play("invalid"); },
     shuffle: function () { play("shuffle"); },
-    win: function () { play("win"); }
+    win: function () { play("win"); },
+    bumper: function () { play("bumper"); },
+    flipper: function () { play("flipper"); },
+    launch: function () { play("launch"); },
+    drain: function () { play("drain"); },
+    gameover: function () { play("gameover"); }
   };
 })();

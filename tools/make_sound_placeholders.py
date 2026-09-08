@@ -21,7 +21,11 @@ HERE = Path(__file__).resolve().parent.parent
 OUT_DIR = HERE / "sounds"
 
 # One per window.SFX method in js/sfx.js.
-EFFECTS = ["pick", "drop", "chew", "swallow", "hit", "speak", "burp", "place", "invalid", "shuffle", "win"]
+EFFECTS = [
+    "pick", "drop", "chew", "swallow", "hit", "speak", "burp",
+    "place", "invalid", "shuffle", "win",
+    "bumper", "flipper", "launch", "drain", "gameover",
+]
 
 DURATION_S = "0.3"
 BITRATE = "8k"

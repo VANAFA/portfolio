@@ -184,6 +184,40 @@
     </div>
   </section>
 
+  <section class="window raised" data-window="pinball" data-taskbar-key="tb.pinball" hidden>
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/pinball-16.png" alt=""> <span data-i18n="win.pinball">Pinball</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="pin-toolbar sunken">
+        <div class="pin-counter-group">
+          <span class="pin-label" data-i18n="pin.score">Score</span>
+          <div class="pin-counter" id="pin-score">000000</div>
+        </div>
+        <button class="btn98" type="button" id="pin-newgame" data-i18n="pin.newGame">New Game</button>
+        <div class="pin-counter-group">
+          <span class="pin-label" data-i18n="pin.balls">Balls</span>
+          <div class="pin-counter" id="pin-balls">3</div>
+        </div>
+      </div>
+      <div class="pin-table-wrap">
+        <canvas id="pin-canvas" width="300" height="500"></canvas>
+      </div>
+      <p class="pin-status" id="pin-status"></p>
+      <div class="pin-controls">
+        <button class="btn98 pin-btn" type="button" id="pin-left" data-i18n="pin.left">◄ Flipper</button>
+        <button class="btn98 pin-btn" type="button" id="pin-launch" data-i18n="pin.launchBtn">Launch</button>
+        <button class="btn98 pin-btn" type="button" id="pin-right" data-i18n="pin.right">Flipper ►</button>
+      </div>
+      <p class="pin-help" data-i18n="pin.help">Z / ← and / / → flip, hold Space to launch — or use the buttons.</p>
+    </div>
+  </section>
+
   <!-- Pop-up window for a clicked project -->
   <div class="overlay" id="modal-overlay" hidden>
     <div class="window raised modal-window" role="dialog" aria-modal="true" aria-labelledby="modal-title">
@@ -230,6 +264,7 @@
   <script src="js/mycomputer.js?v=1b4e8c7"></script>
   <script src="js/minesweeper.js?v=1b4e8c7"></script>
   <script src="js/solitaire.js?v=1b4e8c7"></script>
+  <script src="js/pinball.js"></script>
   <script src="js/taskbar.js?v=1b4e8c7"></script>
   <script src="js/particles.js?v=1b4e8c7"></script>
   <script src="js/sfx.js?v=1b4e8c7"></script>
