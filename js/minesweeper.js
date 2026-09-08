@@ -288,6 +288,47 @@
         cells.push({ mine: false, revealed: false, flagged: false, adjacent: 0, el: el });
       }
     }
+    fitBoard();
+  }
+
+  // Normally the board just fills the window's width and cells follow via
+  // aspect-ratio - fine until the window is maximized, where a wide-but-
+  // short board (e.g. Expert's 30x16) fills the available width and ends up
+  // taller than the window itself, needing a scroll to reach the bottom
+  // rows. When maximized, size cells from whichever of width/height is more
+  // restrictive instead, so the whole board always fits on screen.
+  function fitBoard() {
+    var winEl = boardEl.closest(".window");
+    if (!winEl || !winEl.classList.contains("maximized")) {
+      boardEl.style.width = "";
+      return;
+    }
+    var bodyEl = boardEl.parentElement;
+    var siblingsHeight = 0;
+    Array.prototype.forEach.call(bodyEl.children, function (child) {
+      if (child === boardEl) return;
+      var cs = getComputedStyle(child);
+      siblingsHeight += child.offsetHeight + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom);
+    });
+    // .ms-board's own padding sits outside the cells' aspect-ratio-driven
+    // height, so it has to come off the height budget the same way the
+    // siblings' margins do above - otherwise the board ends up that much
+    // taller than what was actually budgeted for it and still overflows.
+    var boardPadding = parseFloat(getComputedStyle(boardEl).paddingTop) + parseFloat(getComputedStyle(boardEl).paddingBottom);
+    var cellFromWidth = bodyEl.clientWidth / cols;
+    var cellFromHeight = (bodyEl.clientHeight - siblingsHeight - boardPadding) / rows;
+    var cellSize = Math.floor(Math.min(cellFromWidth, cellFromHeight));
+
+    // The estimate above should already be close, but getting it exact
+    // depends on box-model details (borders, subpixel layout rounding)
+    // that aren't worth hand-deriving precisely - measure the real result
+    // and nudge down a pixel at a time on the rare occasion it's still a
+    // hair too tall, rather than trusting the arithmetic blindly.
+    for (var guard = 0; guard < 15 && cellSize > 4; guard++) {
+      boardEl.style.width = cellSize * cols + "px";
+      if (bodyEl.scrollHeight <= bodyEl.clientHeight) break;
+      cellSize--;
+    }
   }
 
   if (levelsEl) {
@@ -301,6 +342,11 @@
     if (state === "won") setStatus("ms.win");
     else if (state === "lost") setStatus("ms.lose");
   });
+
+  var winEl = boardEl.closest(".window");
+  if (winEl && window.ResizeObserver) {
+    new ResizeObserver(fitBoard).observe(winEl);
+  }
 
   newGame("beginner");
 })();
