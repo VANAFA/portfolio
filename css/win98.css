@@ -981,6 +981,32 @@ hr.divider{
 }
 .sol-stock, .sol-waste{ cursor:pointer; }
 
+@keyframes sol-shake{
+  0%,100%{ transform:translateX(0); }
+  20%{ transform:translateX(-5px); }
+  40%{ transform:translateX(5px); }
+  60%{ transform:translateX(-3px); }
+  80%{ transform:translateX(3px); }
+}
+.sol-shake{ animation:sol-shake 0.35s; }
+
+/* The classic "cards cascade off the screen" win animation - flung by JS,
+   this just gives each flying card a fixed, always-on-top box to move. */
+.sol-cascade-card{
+  position:fixed;
+  top:0;
+  left:0;
+  width:56px;
+  height:56px;
+  image-rendering:pixelated;
+  pointer-events:none;
+  z-index:500;
+  will-change:transform;
+}
+@media (prefers-reduced-motion: reduce){
+  .sol-shake{ animation:none; }
+}
+
 /* ===== repo list ===== */
 .repo-list{
   list-style:none;

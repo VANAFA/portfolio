@@ -20,6 +20,18 @@
 
   var stock, waste, foundations, tableau;
   var selection = null; // { pile: "tableau"|"waste", col: number|null, index: number }
+  var wonAlready = false;
+  var cascadeGen = 0;
+
+  var foundationElBySuit = {};
+  foundationEls.forEach(function (el) { foundationElBySuit[el.dataset.suit] = el; });
+
+  function shakeEl(el) {
+    if (!el) return;
+    el.classList.remove("sol-shake");
+    void el.offsetWidth; // restart the animation if it's already mid-shake
+    el.classList.add("sol-shake");
+  }
 
   function rankLabel(r) { return RANK_LABEL[r] || String(r); }
 
@@ -55,6 +67,10 @@
   }
 
   function deal() {
+    cascadeGen++; // invalidate any win cascade still flying from a previous game
+    clearCascade();
+    wonAlready = false;
+
     var deck = freshDeck();
     stock = [];
     waste = [];
@@ -72,6 +88,7 @@
     stock.forEach(function (c) { c.faceUp = false; });
     selection = null;
     setStatus(null);
+    if (window.SFX) window.SFX.shuffle();
     render();
   }
 
@@ -116,12 +133,14 @@
     // every card from index to the end must already be face up (true for any
     // legally-built run) to be draggable as a group
     selection = { pile: "tableau", col: col, index: index };
+    if (window.SFX) window.SFX.pick();
     render();
   }
 
   function pickUpFromWaste() {
     if (!waste.length) return;
     selection = { pile: "waste" };
+    if (window.SFX) window.SFX.pick();
     render();
   }
 
@@ -144,6 +163,7 @@
       if (pile.length && !pile[pile.length - 1].faceUp) pile[pile.length - 1].faceUp = true;
     });
     selection = null;
+    if (window.SFX) window.SFX.place();
     checkWin();
     render();
   }
@@ -157,11 +177,20 @@
     return true;
   }
 
+  function burstAtFoundation(suit) {
+    var el = foundationElBySuit[suit];
+    if (!el || !window.burstParticles) return;
+    var r = el.getBoundingClientRect();
+    var colors = RED[suit] ? ["#e00", "#ff6666", "#ffd700"] : ["#222", "#666", "#ffd700"];
+    window.burstParticles(r.left + r.width / 2, r.top + r.height / 2, colors);
+  }
+
   function tryMoveToFoundation(suit) {
     var run = selectedRun();
     if (!run || run.length !== 1 || !canDropOnFoundation(suit, run[0])) return false;
     removeSelectedRun();
     foundations[suit].push(run[0]);
+    burstAtFoundation(suit);
     afterMove();
     return true;
   }
@@ -171,14 +200,79 @@
     if (!canDropOnFoundation(suit, card)) return false;
     if (fromWaste) waste.pop(); else tableau[col].splice(index, 1);
     foundations[suit].push(card);
+    burstAtFoundation(suit);
     afterMove();
     return true;
+  }
+
+  function clearCascade() {
+    document.querySelectorAll(".sol-cascade-card").forEach(function (el) { el.remove(); });
+  }
+
+  // The classic "cards bounce off the screen" win animation: every card in
+  // the deck (not tied to how these specific foundations filled up) gets
+  // launched in a staggered stream, falls under simple gravity, bounces off
+  // the left/right edges, and is removed once it drops past the bottom.
+  function startWinCascade() {
+    cascadeGen++;
+    var gen = cascadeGen;
+    clearCascade();
+
+    var deckCycle = [];
+    SUITS.forEach(function (s) {
+      for (var r = 1; r <= 13; r++) deckCycle.push({ suit: s, rank: r });
+    });
+
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    var gravity = 0.55;
+    var cardIndex = 0;
+
+    function launchCard() {
+      if (gen !== cascadeGen) return;
+      var card = deckCycle[cardIndex % deckCycle.length];
+      cardIndex++;
+
+      var el = document.createElement("img");
+      el.className = "sol-cascade-card";
+      el.src = cardImgSrc(card);
+      el.alt = "";
+
+      var x = 20 + Math.random() * Math.max(20, vw - 76);
+      var y = -60;
+      var vx = (Math.random() - 0.5) * 14;
+      var vy = 2 + Math.random() * 2;
+      el.style.transform = "translate(" + x + "px," + y + "px)";
+      document.body.appendChild(el);
+
+      function step() {
+        if (gen !== cascadeGen) { el.remove(); return; }
+        vy += gravity;
+        x += vx;
+        y += vy;
+        if (x < 0) { x = 0; vx = -vx * 0.7; }
+        if (x > vw - 56) { x = vw - 56; vx = -vx * 0.7; }
+        el.style.transform = "translate(" + x + "px," + y + "px)";
+        if (y > vh + 60) { el.remove(); return; }
+        requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+
+      if (cardIndex < deckCycle.length) setTimeout(launchCard, 90);
+    }
+    launchCard();
   }
 
   function checkWin() {
     var total = 0;
     SUITS.forEach(function (s) { total += foundations[s].length; });
-    if (total === 52) setStatus("sol.win");
+    if (total !== 52) return;
+    setStatus("sol.win");
+    if (!wonAlready) {
+      wonAlready = true;
+      if (window.SFX) window.SFX.win();
+      startWinCascade();
+    }
   }
 
   function onStockClick() {
@@ -205,14 +299,21 @@
 
   function onWasteDblClick() {
     if (!waste.length) return;
-    quickMoveToFoundation(waste[waste.length - 1], true);
+    if (!quickMoveToFoundation(waste[waste.length - 1], true)) {
+      shakeEl(wasteEl);
+      if (window.SFX) window.SFX.invalid();
+    }
   }
 
-  function onFoundationClick(suit) {
-    if (selection) { tryMoveToFoundation(suit); return; }
+  function onFoundationClick(suit, el) {
+    if (!selection) return;
+    if (!tryMoveToFoundation(suit)) {
+      shakeEl(el);
+      if (window.SFX) window.SFX.invalid();
+    }
   }
 
-  function onTableauCardClick(col, index) {
+  function onTableauCardClick(col, index, colEl) {
     var pile = tableau[col];
     var card = pile[index];
     var isTopCard = index === pile.length - 1;
@@ -227,22 +328,33 @@
     }
     if (selection) {
       if (tryMoveToTableau(col)) return;
-      // clicking a different card just re-selects it instead
+      // A different column's own stack (this same card's column, above the
+      // selection) rejecting the drop should shake before falling through
+      // to re-select the clicked card instead.
+      shakeEl(colEl);
+      if (window.SFX) window.SFX.invalid();
     }
     pickUpFromTableau(col, index);
   }
 
-  function onTableauColumnClick(col) {
+  function onTableauColumnClick(col, colEl) {
     // clicked the empty space below a (possibly empty) column
-    if (selection) tryMoveToTableau(col);
+    if (!selection) return;
+    if (!tryMoveToTableau(col)) {
+      shakeEl(colEl);
+      if (window.SFX) window.SFX.invalid();
+    }
   }
 
-  function onTableauCardDblClick(col, index) {
+  function onTableauCardDblClick(col, index, el) {
     var pile = tableau[col];
     if (index !== pile.length - 1) return;
     var card = pile[index];
     if (!card.faceUp) return;
-    quickMoveToFoundation(card, false, col, index);
+    if (!quickMoveToFoundation(card, false, col, index)) {
+      shakeEl(el);
+      if (window.SFX) window.SFX.invalid();
+    }
   }
 
   function isSelected(pile, col, index) {
@@ -294,7 +406,7 @@
       colEl.addEventListener("click", function () {
         // Card clicks call stopPropagation, so anything reaching here - the
         // empty-slot placeholder included - is a click on the column itself.
-        onTableauColumnClick(col);
+        onTableauColumnClick(col, colEl);
       });
       if (!pile.length) {
         var slot = document.createElement("div");
@@ -306,11 +418,11 @@
         if (isSelected("tableau", col, index)) el.classList.add("selected");
         el.addEventListener("click", function (e) {
           e.stopPropagation();
-          onTableauCardClick(col, index);
+          onTableauCardClick(col, index, colEl);
         });
         el.addEventListener("dblclick", function (e) {
           e.stopPropagation();
-          onTableauCardDblClick(col, index);
+          onTableauCardDblClick(col, index, el);
         });
         colEl.appendChild(el);
       });
@@ -322,7 +434,7 @@
   wasteEl.addEventListener("click", onWasteClick);
   wasteEl.addEventListener("dblclick", onWasteDblClick);
   foundationEls.forEach(function (el) {
-    el.addEventListener("click", function () { onFoundationClick(el.dataset.suit); });
+    el.addEventListener("click", function () { onFoundationClick(el.dataset.suit, el); });
   });
   if (newGameBtn) newGameBtn.addEventListener("click", deal);
 

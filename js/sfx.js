@@ -103,6 +103,29 @@
     // One syllable of speech.
     speak: function () {
       tone(200 + Math.random() * 120, 150 + Math.random() * 90, 0.06, "square", 0.022);
+    },
+    // A card landing somewhere legal - a crisp little tap.
+    place: function () {
+      tone(900, 500, 0.05, "square", 0.05);
+      noise(0.03, 2600, 2.5, 0.05);
+    },
+    // An illegal move - a short low buzz, paired with a shake in the UI.
+    invalid: function () {
+      tone(180, 140, 0.12, "sawtooth", 0.07);
+      setTimeout(function () { tone(160, 120, 0.1, "sawtooth", 0.06); }, 70);
+    },
+    // Riffling the deck for a new game.
+    shuffle: function () {
+      for (var i = 0; i < 7; i++) {
+        setTimeout(function () { noise(0.05, 1800 + Math.random() * 1200, 4, 0.05); }, i * 35);
+      }
+    },
+    // A short rising jingle for a win.
+    win: function () {
+      var notes = [523, 659, 784, 1047];
+      notes.forEach(function (freq, i) {
+        setTimeout(function () { tone(freq, freq, 0.16, "square", 0.05); }, i * 90);
+      });
     }
   };
 
@@ -148,6 +171,10 @@
     chew: function () { play("chew"); },
     swallow: function () { play("swallow"); },
     hit: function () { play("hit"); },
-    speak: function () { play("speak"); }
+    speak: function () { play("speak"); },
+    place: function () { play("place"); },
+    invalid: function () { play("invalid"); },
+    shuffle: function () { play("shuffle"); },
+    win: function () { play("win"); }
   };
 })();
