@@ -7,12 +7,12 @@
 
   var ICONS = [
     { key: "desktop.mycomputer", icon: "images/icons/my_computer-48.png", open: "mycomputer" },
-    { key: "desktop.mydocs", icon: "images/icons/mydocs-48.png" },
-    { key: "desktop.network", icon: "images/icons/network_two_pcs-48.png" },
+    { key: "win.projects", icon: "images/icons/mydocs-48.png", open: "projects" },
     { key: "win.minesweeper", icon: "images/icons/minesweeper-48.png", open: "minesweeper" },
     { key: "win.solitaire", icon: "images/icons/solitaire-48.png", open: "solitaire" },
     { key: "win.pinball", icon: "images/icons/pinball-48.png", open: "pinball" },
-    { key: "desktop.travel", icon: "images/icons/globe_map-0.png", href: "travel.html", feature: "travel" }
+    { key: "win.chat", icon: "images/icons/msn-48.png", open: "chat" },
+    { key: "desktop.travel", icon: "images/icons/globe_map-0.png", open: "travel", feature: "travel" }
   ];
 
   function label(key) {
@@ -26,6 +26,7 @@
       var isFunctional = !!(item.open || item.href);
       var el = document.createElement(item.href ? "a" : isFunctional ? "button" : "div");
       el.className = "desktop-icon" + (isFunctional ? " functional" : "");
+      el.dataset.iconKey = item.key; // js/dragicons.js uses this to spot "My Computer" for the bin easter egg
       if (item.href) {
         el.href = item.href;
       } else if (isFunctional) {
@@ -34,11 +35,12 @@
         el.setAttribute("aria-hidden", "true");
       }
       el.innerHTML =
-        '<img src="' + item.icon + '" alt="">' +
+        '<img src="' + item.icon + '" alt="" draggable="false">' +
         '<span class="desktop-icon-label">' + label(item.key) + "</span>";
-      if (item.open) {
+      if (isFunctional) {
         el.addEventListener("click", function () {
-          if (window.openAppWindow) window.openAppWindow(item.open);
+          if (window.SFX) window.SFX.click();
+          if (item.open && window.openAppWindow) window.openAppWindow(item.open);
         });
       }
       root.appendChild(el);

@@ -21,7 +21,7 @@
           "Reemplazá esto editando una copia de este JSON con viajes y fotos reales, y después corré tools/encrypt_travel.js con la respuesta real para regenerar js/traveldata.js."
         ]
       },
-      "images": ["placeholder-trip.png"]
+      "images": ["osaka_castle.JPG"]
     }
   ]
 }

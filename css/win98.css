@@ -76,6 +76,28 @@ a:visited{ color:#551a8b; }
   flex:1;
   overflow-y:auto;
 }
+/* Minesweeper/Solitaire boards don't stretch to fill a wide maximized window -
+   they'd just look enormous and lopsided pinned to the top-left - so center
+   them in the extra space instead. */
+.window.maximized[data-window="minesweeper"] .window-body,
+.window.maximized[data-window="solitaire"] .window-body{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.window.maximized[data-window="minesweeper"] .ms-board,
+.window.maximized[data-window="minesweeper"] .ms-toolbar,
+.window.maximized[data-window="minesweeper"] .ms-levels{
+  width:100%;
+  max-width:640px;
+}
+.window.maximized[data-window="solitaire"] .sol-toolbar,
+.window.maximized[data-window="solitaire"] .sol-top-row,
+.window.maximized[data-window="solitaire"] .sol-tableau{
+  width:100%;
+  max-width:900px;
+}
 
 .title-bar{
   background:linear-gradient(90deg,var(--w98-titlebar),var(--w98-titlebar-2));
@@ -241,7 +263,7 @@ hr.divider{
   [data-window="mycomputer"]{
     position:fixed;
     right:18px;
-    bottom:46px; /* same spot as .desktop-trash - opening this covers it, same as a real desktop */
+    bottom:140px; /* stacked above .desktop-trash instead of covering it */
     width:420px;
     margin:0;
     z-index:55;
@@ -250,7 +272,7 @@ hr.divider{
     position:fixed;
     top:24px;
     left:120px; /* clears the desktop icon column instead of sitting under it */
-    width:460px;
+    width:420px; /* a bit of margin before the centered content column */
     margin:0;
     z-index:55;
   }
@@ -261,6 +283,21 @@ hr.divider{
     width:490px;
     margin:0;
     z-index:55;
+  }
+  /* js/dragwindows.js - grab any of these four by their title bar to move
+     them; only wired up at this same breakpoint, where they're actually
+     position:fixed instead of stacked in normal flow. */
+  [data-window="mycomputer"] .title-bar,
+  [data-window="minesweeper"] .title-bar,
+  [data-window="solitaire"] .title-bar,
+  [data-window="face"] .title-bar{
+    cursor:grab;
+  }
+  [data-window="mycomputer"].dragging .title-bar,
+  [data-window="minesweeper"].dragging .title-bar,
+  [data-window="solitaire"].dragging .title-bar,
+  [data-window="face"].dragging .title-bar{
+    cursor:grabbing;
   }
 }
 .face-hint{
@@ -636,6 +673,34 @@ hr.divider{
   z-index:100;
 }
 .overlay[hidden]{ display:none; }
+
+/* ===== Easter egg: drag "My Computer" onto the Recycle Bin ============= */
+.bsod-overlay{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:#0000aa;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  font-family:"Courier New",monospace;
+  cursor:default;
+}
+.bsod-overlay[hidden]{ display:none; }
+.bsod-text{
+  white-space:pre-wrap;
+  font-size:18px;
+  line-height:1.6;
+  max-width:640px;
+  margin:0 0 24px;
+}
+.bsod-hint{
+  font-size:18px;
+  margin:0;
+}
 .modal-window{
   width:min(560px,100%);
   margin-top:20px;
@@ -797,29 +862,90 @@ hr.divider{
   margin-top:6px;
 }
 
+/* ===== Travel Blog content: a 90s GeoCities-style personal homepage behind
+   the encrypted lock screen above - starfield background, Comic Sans/Times
+   headers, a scrolling marquee welcome banner, dashed borders. The lock
+   screen itself keeps its plain terminal look; this is the "reveal". ===== */
 .travel-content{
   display:flex;
   flex-direction:column;
   gap:22px;
+  margin:-16px;
+  padding:16px;
+  background-color:#0b0b3b;
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, #fff, transparent),
+    radial-gradient(1px 1px at 25% 65%, #fff, transparent),
+    radial-gradient(1px 1px at 40% 15%, #fff, transparent),
+    radial-gradient(2px 2px at 55% 80%, #fff, transparent),
+    radial-gradient(1px 1px at 70% 35%, #fff, transparent),
+    radial-gradient(1px 1px at 85% 55%, #fff, transparent),
+    radial-gradient(2px 2px at 95% 25%, #fff, transparent),
+    radial-gradient(1px 1px at 15% 90%, #fff, transparent),
+    radial-gradient(1px 1px at 60% 5%, #fff, transparent),
+    linear-gradient(160deg, #1a0a3d, #0b0b3b 55%, #06061f);
+  background-repeat:repeat;
+  background-size:200px 200px, 200px 200px, 200px 200px, 200px 200px,
+    200px 200px, 200px 200px, 200px 200px, 200px 200px, 200px 200px, cover;
+}
+.travel-marquee{
+  overflow:hidden;
+  white-space:nowrap;
+  background:#000;
+  border:2px dashed #ffcc00;
+  padding:4px 0;
+}
+.travel-marquee span{
+  display:inline-block;
+  padding-left:100%;
+  animation:travel-marquee-scroll 14s linear infinite;
+  font-family:"Comic Sans MS","Comic Sans",cursive;
+  font-size:14px;
+  color:#39ff14;
+}
+@keyframes travel-marquee-scroll{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(-100%); }
+}
+@media (prefers-reduced-motion:reduce){
+  .travel-marquee span{ animation:none; padding-left:0; }
+}
+.travel-card{
+  background:#fffdf0;
+  border:3px dashed #ff66cc;
+  border-radius:6px;
+  padding:14px 16px;
+  box-shadow:0 0 0 3px #06061f, 0 0 14px rgba(255,255,255,0.25);
 }
 .travel-card h2{
-  color:#000080;
+  font-family:"Comic Sans MS","Comic Sans",cursive;
+  font-size:22px;
   margin:0 0 4px;
+  color:#cc0066;
+  text-shadow:1px 1px 0 #ffcc00, 2px 2px 0 #0000cc;
 }
 .travel-meta{
+  font-family:"Times New Roman",Times,serif;
+  font-style:italic;
   font-size:12px;
   color:#333;
   margin:0 0 10px;
 }
+.travel-card p:not(.travel-meta){
+  font-family:"Times New Roman",Times,serif;
+  font-size:15px;
+  line-height:1.5;
+  color:#101040;
+}
 .travel-image-wrap{
   margin-bottom:10px;
+  text-align:center;
 }
 .travel-canvas{
   max-width:100%;
-  border-top:2px solid var(--w98-face-darker);
-  border-left:2px solid var(--w98-face-darker);
-  border-right:2px solid var(--w98-face-lighter);
-  border-bottom:2px solid var(--w98-face-lighter);
+  border:4px ridge #c0c0c0;
+  outline:2px solid #000;
+  outline-offset:2px;
 }
 
 /* ===== Minesweeper ===== */
@@ -1323,3 +1449,141 @@ hr.divider{
   .version-badge{ padding:3px 5px; font-size:10px; }
   .lang-btn{ padding:3px 5px; font-size:10px; }
 }
+
+/* ===== Chat (Firebase Auth + Firestore, see js/chat.js) ===== */
+.chat-body{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.chat-readonly-hint{
+  margin:0;
+  font-size:11px;
+  color:#404040;
+}
+.chat-messages{
+  flex:1;
+  min-height:220px;
+  max-height:360px;
+  overflow-y:auto;
+  background:#fff;
+  border-top:2px solid var(--w98-face-darker);
+  border-left:2px solid var(--w98-face-darker);
+  border-right:2px solid var(--w98-face-lighter);
+  border-bottom:2px solid var(--w98-face-lighter);
+  padding:8px;
+}
+.window.maximized .chat-messages{
+  max-height:none;
+}
+.chat-line{
+  margin:0 0 8px;
+  font-size:12px;
+  line-height:1.4;
+}
+.chat-author{
+  color:#000080;
+  font-weight:bold;
+}
+.chat-time{
+  color:#888;
+  font-size:10px;
+}
+.chat-error{ color:#a00; }
+
+.chat-send-form{
+  display:flex;
+  gap:6px;
+}
+.chat-send-form[hidden],
+.chat-session[hidden],
+.chat-verify[hidden]{ display:none; }
+.chat-send-form input{
+  flex:1;
+  padding:4px 6px;
+  border-top:2px solid var(--w98-face-darker);
+  border-left:2px solid var(--w98-face-darker);
+  border-right:2px solid var(--w98-face-lighter);
+  border-bottom:2px solid var(--w98-face-lighter);
+  font-family:inherit;
+  font-size:13px;
+}
+
+.chat-session{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:12px;
+}
+
+.chat-verify{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  align-items:flex-start;
+  font-size:12px;
+  background:var(--w98-face-light);
+  padding:8px;
+}
+
+.chat-auth-tabs{
+  display:flex;
+  gap:4px;
+  margin-bottom:6px;
+}
+.chat-auth-tabs .btn98.selected{
+  border-top:2px solid var(--w98-face-darker);
+  border-left:2px solid var(--w98-face-darker);
+  border-right:2px solid var(--w98-face-lighter);
+  border-bottom:2px solid var(--w98-face-lighter);
+}
+.chat-auth-form{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  max-width:260px;
+}
+.chat-auth-form[hidden]{ display:none; }
+.chat-auth-form input{
+  padding:4px 6px;
+  border-top:2px solid var(--w98-face-darker);
+  border-left:2px solid var(--w98-face-darker);
+  border-right:2px solid var(--w98-face-lighter);
+  border-bottom:2px solid var(--w98-face-lighter);
+  font-family:inherit;
+  font-size:13px;
+}
+.chat-auth-status{
+  min-height:14px;
+  font-size:11px;
+  color:#a00;
+  margin:6px 0 0;
+}
+
+/* A lighthearted nod to "Cap says language!" without using any actual
+   Marvel artwork - just a shield emoji and text. */
+.chat-cap-popup{
+  position:fixed;
+  right:20px;
+  bottom:70px;
+  z-index:500;
+  background:#0b2a6b;
+  color:#fff;
+  padding:10px 16px;
+  border-radius:6px;
+  border:2px solid #b71c1c;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);
+  transform:translateY(20px);
+  opacity:0;
+  transition:transform 0.25s ease, opacity 0.25s ease;
+}
+.chat-cap-popup[hidden]{ display:none; }
+.chat-cap-popup.show{
+  transform:translateY(0);
+  opacity:1;
+}
+.chat-cap-shield{ font-size:20px; }

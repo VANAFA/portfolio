@@ -31,6 +31,7 @@
         '<span class="icon-glyph"><img src="' + escapeHtml(project.glyph || "images/icons/directory_closed-32.png") + '" alt=""></span>' +
         '<span class="icon-label">' + escapeHtml(text.title || project.id) + "</span>";
       btn.addEventListener("click", function () {
+        if (window.SFX) window.SFX.click();
         openModal(project);
       });
       grid.appendChild(btn);
@@ -100,6 +101,20 @@
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && !overlay.hidden) closeModal();
   });
+
+  var travelLink = document.querySelector(".travel-link-row a");
+  if (travelLink) {
+    travelLink.addEventListener("click", function (e) {
+      // Same progressive enhancement as the blog link above: plain click opens
+      // the window in place; modifier/middle clicks still follow the real
+      // travel.html href so the page can be opened in a new tab or shared.
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      if (!window.openAppWindow) return;
+      e.preventDefault();
+      if (window.SFX) window.SFX.click();
+      window.openAppWindow("travel");
+    });
+  }
 
   document.addEventListener("langchange", function () {
     renderGrid();

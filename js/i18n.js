@@ -21,8 +21,6 @@
       "win.mycomputer": "My Computer",
       "tb.mycomputer": "My Computer",
       "desktop.mycomputer": "My Computer",
-      "desktop.mydocs": "My Documents",
-      "desktop.network": "Network Neighborhood",
       "desktop.travel": "Travel Blog",
       "mycomputer.hint": "Pick a desktop background. All images where taken by me. Yes, I like photography.",
       "win.minesweeper": "Minesweeper",
@@ -48,6 +46,8 @@
       "quest.done": "Thanks. Exactly what I needed.",
       "quest.doneBurp": "Buuurp! Pardon me.",
       "trash.label": "Recycle Bin",
+      "bsod.text": "NALLIB.AR\n\nA fatal exception 0E has occurred at 0028:C0011E36 while dragging\nMY_COMPUTER.EXE onto RECYCLE_BIN.DLL.\n\n*  Press any key to terminate this desktop.\n*  Press any key again to restart nallib.ar. You will lose any\n   unsaved changes in all open windows.",
+      "bsod.hint": "Press any key to continue _",
       "win.projects": "My Projects",
       "win.contact": "Contact",
       "win.blog": "Project Blog",
@@ -55,7 +55,6 @@
       "tb.about": "About Me",
       "tb.projects": "My Projects",
       "tb.contact": "Contact",
-      "tb.blog": "Project Blog",
       "tb.travel": "Travel Blog",
       "travel.question": "Security question: what brand of watch do I wear?",
       "travel.hint": "This is real client-side encryption, not a trick — only someone who knows the answer can decrypt it. Ask a friend.",
@@ -63,8 +62,8 @@
       "travel.unlock": "Unlock",
       "travel.checking": "Checking…",
       "travel.wrong": "That's not it.",
-      "travel.back": "« Back to the desktop",
       "travel.linkText": "Encrypted Travel Blog →",
+      "travel.marquee": "🌴 Welcome to my Travel Page!!! 🌴 ~*~ Best viewed in Netscape Navigator at 800x600 ~*~ Thanks for stopping by!! 🌴",
       "about.tagline": "AI Engineering student · Buenos Aires, Argentina",
       "about.p1":
         "Fourth-year Artificial Intelligence Engineering student at Universidad de San Andrés, with hands-on project experience in computer vision, deep learning, and natural language models (pre-training and fine-tuning). I like roles that mix research with practical, applied AI development — and side projects that let me build the whole stack myself.",
@@ -84,7 +83,28 @@
       "blog.tryLive": "Try it live",
       "start": "Start",
       "lang.button": "Español",
-      "lang.title": "Cambiar a español"
+      "lang.title": "Cambiar a español",
+      "win.chat": "Chat",
+      "tb.chat": "Chat",
+      "chat.placeholder": "Type a message…",
+      "chat.send": "Send",
+      "chat.signIn": "Sign in",
+      "chat.signUp": "Sign up",
+      "chat.username": "Username",
+      "chat.email": "Email",
+      "chat.password": "Password (6+ characters)",
+      "chat.verifyHint": "Check your email and click the verification link, then come back here to chat.",
+      "chat.resendVerify": "Resend verification email",
+      "chat.signOut": "Sign out",
+      "chat.working": "Working…",
+      "chat.errNoUsername": "Pick a username first.",
+      "chat.errInvalidEmail": "That email doesn't look right.",
+      "chat.errEmailInUse": "That email already has an account - try signing in instead.",
+      "chat.errWeakPassword": "Password needs to be at least 6 characters.",
+      "chat.errBadCredentials": "Wrong email or password.",
+      "chat.errTooMany": "Too many tries - wait a bit and try again.",
+      "chat.language": "Language!",
+      "chat.readOnlyHint": "Anyone can read this chat. Sign in or sign up to post."
     },
     es: {
       "page.title": "Valentino Nallib Fadel",
@@ -96,8 +116,6 @@
       "win.mycomputer": "Mi PC",
       "tb.mycomputer": "Mi PC",
       "desktop.mycomputer": "Mi PC",
-      "desktop.mydocs": "Mis Documentos",
-      "desktop.network": "Entorno de Red",
       "desktop.travel": "Blog de Viajes",
       "mycomputer.hint": "Elegí un fondo de escritorio. Todas las fotos las saqué yo. Sí, también me gusta sacar fotos.",
       "win.minesweeper": "Buscaminas",
@@ -123,6 +141,8 @@
       "quest.done": "Gracias, capo.",
       "quest.doneBurp": "¡Buuurp! Disculpá.",
       "trash.label": "Papelera",
+      "bsod.text": "NALLIB.AR\n\nSe produjo una excepción fatal 0E en 0028:C0011E36 al arrastrar\nMI_PC.EXE hasta la PAPELERA.DLL.\n\n*  Presioná cualquier tecla para cerrar este escritorio.\n*  Volvé a presionar cualquier tecla para reiniciar nallib.ar. Vas a\n   perder los cambios sin guardar en todas las ventanas abiertas.",
+      "bsod.hint": "Presioná cualquier tecla para continuar _",
       "win.projects": "Mis Proyectos",
       "win.contact": "Contacto",
       "win.blog": "Blog del Proyecto",
@@ -136,10 +156,9 @@
       "travel.unlock": "Desbloquear",
       "travel.checking": "Verificando…",
       "travel.wrong": "No es esa.",
-      "travel.back": "« Volver al escritorio",
       "travel.linkText": "Blog de Viajes Encriptado →",
+      "travel.marquee": "🌴 ¡Bienvenido a mi página de viajes!!! 🌴 ~*~ Mejor vista en Netscape Navigator a 800x600 ~*~ ¡Gracias por venir!! 🌴",
       "tb.contact": "Contacto",
-      "tb.blog": "Blog",
       "about.tagline": "Estudiante de Ingeniería en IA · Buenos Aires, Argentina",
       "about.p1":
         "Estudiante de cuarto año de Ingeniería en Inteligencia Artificial en la Universidad de San Andrés, con experiencia práctica en proyectos de visión por computadora, deep learning y modelos de lenguaje natural (pre-entrenamiento y fine-tuning). Me interesan los roles que mezclan investigación con desarrollo aplicado, y los proyectos propios donde puedo armar todo el stack yo mismo.",
@@ -159,7 +178,28 @@
       "blog.tryLive": "Probalo en vivo",
       "start": "Inicio",
       "lang.button": "English",
-      "lang.title": "Switch to English"
+      "lang.title": "Switch to English",
+      "win.chat": "Chat",
+      "tb.chat": "Chat",
+      "chat.placeholder": "Escribí un mensaje…",
+      "chat.send": "Enviar",
+      "chat.signIn": "Ingresar",
+      "chat.signUp": "Registrarse",
+      "chat.username": "Usuario",
+      "chat.email": "Mail",
+      "chat.password": "Contraseña (6+ caracteres)",
+      "chat.verifyHint": "Revisá tu mail y hacé clic en el link de verificación, después volvé acá para chatear.",
+      "chat.resendVerify": "Reenviar mail de verificación",
+      "chat.signOut": "Salir",
+      "chat.working": "Un momento…",
+      "chat.errNoUsername": "Elegí un usuario primero.",
+      "chat.errInvalidEmail": "Ese mail no parece válido.",
+      "chat.errEmailInUse": "Ese mail ya tiene una cuenta - probá ingresar en vez de registrarte.",
+      "chat.errWeakPassword": "La contraseña necesita al menos 6 caracteres.",
+      "chat.errBadCredentials": "Mail o contraseña incorrectos.",
+      "chat.errTooMany": "Demasiados intentos - esperá un poco y probá de nuevo.",
+      "chat.language": "¡Lenguaje!",
+      "chat.readOnlyHint": "Cualquiera puede leer este chat. Para escribir, ingresá o registrate."
     }
   };
 
@@ -225,6 +265,7 @@
   var btn = document.getElementById("lang-btn");
   if (btn) {
     btn.addEventListener("click", function () {
+      if (window.SFX) window.SFX.click();
       setLang(current === "en" ? "es" : "en");
     });
   }

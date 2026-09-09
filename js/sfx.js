@@ -120,6 +120,11 @@
         setTimeout(function () { noise(0.05, 1800 + Math.random() * 1200, 4, 0.05); }, i * 35);
       }
     },
+    // A generic UI click - desktop icons, window buttons, taskbar entries.
+    click: function () {
+      tone(1000, 700, 0.035, "square", 0.035);
+      noise(0.02, 3000, 3, 0.03);
+    },
     // A short rising jingle for a win.
     win: function () {
       var notes = [523, 659, 784, 1047];
@@ -175,6 +180,7 @@
     place: function () { play("place"); },
     invalid: function () { play("invalid"); },
     shuffle: function () { play("shuffle"); },
-    win: function () { play("win"); }
+    win: function () { play("win"); },
+    click: function () { play("click"); }
   };
 })();

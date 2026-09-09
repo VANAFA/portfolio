@@ -19,8 +19,6 @@
       </div>
     </div>
     <div class="window-body" id="travel-root">
-      <p class="breadcrumb"><a href="index.html" data-i18n="travel.back">« Back to the desktop</a></p>
-
       <div class="travel-lock" id="travel-lock">
         <img class="travel-lock-icon" src="images/icons/file_sorted_lock-1.png?v=ee6593c8" alt="">
         <p class="travel-question" data-i18n="travel.question">Security question: what brand of watch do I wear?</p>
@@ -115,7 +113,7 @@
     </div>
   </section>
 
-  <section class="window raised" data-window="blog" data-taskbar-key="tb.blog" hidden>
+  <section class="window raised" data-window="blog" data-no-taskbar hidden>
     <div class="title-bar">
       <div class="title-bar-text"><img class="icon-inline" src="images/icons/notepad-16.png?v=e89254bd" alt=""> <span data-i18n="win.blog">Project Blog</span></div>
       <div class="title-bar-controls">
@@ -126,6 +124,56 @@
     </div>
     <div class="window-body" id="blog-root">
       <p>…</p>
+    </div>
+  </section>
+
+  <section class="window raised" data-window="chat" data-taskbar-key="tb.chat" hidden>
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/msn-16.png" alt=""> <span data-i18n="win.chat">Chat</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body chat-body" id="chat-root">
+      <p class="chat-readonly-hint" id="chat-readonly-hint" data-i18n="chat.readOnlyHint">Anyone can read this chat. Sign in or sign up to post.</p>
+      <div class="chat-messages" id="chat-messages" aria-live="polite"></div>
+
+      <form id="chat-send-form" class="chat-send-form" hidden>
+        <input type="text" id="chat-input" maxlength="500" autocomplete="off" data-i18n-placeholder="chat.placeholder" placeholder="Type a message…">
+        <button type="submit" class="btn98" data-i18n="chat.send">Send</button>
+      </form>
+
+      <div class="chat-session" id="chat-session" hidden>
+        <span id="chat-session-name"></span>
+        <button type="button" class="btn98" id="chat-signout" data-i18n="chat.signOut">Sign out</button>
+      </div>
+
+      <div class="chat-verify" id="chat-verify" hidden>
+        <p data-i18n="chat.verifyHint">Check your email and click the verification link, then come back here to chat.</p>
+        <button type="button" class="btn98" id="chat-resend-verify" data-i18n="chat.resendVerify">Resend verification email</button>
+        <button type="button" class="btn98" id="chat-signout-unverified" data-i18n="chat.signOut">Sign out</button>
+      </div>
+
+      <div class="chat-auth" id="chat-auth">
+        <div class="chat-auth-tabs">
+          <button type="button" class="btn98 selected" id="chat-tab-signin" data-i18n="chat.signIn">Sign in</button>
+          <button type="button" class="btn98" id="chat-tab-signup" data-i18n="chat.signUp">Sign up</button>
+        </div>
+        <form id="chat-signin-form" class="chat-auth-form">
+          <input type="email" id="chat-signin-email" data-i18n-placeholder="chat.email" placeholder="Email" autocomplete="email" required>
+          <input type="password" id="chat-signin-password" data-i18n-placeholder="chat.password" placeholder="Password" autocomplete="current-password" required>
+          <button type="submit" class="btn98" data-i18n="chat.signIn">Sign in</button>
+        </form>
+        <form id="chat-signup-form" class="chat-auth-form" hidden>
+          <input type="text" id="chat-signup-username" data-i18n-placeholder="chat.username" placeholder="Username" maxlength="24" required>
+          <input type="email" id="chat-signup-email" data-i18n-placeholder="chat.email" placeholder="Email" autocomplete="email" required>
+          <input type="password" id="chat-signup-password" data-i18n-placeholder="chat.password" placeholder="Password" autocomplete="new-password" required minlength="6">
+          <button type="submit" class="btn98" data-i18n="chat.signUp">Sign up</button>
+        </form>
+        <p class="chat-auth-status" id="chat-auth-status"></p>
+      </div>
     </div>
   </section>
 
@@ -265,6 +313,16 @@
     </div>
   </div>
 
+  <div class="chat-cap-popup" id="chat-cap-popup" hidden role="alert">
+    <span class="chat-cap-shield" aria-hidden="true">🛡️</span>
+    <span data-i18n="chat.language">Language!</span>
+  </div>
+
+  <div class="bsod-overlay" id="bsod-overlay" hidden role="alert">
+    <pre class="bsod-text" data-i18n="bsod.text">A fatal exception has occurred.</pre>
+    <p class="bsod-hint" data-i18n="bsod.hint">Press any key to continue.</p>
+  </div>
+
   <img class="chipa" id="chipa" src="images/chipa.png?v=9d1a121c" alt="Chipa" draggable="false" hidden>
 
   <div class="desktop-icons" id="desktop-icons"></div>
@@ -291,9 +349,12 @@
   <script src="js/travel.js?v=5d9fc46"></script>
   <script src="js/main.js?v=5d9fc46"></script>
   <script src="js/windows.js?v=5d9fc46"></script>
+  <script src="js/dragwindows.js?v=5d9fc46"></script>
   <script src="js/pinball.js?v=5d9fc46"></script>
   <script src="js/blog.js?v=5d9fc46"></script>
   <script src="js/desktopicons.js?v=5d9fc46"></script>
+  <script src="js/dragicons.js?v=5d9fc46"></script>
+  <script type="module" src="js/chat.js?v=5d9fc46"></script>
   <script src="js/mycomputer.js?v=5d9fc46"></script>
   <script src="js/minesweeper.js?v=5d9fc46"></script>
   <script src="js/solitaire.js?v=5d9fc46"></script>

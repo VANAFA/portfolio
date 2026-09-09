@@ -1,0 +1,85 @@
+rules_version = '2';
+
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+//
+// Collection: chat_messages
+// Document ID: auto-generated
+// Fields:
+//   - text: string (required, 1-500 chars) - the message body. Basic
+//     English/Spanish profanity is censored client-side (js/chat.js)
+//     BEFORE the write - Spark plan has no Cloud Functions, so there is
+//     no server-side re-check of the text content itself.
+//   - authorUid: string (required, immutable) - must equal the writer's
+//     own auth uid. This is the one identity fact these rules truly
+//     guarantee; authorName below is not.
+//   - authorName: string (required, 1-24 chars) - the display name shown
+//     next to the message. NOT cross-checked against the account's real
+//     display name (avoids a signup race where a fresh ID token hasn't
+//     picked up the profile update yet), so treat it as flavor text, not
+//     a verified identity claim - authorUid is the real identity.
+//   - createdAt: timestamp (required, immutable) - must equal the
+//     server's request time, so clients can't back- or post-date messages.
+// Messages are permanent once posted: no update or delete from clients.
+//
+// Collection: leaderboard_scores
+// Not implemented yet - denied entirely below until that feature is built.
+//
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isAuthenticated() && request.auth.token.email_verified == true;
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function isValidChatMessage(data) {
+      return hasOnlyAllowedFields(['text', 'authorUid', 'authorName', 'createdAt']) &&
+        hasRequiredFields(['text', 'authorUid', 'authorName', 'createdAt']) &&
+        data.text is string && data.text.size() > 0 && data.text.size() <= 500 &&
+        data.authorUid is string && data.authorUid == request.auth.uid &&
+        data.authorName is string && data.authorName.size() > 0 && data.authorName.size() <= 24 &&
+        data.createdAt == request.time;
+    }
+
+    // ===============================================================
+    // chat_messages - public read (this is meant to be an open chat
+    // anyone can read without an account), write requires a signed-in,
+    // email-verified user posting under their own uid. No edits or
+    // deletes once posted.
+    // ===============================================================
+    match /chat_messages/{messageId} {
+      allow read: if true;
+      allow create: if isVerified() && isValidChatMessage(request.resource.data);
+      allow update, delete: if false;
+    }
+
+    // Not built yet - default deny.
+    match /leaderboard_scores/{scoreId} {
+      allow read, write: if false;
+    }
+
+    // Default deny for anything else.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

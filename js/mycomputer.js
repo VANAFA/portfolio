@@ -25,6 +25,7 @@
         : '<span class="bg-swatch"></span>';
       btn.innerHTML = preview + '<span class="bg-label">' + escapeHtml(bg[lang] || bg.en || bg.id) + "</span>";
       btn.addEventListener("click", function () {
+        if (window.SFX) window.SFX.click();
         if (window.setBackground) window.setBackground(bg.id);
       });
       grid.appendChild(btn);

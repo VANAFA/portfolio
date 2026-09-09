@@ -194,7 +194,9 @@
 
   function renderUnlocked() {
     var L = lang();
-    var html = plaintextCache
+    var marqueeHtml =
+      '<div class="travel-marquee"><span>' + escapeAttr(t("travel.marquee")) + "</span></div>";
+    var html = marqueeHtml + plaintextCache
       .map(function (entry) {
         var imgsHtml = entry.imageUrls
           .map(function (url, idx) {

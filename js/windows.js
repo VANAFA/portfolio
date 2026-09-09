@@ -55,6 +55,16 @@
 
   function toggleMaximize(win) {
     win.classList.toggle("maximized");
+    if (win.classList.contains("maximized")) {
+      // A dragged window has inline left/top pinning it in place - that would
+      // fight with .window.maximized's own inset, so clear it. Restoring
+      // drops back to the default pinned-corner position, not wherever it
+      // was dragged to; simple, and dragging again after is still one grab.
+      win.style.left = "";
+      win.style.top = "";
+      win.style.right = "";
+      win.style.bottom = "";
+    }
   }
 
   document.addEventListener("langchange", function () { relabelButtons(); });
@@ -62,29 +72,39 @@
   windowEls.forEach(function (win) {
     var id = win.dataset.window;
 
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "btn98 taskbar-btn";
-    var icon = iconFor(win);
-    btn.innerHTML =
-      (icon ? '<img class="icon-inline" src="' + icon + '" alt="">' : "") +
-      '<span class="taskbar-label">' + titleFor(win) + "</span>";
-    btn.addEventListener("click", function () {
-      if (win.hidden) {
-        showWindow(win);
-      } else {
-        hideWindow(win);
-      }
-    });
-    taskbarWindows.appendChild(btn);
-    buttons[id] = btn;
-    // Reflect the window's actual starting state (most start visible; a window
-    // like "My Computer" starts hidden until opened from its desktop icon).
-    updateButton(win);
+    // A window like "blog" isn't a standalone app - it only ever shows
+    // something after a project's "To know more" opens it, so a permanent
+    // taskbar button for it is just a dead entry that shows nothing when
+    // clicked cold. Its own title-bar controls (close/minimize/maximize)
+    // still work below either way.
+    if (!win.hasAttribute("data-no-taskbar")) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn98 taskbar-btn";
+      var icon = iconFor(win);
+      btn.innerHTML =
+        (icon ? '<img class="icon-inline" src="' + icon + '" alt="">' : "") +
+        '<span class="taskbar-label">' + titleFor(win) + "</span>";
+      btn.addEventListener("click", function () {
+        if (window.SFX) window.SFX.click();
+        if (win.hidden) {
+          showWindow(win);
+        } else {
+          hideWindow(win);
+        }
+      });
+      taskbarWindows.appendChild(btn);
+      buttons[id] = btn;
+      // Reflect the window's actual starting state (most start visible; a
+      // window like "My Computer" starts hidden until opened from its
+      // desktop icon).
+      updateButton(win);
+    }
 
     var controls = win.querySelectorAll(".title-bar-controls button[data-action]");
     controls.forEach(function (ctrlBtn) {
       ctrlBtn.addEventListener("click", function () {
+        if (window.SFX) window.SFX.click();
         var action = ctrlBtn.dataset.action;
         if (action === "close" || action === "minimize") {
           hideWindow(win);

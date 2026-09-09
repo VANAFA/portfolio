@@ -281,6 +281,14 @@
           el.addEventListener("pointercancel", function () { clearHold(); el.classList.remove("pressing"); });
           el.addEventListener("contextmenu", function (e) {
             e.preventDefault();
+            // On a long enough hold, some mobile browsers fire their own native
+            // contextmenu on top of our pointer-based long-press below - without
+            // this guard that's a second handleFlag() call right after the first,
+            // toggling the flag straight back off.
+            if (longPressFired) {
+              longPressFired = false;
+              return;
+            }
             handleFlag(rr, cc);
           });
         })(r, c, el);
