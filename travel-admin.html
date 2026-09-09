@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Travel Blog Editor</title>
+<link rel="icon" type="image/x-icon" href="images/icons/computer.ico?v=40320a87">
+<link rel="stylesheet" href="css/win98.css">
+</head>
+<body>
+
+  <section class="window raised admin-window">
+    <div class="title-bar">
+      <div class="title-bar-text">Travel Blog Editor</div>
+    </div>
+    <div class="window-body">
+      <p class="admin-warning">
+        Not linked from the site anywhere - reachable only if you know this URL. That's
+        convenience, not the real access control: the real gate is step 4 below, which needs a
+        real GitHub personal access token with write access to the repo. Anyone who finds this
+        page can preview/edit a copy locally and download a file; they can't publish it here
+        without your token. English-only - it's a tool for you, not a visitor-facing page.
+      </p>
+
+      <fieldset class="admin-section">
+        <legend>1. Load existing trips (optional)</legend>
+        <p class="admin-hint">Loads and decrypts what's currently live in js/traveldata.js, so you can edit it instead of starting over. Skip this to write brand-new trips from scratch.</p>
+        <div class="admin-row">
+          <label for="admin-load-answer">Current site passphrase</label>
+          <input type="password" id="admin-load-answer" autocomplete="off">
+          <button type="button" class="btn98" id="admin-load-btn">Load &amp; decrypt</button>
+          <button type="button" class="btn98" id="admin-fresh-btn">Start fresh</button>
+        </div>
+        <p class="admin-status" id="admin-load-status"></p>
+      </fieldset>
+
+      <fieldset class="admin-section" id="admin-editor" hidden>
+        <legend>2. Trips</legend>
+        <div id="admin-trips"></div>
+        <button type="button" class="btn98" id="admin-add-trip">+ Add trip</button>
+
+        <hr class="divider">
+
+        <div class="admin-row">
+          <label for="admin-answer">Passphrase to publish with</label>
+          <input type="text" id="admin-answer" autocomplete="off">
+        </div>
+        <p class="admin-hint">Same as what you loaded with, or change it to rotate the passphrase - everyone with the old answer loses access once this is published.</p>
+
+        <hr class="divider">
+        <p><strong>3. Build</strong></p>
+        <button type="button" class="btn98" id="admin-build-btn">Build encrypted js/traveldata.js</button>
+        <p class="admin-status" id="admin-build-status"></p>
+        <textarea id="admin-output" class="admin-output" readonly rows="8" hidden></textarea>
+        <a id="admin-download" class="btn98" hidden download="traveldata.js">Download traveldata.js</a>
+
+        <hr class="divider">
+        <fieldset class="admin-section">
+          <legend>4. Push straight to GitHub (optional)</legend>
+          <div class="admin-row">
+            <label for="gh-token">Personal access token</label>
+            <input type="password" id="gh-token" autocomplete="off">
+          </div>
+          <div class="admin-row">
+            <label><input type="checkbox" id="gh-remember"> Remember token in this browser (localStorage, never sent anywhere but api.github.com)</label>
+          </div>
+          <div class="admin-row">
+            <label for="gh-owner">Owner</label>
+            <input type="text" id="gh-owner" value="VANAFA">
+          </div>
+          <div class="admin-row">
+            <label for="gh-repo">Repo</label>
+            <input type="text" id="gh-repo" value="portfolio">
+          </div>
+          <div class="admin-row">
+            <label for="gh-branch">Branch</label>
+            <input type="text" id="gh-branch" value="main">
+          </div>
+          <div class="admin-row">
+            <label for="gh-path">Path in repo</label>
+            <input type="text" id="gh-path" value="js/traveldata.js">
+          </div>
+          <button type="button" class="btn98" id="gh-push-btn">Commit &amp; push</button>
+          <p class="admin-status" id="gh-status"></p>
+        </fieldset>
+      </fieldset>
+    </div>
+  </section>
+
+  <style>
+    body{ padding:24px 16px; }
+    .admin-window{ max-width:900px; }
+    .admin-warning{ background:#ffffcc; border:2px solid #808000; padding:8px; font-size:12px; }
+    .admin-section{ border:2px groove var(--w98-face); margin:14px 0; padding:10px; }
+    .admin-hint{ font-size:11px; color:#404040; margin:2px 0 8px; }
+    .admin-row{ display:flex; align-items:center; gap:8px; margin:6px 0; flex-wrap:wrap; }
+    .admin-row label{ min-width:170px; }
+    .admin-row input[type="text"], .admin-row input[type="password"], .admin-row input[type="date"]{
+      flex:1; min-width:160px; padding:4px 6px;
+      border-top:2px solid var(--w98-face-darker); border-left:2px solid var(--w98-face-darker);
+      border-right:2px solid var(--w98-face-lighter); border-bottom:2px solid var(--w98-face-lighter);
+      font-family:inherit; font-size:13px;
+    }
+    .admin-output{ width:100%; box-sizing:border-box; font-family:"Courier New",monospace; font-size:11px; margin:8px 0; }
+    .admin-trip{ border:2px ridge var(--w98-face); padding:10px; margin-bottom:14px; background:var(--w98-face-light); }
+    .admin-trip-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+    .admin-block{ background:#fff; border:1px solid var(--w98-face-dark); padding:8px; margin-bottom:8px; }
+    .admin-block-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:11px; color:#404040; }
+    .admin-block textarea{ width:100%; box-sizing:border-box; font-family:inherit; font-size:13px; padding:4px 6px; margin-bottom:4px; }
+    .admin-block img{ max-width:200px; max-height:150px; display:block; margin-bottom:6px; image-rendering:auto; }
+    .admin-btn-sm{ padding:2px 8px; font-size:11px; }
+    .admin-status{ font-size:12px; min-height:1.2em; }
+    .admin-status.error{ color:#a00; font-weight:bold; }
+    .admin-status.ok{ color:#060; font-weight:bold; }
+  </style>
+
+  <script src="js/traveldata.js"></script>
+  <script src="js/travel-admin.js"></script>
+</body>
+</html>

@@ -11,17 +11,78 @@
         "es": "Ningún Lugar, País de Ejemplo"
       },
       "date": "2026-01-01",
-      "body": {
-        "en": [
-          "This is a placeholder entry so the encrypted travel blog has something real to decrypt while there's no real trip written up yet.",
-          "Replace this by editing a copy of this JSON file with real trips and photos, then running tools/encrypt_travel.js with the real answer to regenerate js/traveldata.js."
-        ],
-        "es": [
-          "Esta es una entrada de ejemplo para que el blog de viajes encriptado tenga algo real para desencriptar mientras todavía no hay ningún viaje real escrito.",
-          "Reemplazá esto editando una copia de este JSON con viajes y fotos reales, y después corré tools/encrypt_travel.js con la respuesta real para regenerar js/traveldata.js."
-        ]
+      "blocks": [
+        {
+          "type": "text",
+          "body": {
+            "en": "This is a placeholder entry so the encrypted travel blog has something real to decrypt while there's no real trip written up yet.",
+            "es": "Esta es una entrada de ejemplo para que el blog de viajes encriptado tenga algo real para desencriptar mientras todavía no hay ningún viaje real escrito."
+          }
+        },
+        {
+          "type": "image",
+          "src": "demo-photo.png",
+          "date": "2026-01-01"
+        },
+        {
+          "type": "text",
+          "body": {
+            "en": "Replace this by copying tools/travel-demo-assets/demo-content.json somewhere outside the repo, filling in real trips (text and photos in whatever order you like, each photo with its own optional date), then running tools/encrypt_travel.js with the real answer - or just use the visual editor at travel-admin.html instead, which writes this exact same format for you and can push straight to GitHub.",
+            "es": "Reemplazá esto copiando tools/travel-demo-assets/demo-content.json fuera del repo, completando viajes reales (texto y fotos en el orden que quieras, cada foto con su propia fecha opcional), y corriendo tools/encrypt_travel.js con la respuesta real - o directamente usá el editor visual en travel-admin.html, que escribe este mismo formato y puede subirlo a GitHub directamente."
+          }
+        }
+      ]
+    },
+    {
+      "id": "demo-trip-2",
+      "title": {
+        "en": "Second Placeholder Trip",
+        "es": "Segundo Viaje de Ejemplo"
       },
-      "images": ["osaka_castle.JPG"]
+      "location": {
+        "en": "Somewhere Else, Demo Country",
+        "es": "Otro Lugar, País de Ejemplo"
+      },
+      "date": "2026-02-15",
+      "blocks": [
+        {
+          "type": "text",
+          "body": {
+            "en": "A second placeholder trip, just to show that multiple trips list here in order (newest first) - each one its own card with its own ordered mix of text and photos.",
+            "es": "Un segundo viaje de ejemplo, solo para mostrar que acá aparecen varios viajes en orden (el más nuevo primero) - cada uno con su propia tarjeta y su propia mezcla ordenada de texto y fotos."
+          }
+        },
+        {
+          "type": "image",
+          "src": "demo-photo.png"
+        }
+      ]
+    },
+    {
+      "id": "demo-trip-japan",
+      "title": {
+        "en": "Osaka, Japan",
+        "es": "Osaka, Japón"
+      },
+      "location": {
+        "en": "Osaka, Japan",
+        "es": "Osaka, Japón"
+      },
+      "date": "2026-03-10",
+      "blocks": [
+        {
+          "type": "text",
+          "body": {
+            "en": "A real photo this time, of Osaka Castle - standing in for what a genuine trip entry looks like, photo and all, until it's replaced with the real writeup.",
+            "es": "Esta vez una foto real, del Castillo de Osaka - representando cómo se ve una entrada de viaje real, foto incluida, hasta que se reemplace por el relato real."
+          }
+        },
+        {
+          "type": "image",
+          "src": "osaka-castle.jpg",
+          "date": "2026-03-10"
+        }
+      ]
     }
   ]
 }

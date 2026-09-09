@@ -9,7 +9,9 @@ import {
   signOut,
   sendEmailVerification,
   updateProfile,
-  onAuthStateChanged
+  onAuthStateChanged,
+  reload,
+  getIdToken
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {
   collection,
@@ -33,6 +35,16 @@ import {
     var div = document.createElement("div");
     div.textContent = str;
     return div.innerHTML;
+  }
+
+  // Classic IM flavor: each screen name gets its own stable color (hash of
+  // the name -> a hue), the way MSN contacts each had their own nickname
+  // color, instead of every line reading in the same navy.
+  function authorColor(name) {
+    var hash = 0;
+    for (var i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+    var hue = hash % 360;
+    return "hsl(" + hue + ", 65%, 32%)";
   }
 
   // ---- basic profanity filter (client-side only - Spark plan has no
@@ -84,32 +96,71 @@ import {
   var authStatus = document.getElementById("chat-auth-status");
 
   // ---- message list (public read, works even signed out) ----
-  var seenFirstSnapshot = false;
+  // Unsubscribed while the tab/window is hidden (see the visibilitychange
+  // handler below) so a backgrounded tab isn't left holding an open
+  // real-time connection and re-rendering the list for messages nobody's
+  // there to read.
   var messagesQuery = query(collection(db, "chat_messages"), orderBy("createdAt", "desc"), limit(50));
-  onSnapshot(messagesQuery, function (snap) {
-    var docs = [];
-    snap.forEach(function (doc) { docs.push(doc.data()); });
-    docs.reverse();
-    messagesEl.innerHTML = docs.map(function (m) {
-      var when = m.createdAt && m.createdAt.toDate ? m.createdAt.toDate() : null;
-      var timeStr = when ? when.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }) : "";
-      return (
-        '<p class="chat-line">' +
-        '<span class="chat-author">' + escapeHtml(m.authorName || "?") + "</span> " +
-        '<span class="chat-time">' + escapeHtml(timeStr) + "</span><br>" +
-        '<span class="chat-text">' + escapeHtml(m.text || "") + "</span>" +
-        "</p>"
-      );
-    }).join("");
-    if (seenFirstSnapshot && window.SFX) window.SFX.click();
-    seenFirstSnapshot = true;
-    messagesEl.scrollTop = messagesEl.scrollHeight;
-  }, function (err) {
-    messagesEl.innerHTML = '<p class="chat-line chat-error">' + escapeHtml(err.message) + "</p>";
+  var unsubMessages = null;
+
+  function subscribeMessages() {
+    if (unsubMessages) return;
+    var seenFirstSnapshot = false; // suppress the click sound for this subscription's own initial (re)load
+    unsubMessages = onSnapshot(messagesQuery, function (snap) {
+      var docs = [];
+      snap.forEach(function (doc) { docs.push(doc.data()); });
+      docs.reverse();
+      messagesEl.innerHTML = docs.map(function (m) {
+        var when = m.createdAt && m.createdAt.toDate ? m.createdAt.toDate() : null;
+        var timeStr = when ? when.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }) : "";
+        var author = m.authorName || "?";
+        return (
+          '<p class="chat-line">' +
+          '<span class="chat-author" style="color:' + authorColor(author) + ';">' + escapeHtml(author) + "</span> " +
+          '<span class="chat-time">' + escapeHtml(timeStr) + "</span><br>" +
+          '<span class="chat-text">' + escapeHtml(m.text || "") + "</span>" +
+          "</p>"
+        );
+      }).join("");
+      if (seenFirstSnapshot && window.SFX) window.SFX.click();
+      seenFirstSnapshot = true;
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }, function (err) {
+      messagesEl.innerHTML = '<p class="chat-line chat-error">' + escapeHtml(err.message) + "</p>";
+    });
+  }
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      if (unsubMessages) { unsubMessages(); unsubMessages = null; }
+    } else {
+      subscribeMessages();
+    }
   });
+
+  subscribeMessages();
 
   // ---- auth state -> which panel shows in the composer area ----
   var readonlyHint = document.getElementById("chat-readonly-hint");
+  var verifyStatus = document.getElementById("chat-verify-status");
+
+  function showUnverified() {
+    sendForm.hidden = true;
+    authBox.hidden = true;
+    sessionBox.hidden = true;
+    verifyBox.hidden = false;
+    readonlyHint.hidden = false;
+  }
+
+  function showVerified(user) {
+    authBox.hidden = true;
+    verifyBox.hidden = true;
+    sendForm.hidden = false;
+    sessionBox.hidden = false;
+    readonlyHint.hidden = true;
+    sessionName.textContent = user.displayName || user.email;
+  }
+
   onAuthStateChanged(auth, function (user) {
     if (!user) {
       sendForm.hidden = true;
@@ -118,20 +169,40 @@ import {
       authBox.hidden = false;
       readonlyHint.hidden = false;
     } else if (!user.emailVerified) {
-      sendForm.hidden = true;
-      authBox.hidden = true;
-      sessionBox.hidden = true;
-      verifyBox.hidden = false;
-      readonlyHint.hidden = false;
+      showUnverified();
     } else {
-      authBox.hidden = true;
-      verifyBox.hidden = true;
-      sendForm.hidden = false;
-      sessionBox.hidden = false;
-      readonlyHint.hidden = true;
-      sessionName.textContent = user.displayName || user.email;
+      // The emailVerified flag on the user object can flip true before the
+      // cached ID token's own email_verified claim catches up (that claim
+      // only updates on the token's next refresh, normally up to an hour) -
+      // firestore.rules checks the token claim, so without forcing a
+      // refresh here a message can look like it sent (optimistic local
+      // update) and then vanish when the server rejects the stale-token
+      // write.
+      getIdToken(user, true).then(function () { showVerified(user); }, function () { showVerified(user); });
     }
   });
+
+  // Verifying happens in another tab/window, so this tab's cached user
+  // object doesn't know until asked: reload() re-fetches the account (does
+  // emailVerified say true yet?) and getIdToken(true) forces a fresh token
+  // so a follow-up send isn't rejected on a stale claim.
+  var recheckBtn = document.getElementById("chat-recheck-verify");
+  if (recheckBtn) {
+    recheckBtn.addEventListener("click", function () {
+      if (window.SFX) window.SFX.click();
+      var user = auth.currentUser;
+      if (!user) return;
+      verifyStatus.textContent = t("chat.working");
+      reload(user)
+        .then(function () { return getIdToken(user, true); })
+        .then(function () {
+          verifyStatus.textContent = "";
+          if (user.emailVerified) showVerified(user);
+          else verifyStatus.textContent = t("chat.stillNotVerified");
+        })
+        .catch(function (err) { verifyStatus.textContent = err.message; });
+    });
+  }
 
   // ---- sign in / sign up tab toggle ----
   tabSignIn.addEventListener("click", function () {
@@ -210,12 +281,14 @@ import {
     signOut(auth);
   });
 
+  var sendStatus = document.getElementById("chat-send-status");
   sendForm.addEventListener("submit", function (e) {
     e.preventDefault();
     var raw = input.value.trim();
     if (!raw || !auth.currentUser) return;
     var result = censor(raw);
     input.value = "";
+    sendStatus.hidden = true;
     addDoc(collection(db, "chat_messages"), {
       text: result.text,
       authorUid: auth.currentUser.uid,
@@ -223,6 +296,8 @@ import {
       createdAt: serverTimestamp()
     }).catch(function (err) {
       input.value = raw;
+      sendStatus.textContent = err.message;
+      sendStatus.hidden = false;
       console.error("chat send failed:", err);
     });
     if (result.censored) showLanguagePopup();

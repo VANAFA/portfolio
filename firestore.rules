@@ -24,7 +24,22 @@ rules_version = '2';
 // Messages are permanent once posted: no update or delete from clients.
 //
 // Collection: leaderboard_scores
-// Not implemented yet - denied entirely below until that feature is built.
+// Document ID: auto-generated
+// Fields:
+//   - game: string (required, immutable) - one of the enum values below.
+//     Minesweeper's three difficulties and Solitaire each get their own
+//     leaderboard bucket.
+//   - name: string (required, 1-20 chars) - free-text name the player
+//     types in, arcade-high-score style. No account/auth involved, so
+//     this is unverified flavor text like a Chat authorName, not identity.
+//   - value: number (required, integer, 1-99999) - lower is better for
+//     both games (Minesweeper: seconds elapsed: Solitaire: moves made).
+//   - createdAt: timestamp (required, immutable) - must equal the
+//     server's request time.
+// Entries are permanent once posted: no update or delete from clients.
+// No login required to submit a score - same trust level as a real
+// arcade cabinet's 3-letter initials entry. The value bounds below are
+// the only defense against a garbage/DoS submission.
 //
 // ===============================================================
 
@@ -72,9 +87,22 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // Not built yet - default deny.
+    function isValidScore(data) {
+      let validGames = ['minesweeper-beginner', 'minesweeper-intermediate', 'minesweeper-expert', 'solitaire'];
+      return hasOnlyAllowedFields(['game', 'name', 'value', 'createdAt']) &&
+        hasRequiredFields(['game', 'name', 'value', 'createdAt']) &&
+        data.game is string && data.game in validGames &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 20 &&
+        data.value is number && data.value > 0 && data.value <= 99999 &&
+        data.createdAt == request.time;
+    }
+
+    // leaderboard_scores - public read and create (no account needed, like
+    // typing initials into an arcade cabinet), no edits or deletes.
     match /leaderboard_scores/{scoreId} {
-      allow read, write: if false;
+      allow read: if true;
+      allow create: if isValidScore(request.resource.data);
+      allow update, delete: if false;
     }
 
     // Default deny for anything else.

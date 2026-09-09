@@ -21,6 +21,10 @@
   var rows, cols, mineTotal;
   var cells;          // flat array of { mine, revealed, flagged, adjacent, el }
   var state;          // "ready" | "playing" | "won" | "lost"
+  // Separate from state: mines only go down on the first *reveal*, never on
+  // a first flag - a flag can happen before any safe cell is known, so
+  // there's nothing yet to keep mines away from.
+  var minesPlaced;
   var flagsPlaced;
   var revealedSafeCount;
   var timerHandle;
@@ -54,19 +58,34 @@
     timerEl.textContent = pad3(seconds);
   }
 
+  function tick() {
+    seconds++;
+    if (seconds > 999) seconds = 999;
+    updateCounters();
+  }
+
   function startTimer() {
     clearInterval(timerHandle);
     seconds = 0;
-    timerHandle = setInterval(function () {
-      seconds++;
-      if (seconds > 999) seconds = 999;
-      updateCounters();
-    }, 1000);
+    timerHandle = setInterval(tick, 1000);
   }
 
   function stopTimer() {
     clearInterval(timerHandle);
+    timerHandle = null;
   }
+
+  // Tab/window switched away: stop ticking (and stop waking the page up every
+  // second) rather than silently charging the player for time spent
+  // elsewhere. Coming back resumes the same running total instead of
+  // restarting it - only startTimer() (a new game) resets seconds to 0.
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      if (timerHandle) { clearInterval(timerHandle); timerHandle = null; }
+    } else if (state === "playing" && !timerHandle) {
+      timerHandle = setInterval(tick, 1000);
+    }
+  });
 
   function setStatus(key) {
     statusEl.textContent = key ? (window.t ? window.t(key) : key) : "";
@@ -166,12 +185,16 @@
     state = "won";
     stopTimer();
     setStatus("ms.win");
+    if (window.SFX) window.SFX.win();
     cells.forEach(function (cell) {
       if (cell.mine && !cell.flagged) {
         cell.flagged = true;
         renderCell(cell);
       }
     });
+    // seconds can still be 0 on a very fast win (the timer's first tick
+    // hasn't fired yet) - firestore.rules requires value > 0.
+    if (window.submitLeaderboardScore) window.submitLeaderboardScore("minesweeper-" + level, Math.max(1, seconds));
   }
 
   function lose(exploded) {
@@ -187,16 +210,25 @@
     if (cell.revealed || cell.flagged) return;
 
     if (state === "ready") {
-      placeMines(r, c);
       state = "playing";
       startTimer();
+    }
+    // Mines are placed on the first *reveal* specifically, not just the first
+    // move - a game that started with a flag would otherwise reach here with
+    // state already "playing" and never place mines at all, leaving every
+    // cell mine-free (the whole board floods open on the next click).
+    if (!minesPlaced) {
+      placeMines(r, c);
+      minesPlaced = true;
     }
 
     if (cell.mine) {
       cell.revealed = true;
+      if (window.SFX) window.SFX.hit();
       lose(cell);
       return;
     }
+    if (window.SFX) window.SFX.click();
     revealFlood(r, c);
     if (revealedSafeCount === rows * cols - mineTotal) win();
   }
@@ -211,6 +243,7 @@
     }
     cell.flagged = !cell.flagged;
     flagsPlaced += cell.flagged ? 1 : -1;
+    if (window.SFX) window.SFX[cell.flagged ? "place" : "pick"]();
     renderCell(cell);
     updateCounters();
   }
@@ -220,6 +253,7 @@
     var cfg = LEVELS[level];
     rows = cfg.rows; cols = cfg.cols; mineTotal = cfg.mines;
     state = "ready";
+    minesPlaced = false;
     flagsPlaced = 0;
     revealedSafeCount = 0;
     stopTimer();
@@ -258,6 +292,11 @@
             longPressFired = false;
             el.classList.add("pressing");
             holdTimer = setTimeout(function () {
+              holdTimer = null;
+              // A native long-press contextmenu can beat this timeout on some
+              // mobile browsers (see the contextmenu handler below) - if it
+              // already flagged the cell, don't flag it again right back off.
+              if (longPressFired) return;
               longPressFired = true;
               el.classList.remove("pressing");
               handleFlag(rr, cc);
@@ -281,14 +320,18 @@
           el.addEventListener("pointercancel", function () { clearHold(); el.classList.remove("pressing"); });
           el.addEventListener("contextmenu", function (e) {
             e.preventDefault();
-            // On a long enough hold, some mobile browsers fire their own native
-            // contextmenu on top of our pointer-based long-press below - without
-            // this guard that's a second handleFlag() call right after the first,
-            // toggling the flag straight back off.
-            if (longPressFired) {
-              longPressFired = false;
-              return;
-            }
+            // On some mobile browsers this can fire either before or after our
+            // own HOLD_MS timeout above during the same continued hold - either
+            // way only the first of the two should actually toggle the flag.
+            // (Previously this reset longPressFired back to false on the "came
+            // after" branch, which let a *second* native contextmenu during the
+            // same hold - which some browsers do fire while a touch keeps
+            // pressing - toggle the flag right back off; now it stays latched
+            // until the next fresh press.)
+            if (longPressFired) return;
+            longPressFired = true;
+            clearHold();
+            el.classList.remove("pressing");
             handleFlag(rr, cc);
           });
         })(r, c, el);

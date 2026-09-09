@@ -192,25 +192,41 @@ offline dictionary attack against a short list of likely answers. Pick an
 answer a stranger couldn't easily guess or brute-force from a small set of
 options, even if it's obvious to friends who know you.
 
-**Adding a real entry:**
+Trips render newest-first (sorted by `date` after decrypting), and each
+trip's content is an ordered list of `blocks` - `{ type: "text", body }` or
+`{ type: "image", src/date }` - so text and photos can be interleaved
+however the author wants, with an optional date on each individual photo
+(separate from the trip's own overall date).
 
-1. Copy `tools/travel-demo-assets/demo-content.json` somewhere outside the
-   repo (or to a gitignored path like `tools/travel-content.json`) and fill
-   in real trips: `title`, `location`, `date`, `body` paragraphs (`en`/`es`),
-   and `images` (paths relative to that JSON file).
-2. Run:
+**Adding a real entry - two ways:**
 
-   ```sh
-   node tools/encrypt_travel.js tools/travel-content.json
-   ```
+- **Visual editor:** open `travel-admin.html` locally (not linked from the
+  site - see its own on-page warning for what that URL-obscurity does and
+  doesn't protect) - it can load and decrypt what's currently live, let you
+  add/reorder trips and text/image blocks in a form, then either download
+  the resulting `traveldata.js` or push it straight to GitHub with a
+  personal access token (entered there, kept only in that browser's
+  localStorage if you opt in, never committed anywhere).
+- **CLI, for scripting:** copy `tools/travel-demo-assets/demo-content.json`
+  somewhere outside the repo (or to a gitignored path like
+  `tools/travel-content.json`) and fill in real trips: `title`, `location`,
+  `date`, and a `blocks` array (see the comment atop
+  `tools/encrypt_travel.js` for the exact shape). Then run:
 
-   and type the real answer when prompted - the prompt is hidden (nothing
-   echoed, nothing in shell history). This overwrites `js/traveldata.js`
-   with fresh ciphertext.
-3. Commit and deploy as usual. The plaintext JSON and source photos should
-   **not** be committed - `.gitignore` already excludes the conventional
-   `tools/travel-content.json` / `tools/travel-photos/` paths.
+  ```sh
+  node tools/encrypt_travel.js tools/travel-content.json
+  ```
+
+  and type the real answer when prompted - the prompt is hidden (nothing
+  echoed, nothing in shell history). This overwrites `js/traveldata.js`
+  with fresh ciphertext. Both paths write the exact same file shape and are
+  interchangeable.
+
+Either way, commit and deploy as usual afterwards (or let `travel-admin.html`
+push the commit for you). The plaintext JSON and source photos should
+**not** be committed - `.gitignore` already excludes the conventional
+`tools/travel-content.json` / `tools/travel-photos/` paths.
 
 The bundled `demo-trip` entry exists just so the mechanism has something
-real to decrypt out of the box - its answer is literally `demo`. Replace it
-the same way once there's real content.
+real to decrypt out of the box - its answer is `casio`. Replace it the same
+way once there's real content.

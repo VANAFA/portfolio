@@ -1,13 +1,21 @@
 #!/usr/bin/env node
 // Encrypts travel-blog content into js/traveldata.js. This is meant to run
 // locally on the site owner's machine: real trip text/photos and the real
-// answer never need to be typed anywhere but here.
+// answer never need to be typed anywhere but here. js/travel-admin.js (the
+// in-browser trip editor) writes this exact same output shape via WebCrypto
+// instead - this CLI is the from-scratch / scripting path onto the same
+// format.
 //
 //   node tools/encrypt_travel.js path/to/content.json
 //
 // content.json shape: { "entries": [ { id, title:{en,es}, location:{en,es},
-// date, body:{en:[...paragraphs],es:[...]}, images:[relative/paths.png] } ] }
-// (relative image paths resolve against content.json's own directory.)
+// date, blocks:[...] } ] }, ordered newest-trip-first or not - js/travel.js
+// sorts entries by (decrypted) date itself. Each block is either
+// { "type": "text", "body": {en,es} } or { "type": "image", "src":
+// "relative/path.jpg", "date": "YYYY-MM-DD" (optional) } - blocks render in
+// array order, so text and images can be interleaved however the author
+// wants and each image can carry its own date. (Relative image paths
+// resolve against content.json's own directory.)
 //
 // The answer is read from a hidden prompt (nothing echoed to the terminal,
 // nothing written to shell history). --answer <value> skips the prompt for
@@ -123,16 +131,24 @@ async function main() {
       es: encryptText(key, entry.location.es || entry.location.en),
     };
     out.date = encryptText(key, entry.date);
-    out.body = {
-      en: entry.body.en.map((p) => encryptText(key, p)),
-      es: (entry.body.es || entry.body.en).map((p) => encryptText(key, p)),
-    };
-    out.images = (entry.images || []).map((imgPath) => {
-      const full = path.resolve(baseDir, imgPath);
-      const buf = fs.readFileSync(full);
-      const ext = path.extname(full).toLowerCase();
-      const mime = MIME_BY_EXT[ext] || "image/jpeg";
-      return Object.assign({ mime: mime }, encryptBuffer(key, buf));
+    out.blocks = (entry.blocks || []).map((block) => {
+      if (block.type === "image") {
+        const full = path.resolve(baseDir, block.src);
+        const buf = fs.readFileSync(full);
+        const ext = path.extname(full).toLowerCase();
+        const mime = MIME_BY_EXT[ext] || "image/jpeg";
+        return Object.assign(
+          { type: "image", mime: mime, date: block.date ? encryptText(key, block.date) : null },
+          encryptBuffer(key, buf)
+        );
+      }
+      return {
+        type: "text",
+        body: {
+          en: encryptText(key, block.body.en),
+          es: encryptText(key, block.body.es || block.body.en),
+        },
+      };
     });
     return out;
   });

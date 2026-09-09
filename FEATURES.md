@@ -23,9 +23,16 @@ dependency (later items build on earlier ones), not by priority.
   canvas tile-shuffle — both cosmetic flourishes on top of the real crypto,
   not the security mechanism itself (satisfies "todo el texto se vea
   encriptado... que los píxeles se mezclen").
-- Ships with one placeholder `demo-trip` entry (answer: `demo`) so the
+- Ships with two placeholder trip entries (answer: `casio`) so the
   mechanism has something real to decrypt. See the README's "Travel blog
   (encrypted)" section for how to add real trips.
+- Multi-trip: trips render newest-first, each one an ordered list of text
+  and photo blocks the author can interleave however they want, with an
+  optional date per photo. `travel-admin.html` (not linked from the site) is
+  a visual editor for this — load and decrypt the current trips, add/reorder
+  trips and blocks, then download the new `traveldata.js` or push it
+  straight to GitHub with a personal access token kept only in that
+  browser's own localStorage.
 - Sub-sections still to build inside the travel blog:
   - **Games log**, connected to Backloggd (games played/backlog tracking).
   - **Cars** blog/log.

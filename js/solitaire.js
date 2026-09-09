@@ -21,6 +21,7 @@
   var stock, waste, foundations, tableau;
   var selection = null; // { pile: "tableau"|"waste", col: number|null, index: number }
   var wonAlready = false;
+  var moveCount = 0;
   var cascadeGen = 0;
 
   var foundationElBySuit = {};
@@ -70,6 +71,7 @@
     cascadeGen++; // invalidate any win cascade still flying from a previous game
     clearCascade();
     wonAlready = false;
+    moveCount = 0;
 
     var deck = freshDeck();
     stock = [];
@@ -163,6 +165,7 @@
       if (pile.length && !pile[pile.length - 1].faceUp) pile[pile.length - 1].faceUp = true;
     });
     selection = null;
+    moveCount++;
     if (window.SFX) window.SFX.place();
     checkWin();
     render();
@@ -272,6 +275,7 @@
       wonAlready = true;
       if (window.SFX) window.SFX.win();
       startWinCascade();
+      if (window.submitLeaderboardScore) window.submitLeaderboardScore("solitaire", Math.max(1, moveCount));
     }
   }
 
@@ -428,6 +432,86 @@
       });
       tableauEl.appendChild(colEl);
     });
+
+    fitTable();
+  }
+
+  // Cards normally scale off the window's width alone (css/win98.css's
+  // --sol-card container-query clamp) - fine until maximized, where a tall
+  // tableau column (more cards pile up as a game goes on) can end up taller
+  // than the window itself, forcing a scrollbar. When maximized, size cards
+  // from whichever of width/height is more restrictive instead, the same
+  // approach js/minesweeper.js uses for its board.
+  //
+  // .sol-top-row can't be measured as fixed "chrome" the way .sol-toolbar
+  // can: its piles use min-height:var(--sol-card), so its own height scales
+  // 1:1 with the very card size being solved for here. Measuring it *before*
+  // applying a new size just captures whatever size was already applied last
+  // time - on the very first maximize (jumping from the small default 56px
+  // up to whatever this computes) that stale measurement massively
+  // under-counts how tall the top row is about to become, so the old
+  // version of this function ended up oversizing cards and needing a
+  // scrollbar anyway. Solving for it directly avoids the chase.
+  function fitTable() {
+    var winEl = tableauEl.closest(".window");
+    if (!winEl) return;
+    var bodyEl = tableauEl.closest(".window-body");
+    if (!winEl.classList.contains("maximized")) {
+      bodyEl.style.removeProperty("--sol-card");
+      return;
+    }
+
+    var maxPile = 1;
+    tableau.forEach(function (pile) { if (pile.length > maxPile) maxPile = pile.length; });
+
+    var toolbarEl = winEl.querySelector(".sol-toolbar");
+    var topRowEl = winEl.querySelector(".sol-top-row");
+    var fixedChromeHeight = 0; // .sol-toolbar: text/button only, doesn't scale with card size
+    if (toolbarEl) {
+      var tcs = getComputedStyle(toolbarEl);
+      fixedChromeHeight += toolbarEl.offsetHeight + parseFloat(tcs.marginTop) + parseFloat(tcs.marginBottom);
+    }
+    var topRowMargin = 0; // the row's own height is accounted for in the formula below, not measured
+    if (topRowEl) {
+      var rcs = getComputedStyle(topRowEl);
+      topRowMargin = parseFloat(rcs.marginTop) + parseFloat(rcs.marginBottom);
+    }
+
+    var bodyStyles = getComputedStyle(bodyEl);
+    var paddingV = parseFloat(bodyStyles.paddingTop) + parseFloat(bodyStyles.paddingBottom);
+    var tableauPadding = parseFloat(getComputedStyle(tableauEl).paddingBottom) || 0;
+
+    // .sol-top-row is ~1 card tall; the tableau is (1 + (maxPile-1)*0.32)
+    // cards tall (each card after the first in a column only adds 0.32x its
+    // height on screen - see .sol-tableau-col .sol-card's -0.68x margin).
+    var availableHeight = bodyEl.clientHeight - fixedChromeHeight - topRowMargin - paddingV - tableauPadding;
+    var cardFromHeight = availableHeight / (2 + (maxPile - 1) * 0.32);
+
+    // .sol-toolbar/.sol-top-row/.sol-tableau are all width:100% capped at
+    // max-width:900px when maximized (css/win98.css) - reading the tableau's
+    // own current width picks that up directly (its width doesn't depend on
+    // --sol-card, only its children's do) instead of duplicating the 900px
+    // figure here and risking the two drifting apart.
+    var cardFromWidth = (tableauEl.clientWidth - 6 * 8) / 7; // 7 columns, 6x 8px gaps
+
+    var size = Math.floor(Math.max(40, Math.min(cardFromHeight, cardFromWidth, 160)));
+
+    // The estimate above should already be close, but getting it exact
+    // depends on box-model details not worth hand-deriving precisely -
+    // measure the real result and nudge down a pixel at a time on the rare
+    // occasion it's still a hair too tall/wide (same approach as
+    // js/minesweeper.js's fitBoard). Checks both axes since .sol-tableau has
+    // its own independent overflow-x, separate from .window-body's overflow-y.
+    for (var guard = 0; guard < 15 && size > 40; guard++) {
+      bodyEl.style.setProperty("--sol-card", size + "px");
+      if (bodyEl.scrollHeight <= bodyEl.clientHeight && tableauEl.scrollWidth <= tableauEl.clientWidth) break;
+      size--;
+    }
+  }
+
+  var solWinEl = tableauEl.closest(".window");
+  if (solWinEl && window.ResizeObserver) {
+    new ResizeObserver(fitTable).observe(solWinEl);
   }
 
   stockEl.addEventListener("click", onStockClick);

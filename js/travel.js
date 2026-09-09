@@ -71,6 +71,27 @@
     });
   }
 
+  // A block is either { type: "text", body: {en,es} } or { type: "image",
+  // date? } - order in the array is the author's own order, interleaving
+  // text and photos however they liked, so decrypting one preserves its
+  // shape instead of collapsing back into separate arrays.
+  function decryptBlock(key, block) {
+    if (block.type === "image") {
+      return Promise.all([
+        decryptImage(key, block),
+        block.date ? decryptText(key, block.date) : Promise.resolve(null),
+      ]).then(function (r) {
+        return { type: "image", url: r[0], date: r[1] };
+      });
+    }
+    return Promise.all([
+      decryptText(key, block.body.en),
+      decryptText(key, block.body.es),
+    ]).then(function (r) {
+      return { type: "text", body: { en: r[0], es: r[1] } };
+    });
+  }
+
   function decryptAll(key) {
     return Promise.all(
       entries.map(function (entry) {
@@ -80,21 +101,24 @@
           decryptText(key, entry.location.en),
           decryptText(key, entry.location.es),
           decryptText(key, entry.date),
-          Promise.all(entry.body.en.map(function (p) { return decryptText(key, p); })),
-          Promise.all(entry.body.es.map(function (p) { return decryptText(key, p); })),
-          Promise.all(entry.images.map(function (img) { return decryptImage(key, img); })),
+          Promise.all((entry.blocks || []).map(function (b) { return decryptBlock(key, b); })),
         ]).then(function (r) {
           return {
             id: entry.id,
             title: { en: r[0], es: r[1] },
             location: { en: r[2], es: r[3] },
             date: r[4],
-            body: { en: r[5], es: r[6] },
-            imageUrls: r[7],
+            blocks: r[5],
           };
         });
       })
-    );
+    ).then(function (decrypted) {
+      // Newest trip first. Dates are plain "YYYY-MM-DD" strings, which
+      // already sort correctly as plain text.
+      return decrypted.slice().sort(function (a, b) {
+        return a.date < b.date ? 1 : a.date > b.date ? -1 : 0;
+      });
+    });
   }
 
   // ---- "looks encrypted" teaser, shown before unlock -----------------
@@ -102,10 +126,12 @@
   function renderLocked() {
     var cards = entries
       .map(function (entry) {
+        var firstText = (entry.blocks || []).filter(function (b) { return b.type === "text"; })[0];
+        var previewCipher = firstText ? firstText.body.en.data.slice(0, 120) : "";
         return (
           '<div class="travel-card travel-card-locked">' +
           '<div class="travel-cipher-block">' + entry.title.en.data + "</div>" +
-          '<div class="travel-cipher-block travel-cipher-dim">' + entry.body.en[0].data.slice(0, 120) + "</div>" +
+          '<div class="travel-cipher-block travel-cipher-dim">' + previewCipher + "</div>" +
           "</div>"
         );
       })
@@ -198,20 +224,25 @@
       '<div class="travel-marquee"><span>' + escapeAttr(t("travel.marquee")) + "</span></div>";
     var html = marqueeHtml + plaintextCache
       .map(function (entry) {
-        var imgsHtml = entry.imageUrls
-          .map(function (url, idx) {
-            return '<div class="travel-image-wrap"><canvas class="travel-canvas" data-entry="' + entry.id + '" data-idx="' + idx + '"></canvas></div>';
+        var blocksHtml = entry.blocks
+          .map(function (block, idx) {
+            if (block.type === "image") {
+              var dateHtml = block.date ? '<p class="travel-image-date">' + escapeAttr(block.date) + "</p>" : "";
+              return (
+                '<div class="travel-image-wrap">' +
+                '<canvas class="travel-canvas" data-entry="' + entry.id + '" data-idx="' + idx + '"></canvas>' +
+                dateHtml +
+                "</div>"
+              );
+            }
+            return '<p class="travel-scramble" data-final="' + escapeAttr(block.body[L]) + '"></p>';
           })
-          .join("");
-        var bodyHtml = entry.body[L]
-          .map(function (p) { return '<p class="travel-scramble" data-final="' + escapeAttr(p) + '"></p>'; })
           .join("");
         return (
           '<article class="travel-card">' +
           '<h2 class="travel-scramble" data-final="' + escapeAttr(entry.title[L]) + '"></h2>' +
           '<p class="travel-meta"><span class="travel-scramble" data-final="' + escapeAttr(entry.location[L]) + '"></span> · ' + escapeAttr(entry.date) + "</p>" +
-          imgsHtml +
-          bodyHtml +
+          blocksHtml +
           "</article>"
         );
       })
@@ -224,9 +255,10 @@
     });
 
     plaintextCache.forEach(function (entry) {
-      entry.imageUrls.forEach(function (url, idx) {
+      entry.blocks.forEach(function (block, idx) {
+        if (block.type !== "image") return;
         var canvas = content.querySelector('canvas[data-entry="' + entry.id + '"][data-idx="' + idx + '"]');
-        if (canvas) revealImageTiles(canvas, url, 6, 4, 900);
+        if (canvas) revealImageTiles(canvas, block.url, 6, 4, 900);
       });
     });
   }

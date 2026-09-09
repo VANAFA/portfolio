@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Project Blog</title>
 <link rel="icon" type="image/x-icon" href="images/icons/computer.ico?v=40320a87">
-<link rel="stylesheet" href="css/win98.css?v=de3764a">
+<link rel="stylesheet" href="css/win98.css?v=devlocal2">
 </head>
 <body>
 
@@ -101,7 +101,7 @@
     </div>
   </section>
 
-  <section class="window raised" data-window="travel" data-taskbar-key="tb.travel" hidden>
+  <section class="window raised" data-window="travel" data-taskbar-key="tb.travel" data-feature="travel" hidden>
     <div class="title-bar">
       <div class="title-bar-text"><img class="icon-inline" src="images/icons/globe_map-1.png?v=3d579dcb" alt=""> <span data-i18n="win.travel">Travel Blog</span></div>
       <div class="title-bar-controls">
@@ -144,6 +144,7 @@
         <input type="text" id="chat-input" maxlength="500" autocomplete="off" data-i18n-placeholder="chat.placeholder" placeholder="Type a message…">
         <button type="submit" class="btn98" data-i18n="chat.send">Send</button>
       </form>
+      <p class="chat-send-status" id="chat-send-status" hidden></p>
 
       <div class="chat-session" id="chat-session" hidden>
         <span id="chat-session-name"></span>
@@ -152,8 +153,12 @@
 
       <div class="chat-verify" id="chat-verify" hidden>
         <p data-i18n="chat.verifyHint">Check your email and click the verification link, then come back here to chat.</p>
-        <button type="button" class="btn98" id="chat-resend-verify" data-i18n="chat.resendVerify">Resend verification email</button>
-        <button type="button" class="btn98" id="chat-signout-unverified" data-i18n="chat.signOut">Sign out</button>
+        <div class="chat-verify-actions">
+          <button type="button" class="btn98" id="chat-recheck-verify" data-i18n="chat.recheckVerify">I verified it - check again</button>
+          <button type="button" class="btn98" id="chat-resend-verify" data-i18n="chat.resendVerify">Resend verification email</button>
+          <button type="button" class="btn98" id="chat-signout-unverified" data-i18n="chat.signOut">Sign out</button>
+        </div>
+        <p class="chat-auth-status" id="chat-verify-status"></p>
       </div>
 
       <div class="chat-auth" id="chat-auth">
@@ -174,6 +179,21 @@
         </form>
         <p class="chat-auth-status" id="chat-auth-status"></p>
       </div>
+    </div>
+  </section>
+
+  <section class="window raised" data-window="leaderboard" data-taskbar-key="tb.leaderboard" hidden>
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/leaderboard-16.png" alt=""> <span data-i18n="win.leaderboard">Leaderboard</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body" id="leaderboard-root">
+      <div class="leaderboard-tabs" id="leaderboard-tabs"></div>
+      <ol class="leaderboard-list" id="leaderboard-list"></ol>
     </div>
   </section>
 
@@ -313,6 +333,27 @@
     </div>
   </div>
 
+  <div class="overlay" id="score-overlay" hidden>
+    <div class="window raised modal-window" role="dialog" aria-modal="true" aria-labelledby="score-title">
+      <div class="title-bar">
+        <div class="title-bar-text" id="score-title" data-i18n="score.title">Save your score?</div>
+        <div class="title-bar-controls">
+          <button aria-label="Close" id="score-close">✕</button>
+        </div>
+      </div>
+      <div class="window-body">
+        <p id="score-summary"></p>
+        <form id="score-form" class="score-form">
+          <input type="text" id="score-name" maxlength="20" autocomplete="off" data-i18n-placeholder="score.namePlaceholder" placeholder="Your name" required>
+          <div class="modal-actions">
+            <button type="submit" class="btn98" data-i18n="score.submit">Submit</button>
+            <button type="button" class="btn98" id="score-skip" data-i18n="score.skip">Skip</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <div class="chat-cap-popup" id="chat-cap-popup" hidden role="alert">
     <span class="chat-cap-shield" aria-hidden="true">🛡️</span>
     <span data-i18n="chat.language">Language!</span>
@@ -340,31 +381,32 @@
     <a class="btn98 version-badge" id="version-badge" href="#" target="_blank" rel="noopener">v: …</a>
   </div>
 
-  <script src="js/data.js?v=de3764a"></script>
-  <script src="js/i18n.js?v=de3764a"></script>
-  <script src="js/features.js?v=de3764a"></script>
-  <script src="js/backgrounds.js?v=de3764a"></script>
-  <script src="js/background.js?v=de3764a"></script>
-  <script src="js/traveldata.js?v=de3764a"></script>
-  <script src="js/travel.js?v=de3764a"></script>
-  <script src="js/main.js?v=de3764a"></script>
-  <script src="js/windows.js?v=de3764a"></script>
-  <script src="js/dragwindows.js?v=de3764a"></script>
-  <script src="js/pinball.js?v=de3764a"></script>
-  <script src="js/blog.js?v=de3764a"></script>
-  <script src="js/desktopicons.js?v=de3764a"></script>
-  <script src="js/dragicons.js?v=de3764a"></script>
-  <script type="module" src="js/chat.js?v=de3764a"></script>
-  <script src="js/mycomputer.js?v=de3764a"></script>
-  <script src="js/minesweeper.js?v=de3764a"></script>
-  <script src="js/solitaire.js?v=de3764a"></script>
-  <script src="js/taskbar.js?v=de3764a"></script>
-  <script src="js/particles.js?v=de3764a"></script>
-  <script src="js/sfx.js?v=de3764a"></script>
-  <script src="js/face.js?v=de3764a"></script>
-  <script src="js/chipa.js?v=de3764a"></script>
-  <script src="js/quest.js?v=de3764a"></script>
-  <script src="js/hitme.js?v=de3764a"></script>
-  <script src="js/version.js?v=de3764a"></script>
+  <script src="js/data.js?v=devlocal2"></script>
+  <script src="js/i18n.js?v=devlocal2"></script>
+  <script src="js/features.js?v=devlocal2"></script>
+  <script src="js/backgrounds.js?v=devlocal2"></script>
+  <script src="js/background.js?v=devlocal2"></script>
+  <script src="js/traveldata.js?v=devlocal2"></script>
+  <script src="js/travel.js?v=devlocal2"></script>
+  <script src="js/main.js?v=devlocal2"></script>
+  <script src="js/windows.js?v=devlocal2"></script>
+  <script src="js/dragwindows.js?v=devlocal2"></script>
+  <script src="js/pinball.js?v=devlocal2"></script>
+  <script src="js/blog.js?v=devlocal2"></script>
+  <script src="js/desktopicons.js?v=devlocal2"></script>
+  <script src="js/dragicons.js?v=devlocal2"></script>
+  <script type="module" src="js/chat.js?v=devlocal2"></script>
+  <script type="module" src="js/leaderboard.js?v=devlocal2"></script>
+  <script src="js/mycomputer.js?v=devlocal2"></script>
+  <script src="js/minesweeper.js?v=devlocal2"></script>
+  <script src="js/solitaire.js?v=devlocal2"></script>
+  <script src="js/taskbar.js?v=devlocal2"></script>
+  <script src="js/particles.js?v=devlocal2"></script>
+  <script src="js/sfx.js?v=devlocal2"></script>
+  <script src="js/face.js?v=devlocal2"></script>
+  <script src="js/chipa.js?v=devlocal2"></script>
+  <script src="js/quest.js?v=devlocal2"></script>
+  <script src="js/hitme.js?v=devlocal2"></script>
+  <script src="js/version.js?v=devlocal2"></script>
 </body>
 </html>

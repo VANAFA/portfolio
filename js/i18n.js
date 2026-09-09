@@ -94,6 +94,8 @@
       "chat.email": "Email",
       "chat.password": "Password (6+ characters)",
       "chat.verifyHint": "Check your email and click the verification link, then come back here to chat.",
+      "chat.recheckVerify": "I verified it - check again",
+      "chat.stillNotVerified": "Still not verified - check the email and try again.",
       "chat.resendVerify": "Resend verification email",
       "chat.signOut": "Sign out",
       "chat.working": "Working…",
@@ -104,7 +106,21 @@
       "chat.errBadCredentials": "Wrong email or password.",
       "chat.errTooMany": "Too many tries - wait a bit and try again.",
       "chat.language": "Language!",
-      "chat.readOnlyHint": "Anyone can read this chat. Sign in or sign up to post."
+      "chat.readOnlyHint": "Anyone can read this chat. Sign in or sign up to post.",
+      "win.leaderboard": "Leaderboard",
+      "tb.leaderboard": "Leaderboard",
+      "leaderboard.msBeginner": "Minesweeper: Beginner",
+      "leaderboard.msIntermediate": "Minesweeper: Intermediate",
+      "leaderboard.msExpert": "Minesweeper: Expert",
+      "leaderboard.solitaire": "Solitaire",
+      "leaderboard.moves": "moves",
+      "leaderboard.seconds": "s",
+      "leaderboard.empty": "No scores yet - be the first!",
+      "score.title": "Save your score?",
+      "score.summaryPrefix": "You got:",
+      "score.namePlaceholder": "Your name",
+      "score.submit": "Submit",
+      "score.skip": "Skip"
     },
     es: {
       "page.title": "Valentino Nallib Fadel",
@@ -189,6 +205,8 @@
       "chat.email": "Mail",
       "chat.password": "Contraseña (6+ caracteres)",
       "chat.verifyHint": "Revisá tu mail y hacé clic en el link de verificación, después volvé acá para chatear.",
+      "chat.recheckVerify": "Ya lo verifiqué - revisar de nuevo",
+      "chat.stillNotVerified": "Todavía no está verificado - revisá el mail y probá de nuevo.",
       "chat.resendVerify": "Reenviar mail de verificación",
       "chat.signOut": "Salir",
       "chat.working": "Un momento…",
@@ -199,7 +217,21 @@
       "chat.errBadCredentials": "Mail o contraseña incorrectos.",
       "chat.errTooMany": "Demasiados intentos - esperá un poco y probá de nuevo.",
       "chat.language": "¡Lenguaje!",
-      "chat.readOnlyHint": "Cualquiera puede leer este chat. Para escribir, ingresá o registrate."
+      "chat.readOnlyHint": "Cualquiera puede leer este chat. Para escribir, ingresá o registrate.",
+      "win.leaderboard": "Ranking",
+      "tb.leaderboard": "Ranking",
+      "leaderboard.msBeginner": "Buscaminas: Principiante",
+      "leaderboard.msIntermediate": "Buscaminas: Intermedio",
+      "leaderboard.msExpert": "Buscaminas: Experto",
+      "leaderboard.solitaire": "Solitario",
+      "leaderboard.moves": "movimientos",
+      "leaderboard.seconds": "s",
+      "leaderboard.empty": "Todavía no hay puntajes - ¡sé el primero!",
+      "score.title": "¿Guardar tu puntaje?",
+      "score.summaryPrefix": "Hiciste:",
+      "score.namePlaceholder": "Tu nombre",
+      "score.submit": "Enviar",
+      "score.skip": "Omitir"
     }
   };
 

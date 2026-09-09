@@ -55,11 +55,30 @@
 			.lds-spinner div:nth-child(11){transform:rotate(300deg);animation-delay:-0.1s}
 			.lds-spinner div:nth-child(12){transform:rotate(330deg);animation-delay:0s}
 			@keyframes lds-spinner{0%{opacity:1}100%{opacity:0}}
+
+			/* Touch controls - the game itself only ever listens for keyboard
+			   input, so on a touch device there was previously no way to work
+			   the flippers or plunger at all. Shown only when a touch-capable
+			   pointer is detected (see the touch-controls script below); each
+			   button just dispatches the same keydown/keyup the real key
+			   already produces, straight onto document, so the existing
+			   keyboard-handling code above (and inside the game engine
+			   itself) does the rest unmodified. */
+			.touch-controls{display:none;position:fixed;left:0;right:0;bottom:0;z-index:100;justify-content:space-between;align-items:flex-end;padding:0 3vw 3vw;pointer-events:none}
+			.touch-controls.enabled{display:flex}
+			.touch-btn{pointer-events:auto;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none;width:22vw;max-width:120px;height:22vw;max-height:120px;border-radius:50%;background:rgba(255,255,255,0.14);border:2px solid rgba(255,255,255,0.5);color:#fff;font-family:Arial;font-size:13px;font-weight:bold;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2}
+			.touch-btn.pressed{background:rgba(255,255,255,0.34)}
+			.touch-btn-launch{width:16vw;max-width:90px;height:16vw;max-height:90px;margin-bottom:4vw}
 		</style>
 	</head>
 	<body>
 		<div class="pleasewait"><div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
 		<canvas id="canvas"></canvas>
+		<div class="touch-controls" id="touch-controls">
+			<div class="touch-btn" id="touch-flipper-left" data-key="z">LEFT<br>FLIPPER</div>
+			<div class="touch-btn touch-btn-launch" id="touch-launch" data-key=" ">LAUNCH</div>
+			<div class="touch-btn" id="touch-flipper-right" data-key="c">RIGHT<br>FLIPPER</div>
+		</div>
 		<div class="gui_container">
 			<div class="gui_background"></div>
 			<div class="gui_controls"><span class="gui_controls_key">LEFT FLIPPER = </span>Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gui_controls_key">RIGHT FLIPPER = </span>C<br><span class="gui_controls_key">TILT FLIPPER TABLE = </span>X&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gui_controls_key">LAUNCH BALL = </span>SPACE<br><span class="gui_controls_key">RESTART GAME = </span>R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gui_controls_key">ENABLE/DISABLE SOUND = </span>T</div>
@@ -129,6 +148,57 @@
 				{
 				event.preventDefault();
 				});
+
+			// Touch controls: each button simulates its key being pressed/held.
+			// A real keypress's event target is wherever focus is (often the
+			// canvas once the game's grabbed it) and bubbles up to document -
+			// the "c"/"r" remap above is a document-level listener, while the
+			// engine's own SDL input almost certainly listens on the canvas
+			// directly (that's where the remap forwards its translated events
+			// to). Dispatching on both, for every key, reaches whichever of
+			// the two actually needs it without having to know for sure.
+			var IS_TOUCH_DEVICE = ("ontouchstart" in window) || navigator.maxTouchPoints > 0;
+			if (IS_TOUCH_DEVICE) {
+				document.getElementById("touch-controls").classList.add("enabled");
+			}
+			// code/which/keyCode included alongside key, matching the shape the
+			// "c"/"r" remap above already uses - whichever of the old/new
+			// properties the engine's SDL glue actually reads, this covers it.
+			var TOUCH_KEY_INFO = {
+				"z": { code: "KeyZ", which: 90, keyCode: 90 },
+				"c": { code: "KeyC", which: 67, keyCode: 67 },
+				" ": { code: "Space", which: 32, keyCode: 32 }
+			};
+			Array.prototype.forEach.call(document.querySelectorAll(".touch-btn"), function (btn) {
+				var key = btn.getAttribute("data-key");
+				var info = TOUCH_KEY_INFO[key] || {};
+				var held = false;
+				function fire(type) {
+					var opts = Object.assign({ key: key, shiftKey: false, ctrlKey: false, altKey: false, metaKey: false, bubbles: true, cancelable: true }, info);
+					document.dispatchEvent(new KeyboardEvent(type, opts));
+					var canvas = document.getElementById("canvas");
+					if (canvas) canvas.dispatchEvent(new KeyboardEvent(type, opts));
+				}
+				function press(e) {
+					e.preventDefault();
+					if (held) return;
+					held = true;
+					btn.classList.add("pressed");
+					fire("keydown");
+				}
+				function release(e) {
+					if (e) e.preventDefault();
+					if (!held) return;
+					held = false;
+					btn.classList.remove("pressed");
+					fire("keyup");
+				}
+				btn.addEventListener("pointerdown", press);
+				btn.addEventListener("pointerup", release);
+				btn.addEventListener("pointercancel", release);
+				btn.addEventListener("pointerleave", release);
+				btn.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+			});
 
 			window.addEventListener("load", function()
 				{

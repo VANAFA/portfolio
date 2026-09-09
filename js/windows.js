@@ -77,7 +77,13 @@
     // taskbar button for it is just a dead entry that shows nothing when
     // clicked cold. Its own title-bar controls (close/minimize/maximize)
     // still work below either way.
-    if (!win.hasAttribute("data-no-taskbar")) {
+    //
+    // A window tagged data-feature (e.g. the "guest" copy of the travel
+    // window on index.html/blog.html) skips its taskbar button on prod too -
+    // js/features.js already hides that feature's desktop icon/link there,
+    // so a taskbar button would be a loophole back to the same window.
+    var hiddenFeature = win.dataset.feature && window.isFeatureHidden && window.isFeatureHidden(win.dataset.feature);
+    if (!win.hasAttribute("data-no-taskbar") && !hiddenFeature) {
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "btn98 taskbar-btn";

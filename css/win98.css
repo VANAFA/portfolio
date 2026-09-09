@@ -284,18 +284,33 @@ hr.divider{
     margin:0;
     z-index:55;
   }
-  /* js/dragwindows.js - grab any of these four by their title bar to move
-     them; only wired up at this same breakpoint, where they're actually
+  /* Mirrors My Computer's right:18/bottom corner spot on the opposite side -
+     the true bottom-left corner, past the desktop icon column, rather than
+     clearing it like Minesweeper/Solitaire do. It can end up behind/over
+     Solitaire's own default spot depending on window heights; both are
+     draggable (below) precisely so that's a starting point, not a promise. */
+  [data-window="chat"]{
+    position:fixed;
+    left:18px;
+    bottom:24px;
+    width:360px;
+    margin:0;
+    z-index:55;
+  }
+  /* js/dragwindows.js - grab any of these by their title bar to move them;
+     only wired up at this same breakpoint, where they're actually
      position:fixed instead of stacked in normal flow. */
   [data-window="mycomputer"] .title-bar,
   [data-window="minesweeper"] .title-bar,
   [data-window="solitaire"] .title-bar,
+  [data-window="chat"] .title-bar,
   [data-window="face"] .title-bar{
     cursor:grab;
   }
   [data-window="mycomputer"].dragging .title-bar,
   [data-window="minesweeper"].dragging .title-bar,
   [data-window="solitaire"].dragging .title-bar,
+  [data-window="chat"].dragging .title-bar,
   [data-window="face"].dragging .title-bar{
     cursor:grabbing;
   }
@@ -947,6 +962,12 @@ hr.divider{
   outline:2px solid #000;
   outline-offset:2px;
 }
+.travel-image-date{
+  font-family:"Comic Sans MS","Comic Sans",cursive;
+  font-size:11px;
+  color:#ffcc00;
+  margin:4px 0 0;
+}
 
 /* ===== Minesweeper ===== */
 .ms-levels{
@@ -1490,6 +1511,11 @@ hr.divider{
   font-size:10px;
 }
 .chat-error{ color:#a00; }
+.chat-send-status{
+  margin:4px 0 0;
+  font-size:11px;
+  color:#a00;
+}
 
 .chat-send-form{
   display:flex;
@@ -1524,6 +1550,11 @@ hr.divider{
   font-size:12px;
   background:var(--w98-face-light);
   padding:8px;
+}
+.chat-verify-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
 }
 
 .chat-auth-tabs{
@@ -1587,3 +1618,67 @@ hr.divider{
   opacity:1;
 }
 .chat-cap-shield{ font-size:20px; }
+
+/* ===== Leaderboard (Firestore, see js/leaderboard.js) ===== */
+.leaderboard-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin-bottom:10px;
+}
+.leaderboard-tabs .btn98.selected{
+  border-top:2px solid var(--w98-face-darker);
+  border-left:2px solid var(--w98-face-darker);
+  border-right:2px solid var(--w98-face-lighter);
+  border-bottom:2px solid var(--w98-face-lighter);
+}
+.leaderboard-list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  background:#fff;
+  border-top:2px solid var(--w98-face-darker);
+  border-left:2px solid var(--w98-face-darker);
+  border-right:2px solid var(--w98-face-lighter);
+  border-bottom:2px solid var(--w98-face-lighter);
+  padding:8px;
+  min-height:120px;
+}
+.leaderboard-row{
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+  font-size:13px;
+  padding:2px 4px;
+}
+.leaderboard-row:nth-child(odd){ background:var(--w98-face-light); }
+.leaderboard-rank{
+  font-weight:bold;
+  color:#000080;
+  min-width:1.6em;
+}
+.leaderboard-name{ flex:1; }
+.leaderboard-value{ font-family:"Courier New",monospace; }
+.leaderboard-empty{
+  color:#555;
+  font-size:12px;
+  padding:4px;
+}
+
+.score-form{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.score-form input{
+  padding:4px 6px;
+  border-top:2px solid var(--w98-face-darker);
+  border-left:2px solid var(--w98-face-darker);
+  border-right:2px solid var(--w98-face-lighter);
+  border-bottom:2px solid var(--w98-face-lighter);
+  font-family:inherit;
+  font-size:13px;
+}
