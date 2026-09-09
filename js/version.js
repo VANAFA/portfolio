@@ -2,9 +2,9 @@
 // Updated by hand right after every push - if the badge you see doesn't match
 // the commit you were told about, it's a caching problem, not a missed commit.
 window.SITE_VERSION = {
-  hash: "b434740",
-  updated: "2026-09-09 17:32 UTC",
-  url: "https://github.com/VANAFA/portfolio/commit/b434740"
+  hash: "1ac270b",
+  updated: "2026-09-09 20:00 UTC",
+  url: "https://github.com/VANAFA/portfolio/commit/1ac270b"
 };
 
 (function () {
