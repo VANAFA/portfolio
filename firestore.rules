@@ -42,10 +42,12 @@ rules_version = '2';
 //   - value: number (required, integer, > 0) - lower is better for
 //     Minesweeper (seconds elapsed) and Solitaire (moves made), capped at
 //     99999; higher is better for Pinball (points), capped at 999999999.
-//     Pinball's value is self-reported (js/pinball.js has no way to read
-//     the embedded WASM game's real score) - these bounds are just an
-//     anti-garbage/DoS sanity check, not proof the number is real, unlike
-//     the other three games where this site's own code computes the value.
+//     Pinball is a custom rebuild of alula/SpaceCadetPinball (see
+//     pinball/index.html) with two exported functions added to the
+//     upstream engine specifically so the value can be read straight out
+//     of the game's own memory when a game ends, the same trust level as
+//     the other three games - not self-reported. These bounds are still
+//     just an anti-garbage/DoS sanity check, same as the others.
 //   - createdAt: timestamp (required, immutable per write) - must equal the
 //     server's request time, so it reflects when this document's current
 //     (best-so-far) value was actually set.

@@ -1240,34 +1240,6 @@ hr.divider{
   height:100%;
   border:none;
 }
-.pinball-score-form{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap;
-  margin:0;
-  padding:8px 10px 4px;
-  background:var(--w98-face-light);
-  border-top:1px solid var(--w98-face-dark);
-}
-.pinball-score-form label{ font-size:12px; }
-.pinball-score-form input[type="number"]{
-  width:110px;
-  padding:4px 6px;
-  border-top:2px solid var(--w98-face-darker);
-  border-left:2px solid var(--w98-face-darker);
-  border-right:2px solid var(--w98-face-lighter);
-  border-bottom:2px solid var(--w98-face-lighter);
-  font-family:inherit;
-  font-size:13px;
-}
-.pinball-score-hint{
-  margin:0;
-  padding:0 10px 6px;
-  font-size:10.5px;
-  color:#555;
-  background:var(--w98-face-light);
-}
 .pinball-credit{
   margin:0;
   padding:4px 10px;

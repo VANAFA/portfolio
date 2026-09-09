@@ -70,25 +70,11 @@
     }
   });
 
-  // ---- leaderboard: self-reported score --------------------------------
-  // The embedded engine is a compiled WASM binary with no exposed JS API and
-  // no on-screen text in the DOM (the score is drawn as pixels on the
-  // canvas) - there's no way to read the real score out programmatically,
-  // unlike Minesweeper/Solitaire where this site's own code already knows
-  // the number. This leaderboard entry is trust-based: the player types in
-  // whatever the game just showed them. firestore.rules still bounds it to
-  // a sane range and only lets a resubmission overwrite a strictly higher
-  // score (pinball is high-score-wins, unlike the other two games), but
-  // can't verify the number is real.
-  var scoreForm = document.getElementById("pinball-score-form");
-  if (scoreForm) {
-    scoreForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var input = document.getElementById("pinball-score-input");
-      var value = Math.floor(Number(input.value));
-      if (!(value > 0)) return;
-      if (window.submitLeaderboardScore) window.submitLeaderboardScore("pinball", value);
-      input.value = "";
-    });
-  }
+  // Leaderboard scores report themselves: pinball/index.html is a custom
+  // rebuild of alula/SpaceCadetPinball (see its Module.onRuntimeInitialized)
+  // with two small additions to the upstream engine - exported GetScore/
+  // GetGameMode functions - specifically so it can read its own real score
+  // and call window.parent.submitLeaderboardScore("pinball", score) the
+  // moment a game ends, the same way Minesweeper/Solitaire already do from
+  // their own code. No form, no self-reporting, nothing to wire up here.
 })();
