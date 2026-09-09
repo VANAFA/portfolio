@@ -15,8 +15,9 @@ locally.
 
 ## Hiding a work-in-progress feature
 
-Some features (currently: the Travel Blog) aren't ready to be publicly
-discoverable yet but are still worth testing locally. `js/features.js`
+Some features aren't ready to be publicly discoverable yet but are still
+worth testing locally (the Travel Blog used to be the example here - it's
+shipped now, so `HIDDEN_IN_PROD` is currently empty). `js/features.js`
 hides a feature's nav entry points — desktop icon, "Encrypted Travel Blog"
 link, etc. — whenever the page isn't running on `localhost`/`file://`, i.e.
 only on the deployed site. The exact same files are served in both places;

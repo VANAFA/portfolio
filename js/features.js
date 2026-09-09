@@ -13,7 +13,7 @@
 // window.isFeatureHidden("name") anywhere a feature's entry point is built
 // from JS instead of static markup (e.g. js/desktopicons.js).
 (function () {
-  var HIDDEN_IN_PROD = ["travel"];
+  var HIDDEN_IN_PROD = [];
 
   var isProd = !(
     location.protocol === "file:" ||
