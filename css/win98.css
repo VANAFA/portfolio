@@ -284,15 +284,16 @@ hr.divider{
     margin:0;
     z-index:55;
   }
-  /* Mirrors My Computer's right:18/bottom corner spot on the opposite side -
-     the true bottom-left corner, past the desktop icon column, rather than
-     clearing it like Minesweeper/Solitaire do. It can end up behind/over
-     Solitaire's own default spot depending on window heights; both are
-     draggable (below) precisely so that's a starting point, not a promise. */
+  /* Bottom-left corner, clearing the desktop icon column the same way
+     Minesweeper/Solitaire do above rather than sitting under it. It can end
+     up behind/over Solitaire's own default spot depending on window
+     heights; both are draggable (below) precisely so that's a starting
+     point, not a promise. */
   [data-window="chat"]{
     position:fixed;
-    left:18px;
-    bottom:24px;
+    left:120px;
+    bottom:50px; /* clears the 34px taskbar with a bit of a gap, rather than
+                    dipping into it like bottom:24px did */
     width:360px;
     margin:0;
     z-index:55;
@@ -699,7 +700,9 @@ hr.divider{
   justify-content:center;
   padding:40px 16px;
   overflow-y:auto;
-  z-index:100;
+  z-index:250; /* above .window.maximized's 150 and the taskbar's 200, so e.g.
+                  the pinball high-score entry stays on top of both even when
+                  the pinball window is maximized */
 }
 .overlay[hidden]{ display:none; }
 
