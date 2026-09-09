@@ -1056,21 +1056,51 @@ hr.divider{
 .pinball-body{
   padding:0;
 }
-.pinball-frame{
-  display:block;
+/* The embedded game is a WebGL/WASM build that freezes or goes black if its real
+   iframe viewport is resized while it's running (reproducible by maximizing or
+   restoring the Pinball window) - live-resizing it is not safe. js/pinball.js
+   instead reloads the iframe fresh at its new size on every layout change, which
+   is the code path that already works correctly (how it renders on first load).
+   The aspect-ratio below keeps the game's own natural-ish proportions when
+   maximized, instead of stretching a short, very wide box (the table+backglass
+   composition doesn't relayout itself for extreme aspect ratios - it would just
+   leave the extra width as black space). */
+.pinball-frame-wrap{
+  position:relative;
   width:100%;
   height:70vh;
   max-height:640px;
   min-height:420px;
+  background:#000;
+}
+.pinball-frame{
+  display:block;
+  width:100%;
+  height:100%;
   border:none;
 }
 .pinball-credit{
   margin:0;
-  padding:6px 10px;
-  font-size:11px;
+  padding:4px 10px;
+  font-size:10.5px;
+  line-height:1.4;
   color:#333;
   background:var(--w98-face-light);
   border-top:1px solid var(--w98-face-dark);
+}
+.pinball-credit a{ color:#000080; }
+.window.maximized .pinball-body{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.window.maximized .pinball-frame-wrap{
+  flex:1 1 0;
+  width:auto;
+  aspect-ratio:6/5;
+  max-width:100%;
+  max-height:none;
+  min-height:0;
 }
 
 /* ===== repo list ===== */

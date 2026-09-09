@@ -68,9 +68,9 @@ dependency (later items build on earlier ones), not by priority.
 ## 5. 90s-style phone number banner — shipped
 
 - Live in the Contact window: a scrolling LED-ticker marquee alternating
-  `+54 011 3569-4552` / `+54 011 FLOW-ILLA` (the vanity letters found via
+  `+54 011 FLOW-ILLA` / `+54 011 FLOW-ILLA` (the vanity letters found via
   `vanitygen.py` — `FLOWILLA` spells FLOW *and* contains WILL/WILLA) /
-  "¡LLAMAME! CALL ME!", all wrapped in a `tel:` link. Respects
+  "CONTACT NUMBER", all wrapped in a `tel:` link. Respects
   `prefers-reduced-motion`.
 
 ## 6. Console collection window
