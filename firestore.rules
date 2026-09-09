@@ -24,7 +24,14 @@ rules_version = '2';
 // Messages are permanent once posted: no update or delete from clients.
 //
 // Collection: leaderboard_scores
-// Document ID: auto-generated
+// Document ID: "<game>_<name, trimmed+lowercased>" (js/leaderboard.js derives
+//   this) - one document per name per game, not auto-generated, so a player
+//   beating their own previous score overwrites the same slot instead of
+//   piling up a new entry. There's no account system to key this off
+//   instead, so two different people who happen to type the same name for
+//   the same game share a slot and only the better of their scores
+//   survives - an accepted quirk of the same "no login, arcade cabinet"
+//   trust model as the name field itself.
 // Fields:
 //   - game: string (required, immutable) - one of the enum values below.
 //     Minesweeper's three difficulties and Solitaire each get their own
@@ -32,14 +39,22 @@ rules_version = '2';
 //   - name: string (required, 1-20 chars) - free-text name the player
 //     types in, arcade-high-score style. No account/auth involved, so
 //     this is unverified flavor text like a Chat authorName, not identity.
-//   - value: number (required, integer, 1-99999) - lower is better for
-//     both games (Minesweeper: seconds elapsed: Solitaire: moves made).
-//   - createdAt: timestamp (required, immutable) - must equal the
-//     server's request time.
-// Entries are permanent once posted: no update or delete from clients.
-// No login required to submit a score - same trust level as a real
-// arcade cabinet's 3-letter initials entry. The value bounds below are
-// the only defense against a garbage/DoS submission.
+//   - value: number (required, integer, > 0) - lower is better for
+//     Minesweeper (seconds elapsed) and Solitaire (moves made), capped at
+//     99999; higher is better for Pinball (points), capped at 999999999.
+//     Pinball's value is self-reported (js/pinball.js has no way to read
+//     the embedded WASM game's real score) - these bounds are just an
+//     anti-garbage/DoS sanity check, not proof the number is real, unlike
+//     the other three games where this site's own code computes the value.
+//   - createdAt: timestamp (required, immutable per write) - must equal the
+//     server's request time, so it reflects when this document's current
+//     (best-so-far) value was actually set.
+// No login required to submit a score - same trust level as a real arcade
+// cabinet's 3-letter initials entry. The value bounds below are the only
+// defense against a garbage/DoS submission. An existing document can only
+// be overwritten with a strictly better value (see isValidScore/allow
+// update below) - that's what makes an old record disappear once beaten,
+// and stops anyone from overwriting a good score with a worse one.
 //
 // ===============================================================
 
@@ -88,21 +103,34 @@ service cloud.firestore {
     }
 
     function isValidScore(data) {
-      let validGames = ['minesweeper-beginner', 'minesweeper-intermediate', 'minesweeper-expert', 'solitaire'];
+      let validGames = ['minesweeper-beginner', 'minesweeper-intermediate', 'minesweeper-expert', 'solitaire', 'pinball'];
+      let maxValue = data.game == 'pinball' ? 999999999 : 99999;
       return hasOnlyAllowedFields(['game', 'name', 'value', 'createdAt']) &&
         hasRequiredFields(['game', 'name', 'value', 'createdAt']) &&
         data.game is string && data.game in validGames &&
         data.name is string && data.name.size() > 0 && data.name.size() <= 20 &&
-        data.value is number && data.value > 0 && data.value <= 99999 &&
+        data.value is number && data.value > 0 && data.value <= maxValue &&
         data.createdAt == request.time;
     }
 
+    // Pinball is the one game here where a higher value is the better one.
+    function isScoreImprovement(newData, oldData) {
+      return newData.game == 'pinball' ? newData.value > oldData.value : newData.value < oldData.value;
+    }
+
     // leaderboard_scores - public read and create (no account needed, like
-    // typing initials into an arcade cabinet), no edits or deletes.
+    // typing initials into an arcade cabinet). An existing entry can only be
+    // updated to a strictly better value for the same game - that's the
+    // entire "beat your record and the old one disappears" mechanism, since
+    // js/leaderboard.js reuses the same document ID for the same name+game
+    // rather than always creating a new document. No deletes.
     match /leaderboard_scores/{scoreId} {
       allow read: if true;
       allow create: if isValidScore(request.resource.data);
-      allow update, delete: if false;
+      allow update: if isValidScore(request.resource.data) &&
+        request.resource.data.game == resource.data.game &&
+        isScoreImprovement(request.resource.data, resource.data);
+      allow delete: if false;
     }
 
     // Default deny for anything else.

@@ -23,6 +23,7 @@
   var wonAlready = false;
   var moveCount = 0;
   var cascadeGen = 0;
+  var autoCompleting = false; // true once every tableau card is face up and the rest plays itself
 
   var foundationElBySuit = {};
   foundationEls.forEach(function (el) { foundationElBySuit[el.dataset.suit] = el; });
@@ -71,6 +72,7 @@
     cascadeGen++; // invalidate any win cascade still flying from a previous game
     clearCascade();
     wonAlready = false;
+    autoCompleting = false;
     moveCount = 0;
 
     var deck = freshDeck();
@@ -169,6 +171,93 @@
     if (window.SFX) window.SFX.place();
     checkWin();
     render();
+    tryAutoComplete();
+  }
+
+  // Once every tableau card is face up there's no hidden information left -
+  // every card still in the tableau sits in one continuous, already-legally-
+  // built descending run (that's the only way it could have gotten there),
+  // so the lowest-ranked card not yet on its foundation is always sitting
+  // exposed at the top of wherever it is (a pile, or the waste) once earlier
+  // ranks clear out of the way. Repeatedly playing whatever's exposed and
+  // eligible - drawing through the stock as needed for more candidates - is
+  // therefore guaranteed to finish the game, so it's safe to just play it out
+  // automatically instead of making the player click through the obvious rest.
+  function allTableauFaceUp() {
+    return tableau.every(function (pile) {
+      return pile.every(function (card) { return card.faceUp; });
+    });
+  }
+
+  function tryAutoComplete() {
+    if (autoCompleting || wonAlready) return;
+    if (!allTableauFaceUp()) return;
+    autoCompleting = true;
+    selection = null;
+    render();
+    setTimeout(autoCompleteStep, 250);
+  }
+
+  function autoCompleteStep() {
+    if (wonAlready) { autoCompleting = false; return; }
+
+    var moved = false;
+    for (var col = 0; col < 7 && !moved; col++) {
+      var pile = tableau[col];
+      if (!pile.length) continue;
+      var card = pile[pile.length - 1];
+      if (canDropOnFoundation(card.suit, card)) {
+        pile.pop();
+        foundations[card.suit].push(card);
+        burstAtFoundation(card.suit);
+        moveCount++;
+        if (window.SFX) window.SFX.place();
+        moved = true;
+      }
+    }
+    if (!moved && waste.length) {
+      var wasteCard = waste[waste.length - 1];
+      if (canDropOnFoundation(wasteCard.suit, wasteCard)) {
+        waste.pop();
+        foundations[wasteCard.suit].push(wasteCard);
+        burstAtFoundation(wasteCard.suit);
+        moveCount++;
+        if (window.SFX) window.SFX.place();
+        moved = true;
+      }
+    }
+    // Nothing playable right now - draw (or recycle waste back to stock) to
+    // surface the next candidate. This still counts as making progress: the
+    // "moved" flag here just means "keep the loop going", not "found a move".
+    if (!moved) {
+      if (stock.length) {
+        var drawn = stock.pop();
+        drawn.faceUp = true;
+        waste.push(drawn);
+        moved = true;
+      } else if (waste.length) {
+        while (waste.length) {
+          var recycled = waste.pop();
+          recycled.faceUp = false;
+          stock.push(recycled);
+        }
+        moved = true;
+      }
+    }
+
+    render();
+    checkWin();
+
+    if (wonAlready) {
+      autoCompleting = false;
+    } else if (moved) {
+      setTimeout(autoCompleteStep, 90);
+    } else {
+      // Shouldn't be reachable once the tableau is fully face up (see the
+      // comment above allTableauFaceUp) - bail out rather than risk hanging
+      // if some edge case ever gets here anyway.
+      autoCompleting = false;
+    }
   }
 
   function tryMoveToTableau(col) {
@@ -212,10 +301,14 @@
     document.querySelectorAll(".sol-cascade-card").forEach(function (el) { el.remove(); });
   }
 
-  // The classic "cards bounce off the screen" win animation: every card in
-  // the deck (not tied to how these specific foundations filled up) gets
-  // launched in a staggered stream, falls under simple gravity, bounces off
-  // the left/right edges, and is removed once it drops past the bottom.
+  // The actual classic "cards spring out of the foundations and bounce down
+  // the screen" win animation (the previous version here just rained cards
+  // down from off the top of the page, which isn't the same thing at all).
+  // Each card launches from wherever its own foundation pile currently sits
+  // on screen, pops up and out to one side, then falls under gravity,
+  // bouncing off the left/right edges *and* the floor - losing a bit of
+  // energy each floor bounce - until it settles or bounces off the bottom
+  // of the screen for good.
   function startWinCascade() {
     cascadeGen++;
     var gen = cascadeGen;
@@ -228,40 +321,60 @@
 
     var vw = window.innerWidth;
     var vh = window.innerHeight;
-    var gravity = 0.55;
+    var gravity = 0.7;
     var cardIndex = 0;
+    var suitIndex = 0;
 
     function launchCard() {
       if (gen !== cascadeGen) return;
       var card = deckCycle[cardIndex % deckCycle.length];
       cardIndex++;
 
+      // Cycle which foundation each card springs out of, so the four piles
+      // empty out in a round-robin stream rather than one at a time.
+      var suit = SUITS[suitIndex % SUITS.length];
+      suitIndex++;
+      var foundEl = foundationElBySuit[suit];
+      var rect = foundEl ? foundEl.getBoundingClientRect() : { left: vw / 2 - 28, top: 0, width: 56 };
+      var size = rect.width || 56;
+
       var el = document.createElement("img");
       el.className = "sol-cascade-card";
       el.src = cardImgSrc(card);
       el.alt = "";
+      el.style.width = size + "px";
+      el.style.height = size + "px";
 
-      var x = 20 + Math.random() * Math.max(20, vw - 76);
-      var y = -60;
-      var vx = (Math.random() - 0.5) * 14;
-      var vy = 2 + Math.random() * 2;
+      var x = rect.left;
+      var y = rect.top;
+      var vx = (Math.random() < 0.5 ? -1 : 1) * (2.5 + Math.random() * 5);
+      var vy = -(9 + Math.random() * 7); // pops up out of the pile first, like the original
       el.style.transform = "translate(" + x + "px," + y + "px)";
       document.body.appendChild(el);
+
+      var bounces = 0;
+      var maxBounces = 3 + Math.floor(Math.random() * 3);
 
       function step() {
         if (gen !== cascadeGen) { el.remove(); return; }
         vy += gravity;
         x += vx;
         y += vy;
-        if (x < 0) { x = 0; vx = -vx * 0.7; }
-        if (x > vw - 56) { x = vw - 56; vx = -vx * 0.7; }
+        if (x < 0) { x = 0; vx = -vx; }
+        if (x > vw - size) { x = vw - size; vx = -vx; }
+        var floor = vh - size;
+        if (y >= floor) {
+          y = floor;
+          vy = -vy * 0.6; // loses energy each bounce, same as a real dropped card
+          bounces++;
+          if (bounces >= maxBounces || Math.abs(vy) < 3) { el.remove(); return; }
+        }
         el.style.transform = "translate(" + x + "px," + y + "px)";
-        if (y > vh + 60) { el.remove(); return; }
         requestAnimationFrame(step);
       }
       requestAnimationFrame(step);
 
-      if (cardIndex < deckCycle.length) setTimeout(launchCard, 90);
+      if (cardIndex < deckCycle.length) setTimeout(launchCard, 70);
     }
     launchCard();
   }
@@ -280,6 +393,7 @@
   }
 
   function onStockClick() {
+    if (autoCompleting) return;
     if (stock.length) {
       var card = stock.pop();
       card.faceUp = true;
@@ -296,13 +410,13 @@
   }
 
   function onWasteClick() {
-    if (!waste.length) return;
+    if (autoCompleting || !waste.length) return;
     if (selection && selection.pile === "waste") { clearSelection(); return; }
     pickUpFromWaste();
   }
 
   function onWasteDblClick() {
-    if (!waste.length) return;
+    if (autoCompleting || !waste.length) return;
     if (!quickMoveToFoundation(waste[waste.length - 1], true)) {
       shakeEl(wasteEl);
       if (window.SFX) window.SFX.invalid();
@@ -310,7 +424,7 @@
   }
 
   function onFoundationClick(suit, el) {
-    if (!selection) return;
+    if (autoCompleting || !selection) return;
     if (!tryMoveToFoundation(suit)) {
       shakeEl(el);
       if (window.SFX) window.SFX.invalid();
@@ -318,6 +432,7 @@
   }
 
   function onTableauCardClick(col, index, colEl) {
+    if (autoCompleting) return;
     var pile = tableau[col];
     var card = pile[index];
     var isTopCard = index === pile.length - 1;
@@ -343,7 +458,7 @@
 
   function onTableauColumnClick(col, colEl) {
     // clicked the empty space below a (possibly empty) column
-    if (!selection) return;
+    if (autoCompleting || !selection) return;
     if (!tryMoveToTableau(col)) {
       shakeEl(colEl);
       if (window.SFX) window.SFX.invalid();
@@ -351,6 +466,7 @@
   }
 
   function onTableauCardDblClick(col, index, el) {
+    if (autoCompleting) return;
     var pile = tableau[col];
     if (index !== pile.length - 1) return;
     var card = pile[index];

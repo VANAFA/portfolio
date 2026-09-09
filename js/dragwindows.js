@@ -1,12 +1,12 @@
 // Lets the pinned-corner windows (My Computer, Minesweeper, Solitaire, Chat,
-// Hit me!) be dragged around by their title bar, like real OS windows. Only
-// active where those windows are actually position:fixed (see the
+// Leaderboard, Hit me!) be dragged around by their title bar, like real OS
+// windows. Only active where those windows are actually position:fixed (see the
 // min-width:1200px rules in css/win98.css) - in the narrow-screen layout
 // they're normal-flow blocks stacked in a column, where dragging wouldn't
 // make sense. Positions are session-only: reloading resets to the default
 // pinned spot.
 (function () {
-  var DRAGGABLE_IDS = ["mycomputer", "minesweeper", "solitaire", "chat", "face"];
+  var DRAGGABLE_IDS = ["mycomputer", "minesweeper", "solitaire", "chat", "leaderboard", "face"];
   var DESKTOP_QUERY = "(min-width: 1200px)";
 
   DRAGGABLE_IDS.forEach(function (id) {

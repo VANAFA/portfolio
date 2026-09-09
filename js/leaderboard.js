@@ -5,7 +5,8 @@
 import { db } from "./firebase-init.js";
 import {
   collection,
-  addDoc,
+  doc,
+  setDoc,
   query,
   where,
   orderBy,
@@ -28,12 +29,22 @@ import {
     return div.innerHTML;
   }
 
-  var GAMES = ["minesweeper-beginner", "minesweeper-intermediate", "minesweeper-expert", "solitaire"];
+  var GAMES = ["minesweeper-beginner", "minesweeper-intermediate", "minesweeper-expert", "solitaire", "pinball"];
   var GAME_LABEL_KEYS = {
     "minesweeper-beginner": "leaderboard.msBeginner",
     "minesweeper-intermediate": "leaderboard.msIntermediate",
     "minesweeper-expert": "leaderboard.msExpert",
-    "solitaire": "leaderboard.solitaire"
+    "solitaire": "leaderboard.solitaire",
+    "pinball": "leaderboard.pinball"
+  };
+  // Minesweeper (seconds) and Solitaire (moves): lower is better. Pinball
+  // (points): higher is better - the one game here where that flips.
+  var SORT_DIR = {
+    "minesweeper-beginner": "asc",
+    "minesweeper-intermediate": "asc",
+    "minesweeper-expert": "asc",
+    "solitaire": "asc",
+    "pinball": "desc"
   };
   var currentGame = GAMES[0];
   var unsub = null;
@@ -42,9 +53,9 @@ import {
   var listEl = document.getElementById("leaderboard-list");
 
   function formatValue(game, value) {
-    return game === "solitaire"
-      ? value + " " + t("leaderboard.moves")
-      : value + " " + t("leaderboard.seconds");
+    if (game === "solitaire") return value + " " + t("leaderboard.moves");
+    if (game === "pinball") return Number(value).toLocaleString() + " " + t("leaderboard.points");
+    return value + " " + t("leaderboard.seconds");
   }
 
   function renderTabs() {
@@ -71,7 +82,7 @@ import {
     var q = query(
       collection(db, "leaderboard_scores"),
       where("game", "==", currentGame),
-      orderBy("value", "asc"),
+      orderBy("value", SORT_DIR[currentGame]),
       limit(10)
     );
     unsub = onSnapshot(q, function (snap) {
@@ -133,19 +144,32 @@ import {
     if (e.target === overlay) closeScoreDialog();
   });
 
+  // One document per name+game (not an auto-generated ID) - resubmitting
+  // under the same name overwrites this same slot instead of piling up a
+  // new entry, which is what makes an old record disappear once beaten.
+  // firestore.rules only allows that overwrite when the new value is
+  // strictly better, so this is safe to just attempt unconditionally: a
+  // worse score is silently rejected by the rules, leaving the existing
+  // (better) record standing exactly as it should.
+  function scoreDocId(game, name) {
+    return game + "_" + name.trim().toLowerCase().replace(/\//g, "-");
+  }
+
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     if (!pending) return;
     var name = nameInput.value.trim().slice(0, 20);
     if (!name) return;
     localStorage.setItem("leaderboard-name", name);
-    addDoc(collection(db, "leaderboard_scores"), {
+    setDoc(doc(db, "leaderboard_scores", scoreDocId(pending.game, name)), {
       game: pending.game,
       name: name,
       value: pending.value,
       createdAt: serverTimestamp()
     }).catch(function (err) {
-      console.error("score submit failed:", err);
+      // Also the expected outcome for a score that isn't actually an
+      // improvement - not worth surfacing as an error to the player.
+      console.error("score submit failed (or wasn't a personal best):", err);
     });
     closeScoreDialog();
   });

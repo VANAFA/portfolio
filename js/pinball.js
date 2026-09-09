@@ -69,4 +69,26 @@
       document.addEventListener("visibilitychange", sync);
     }
   });
+
+  // ---- leaderboard: self-reported score --------------------------------
+  // The embedded engine is a compiled WASM binary with no exposed JS API and
+  // no on-screen text in the DOM (the score is drawn as pixels on the
+  // canvas) - there's no way to read the real score out programmatically,
+  // unlike Minesweeper/Solitaire where this site's own code already knows
+  // the number. This leaderboard entry is trust-based: the player types in
+  // whatever the game just showed them. firestore.rules still bounds it to
+  // a sane range and only lets a resubmission overwrite a strictly higher
+  // score (pinball is high-score-wins, unlike the other two games), but
+  // can't verify the number is real.
+  var scoreForm = document.getElementById("pinball-score-form");
+  if (scoreForm) {
+    scoreForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var input = document.getElementById("pinball-score-input");
+      var value = Math.floor(Number(input.value));
+      if (!(value > 0)) return;
+      if (window.submitLeaderboardScore) window.submitLeaderboardScore("pinball", value);
+      input.value = "";
+    });
+  }
 })();

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Travel Blog</title>
 <link rel="icon" type="image/x-icon" href="images/icons/computer.ico?v=40320a87">
-<link rel="stylesheet" href="css/win98.css?v=e2ecfa7">
+<link rel="stylesheet" href="css/win98.css?v=devlocal4">
 </head>
 <body data-title-key="page.travelTitle">
 
@@ -310,6 +310,12 @@
     </div>
     <div class="window-body pinball-body">
       <div class="pinball-frame-wrap"><iframe class="pinball-frame" src="pinball/index.html" title="3D Pinball: Space Cadet" loading="lazy" allow="autoplay; fullscreen"></iframe></div>
+      <form class="pinball-score-form" id="pinball-score-form">
+        <label for="pinball-score-input" data-i18n="pin.scoreLabel">Your final score:</label>
+        <input type="number" id="pinball-score-input" min="0" max="999999999" step="1" inputmode="numeric" autocomplete="off" required>
+        <button type="submit" class="btn98" data-i18n="pin.scoreSubmit">Save to leaderboard</button>
+      </form>
+      <p class="pinball-score-hint" data-i18n="pin.scoreHint">Self-reported - type in the score shown at the end of your game.</p>
       <p class="pinball-credit"><span data-i18n="pin.credit">3D Pinball: Space Cadet - not built by me; mirrored here since the original disables Play when framed.</span> <a href="https://github.com/lrusso/3DPinballSpaceCadet" target="_blank" rel="noopener">lrusso</a> (<span data-i18n="pin.creditPort">web port</span>) &middot; <a href="https://github.com/alula/SpaceCadetPinball" target="_blank" rel="noopener">alula</a> (<span data-i18n="pin.creditDecompile">decompilation</span>)</p>
     </div>
   </section>
@@ -381,32 +387,32 @@
     <a class="btn98 version-badge" id="version-badge" href="#" target="_blank" rel="noopener">v: …</a>
   </div>
 
-  <script src="js/data.js?v=e2ecfa7"></script>
-  <script src="js/i18n.js?v=e2ecfa7"></script>
-  <script src="js/features.js?v=e2ecfa7"></script>
-  <script src="js/backgrounds.js?v=e2ecfa7"></script>
-  <script src="js/background.js?v=e2ecfa7"></script>
-  <script src="js/traveldata.js?v=e2ecfa7"></script>
-  <script src="js/travel.js?v=e2ecfa7"></script>
-  <script src="js/main.js?v=e2ecfa7"></script>
-  <script src="js/windows.js?v=e2ecfa7"></script>
-  <script src="js/dragwindows.js?v=e2ecfa7"></script>
-  <script src="js/pinball.js?v=e2ecfa7"></script>
-  <script src="js/blog.js?v=e2ecfa7"></script>
-  <script src="js/desktopicons.js?v=e2ecfa7"></script>
-  <script src="js/dragicons.js?v=e2ecfa7"></script>
-  <script type="module" src="js/chat.js?v=e2ecfa7"></script>
-  <script type="module" src="js/leaderboard.js?v=e2ecfa7"></script>
-  <script src="js/mycomputer.js?v=e2ecfa7"></script>
-  <script src="js/minesweeper.js?v=e2ecfa7"></script>
-  <script src="js/solitaire.js?v=e2ecfa7"></script>
-  <script src="js/taskbar.js?v=e2ecfa7"></script>
-  <script src="js/particles.js?v=e2ecfa7"></script>
-  <script src="js/sfx.js?v=e2ecfa7"></script>
-  <script src="js/face.js?v=e2ecfa7"></script>
-  <script src="js/chipa.js?v=e2ecfa7"></script>
-  <script src="js/quest.js?v=e2ecfa7"></script>
-  <script src="js/hitme.js?v=e2ecfa7"></script>
-  <script src="js/version.js?v=e2ecfa7"></script>
+  <script src="js/data.js?v=devlocal4"></script>
+  <script src="js/i18n.js?v=devlocal4"></script>
+  <script src="js/features.js?v=devlocal4"></script>
+  <script src="js/backgrounds.js?v=devlocal4"></script>
+  <script src="js/background.js?v=devlocal4"></script>
+  <script src="js/traveldata.js?v=devlocal4"></script>
+  <script src="js/travel.js?v=devlocal4"></script>
+  <script src="js/main.js?v=devlocal4"></script>
+  <script src="js/windows.js?v=devlocal4"></script>
+  <script src="js/dragwindows.js?v=devlocal4"></script>
+  <script src="js/pinball.js?v=devlocal4"></script>
+  <script src="js/blog.js?v=devlocal4"></script>
+  <script src="js/desktopicons.js?v=devlocal4"></script>
+  <script src="js/dragicons.js?v=devlocal4"></script>
+  <script type="module" src="js/chat.js?v=devlocal4"></script>
+  <script type="module" src="js/leaderboard.js?v=devlocal4"></script>
+  <script src="js/mycomputer.js?v=devlocal4"></script>
+  <script src="js/minesweeper.js?v=devlocal4"></script>
+  <script src="js/solitaire.js?v=devlocal4"></script>
+  <script src="js/taskbar.js?v=devlocal4"></script>
+  <script src="js/particles.js?v=devlocal4"></script>
+  <script src="js/sfx.js?v=devlocal4"></script>
+  <script src="js/face.js?v=devlocal4"></script>
+  <script src="js/chipa.js?v=devlocal4"></script>
+  <script src="js/quest.js?v=devlocal4"></script>
+  <script src="js/hitme.js?v=devlocal4"></script>
+  <script src="js/version.js?v=devlocal4"></script>
 </body>
 </html>

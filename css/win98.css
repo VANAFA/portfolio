@@ -297,6 +297,18 @@ hr.divider{
     margin:0;
     z-index:55;
   }
+  /* Right side, below the Hit me! face window - between it and the centered
+     content column below, rather than off in a corner of its own. 460px
+     clears the face window's own ~24-430px span with a bit of a gap, the
+     same way My Computer's bottom:140px clears the Recycle Bin. */
+  [data-window="leaderboard"]{
+    position:fixed;
+    top:460px;
+    right:24px;
+    width:260px;
+    margin:0;
+    z-index:55;
+  }
   /* js/dragwindows.js - grab any of these by their title bar to move them;
      only wired up at this same breakpoint, where they're actually
      position:fixed instead of stacked in normal flow. */
@@ -304,6 +316,7 @@ hr.divider{
   [data-window="minesweeper"] .title-bar,
   [data-window="solitaire"] .title-bar,
   [data-window="chat"] .title-bar,
+  [data-window="leaderboard"] .title-bar,
   [data-window="face"] .title-bar{
     cursor:grab;
   }
@@ -311,6 +324,7 @@ hr.divider{
   [data-window="minesweeper"].dragging .title-bar,
   [data-window="solitaire"].dragging .title-bar,
   [data-window="chat"].dragging .title-bar,
+  [data-window="leaderboard"].dragging .title-bar,
   [data-window="face"].dragging .title-bar{
     cursor:grabbing;
   }
@@ -1225,6 +1239,34 @@ hr.divider{
   width:100%;
   height:100%;
   border:none;
+}
+.pinball-score-form{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:0;
+  padding:8px 10px 4px;
+  background:var(--w98-face-light);
+  border-top:1px solid var(--w98-face-dark);
+}
+.pinball-score-form label{ font-size:12px; }
+.pinball-score-form input[type="number"]{
+  width:110px;
+  padding:4px 6px;
+  border-top:2px solid var(--w98-face-darker);
+  border-left:2px solid var(--w98-face-darker);
+  border-right:2px solid var(--w98-face-lighter);
+  border-bottom:2px solid var(--w98-face-lighter);
+  font-family:inherit;
+  font-size:13px;
+}
+.pinball-score-hint{
+  margin:0;
+  padding:0 10px 6px;
+  font-size:10.5px;
+  color:#555;
+  background:var(--w98-face-light);
 }
 .pinball-credit{
   margin:0;
