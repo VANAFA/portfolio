@@ -131,11 +131,12 @@
       tone(1000, 700, 0.035, "square", 0.035);
       noise(0.02, 3000, 3, 0.03);
     },
-    // A little two-note chime for an incoming chat message - not a
-    // reproduction of the classic MSN "doot-doot", just evoking it.
+    // Two-note ascending chime for an incoming chat message, modelled on the
+    // classic MSN Messenger "new message" notification: E5 (659 Hz) then
+    // A5 (880 Hz), each a clean sine with a short bell-like decay.
     message: function () {
-      tone(760, 760, 0.09, "sine", 0.05);
-      setTimeout(function () { tone(1010, 1010, 0.12, "sine", 0.05); }, 100);
+      tone(659, 659, 0.15, "sine", 0.055);
+      setTimeout(function () { tone(880, 880, 0.22, "sine", 0.06); }, 130);
     },
     // A short rising jingle for a win.
     win: function () {

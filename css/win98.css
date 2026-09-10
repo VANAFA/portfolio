@@ -92,7 +92,13 @@ a:visited{ color:#551a8b; }
 }
 .window.maximized[data-window="minesweeper"]{ width:min(calc(100vw - 24px), 700px); }
 .window.maximized[data-window="solitaire"]{ width:min(calc(100vw - 24px), 960px); }
-.window.maximized[data-window="pinball"]{ width:min(calc(100vw - 24px), 760px); }
+/* Wider than the 760px other maximized windows use - unlike a document or a
+   small board, the table+backglass composition actually has room to grow
+   into, and doing so is what lets it use more of a tall viewport's height
+   (see .pinball-frame-wrap's aspect-ratio). Comfortably above what the 85vh
+   formula there resolves to on a typical monitor, so vh - not this cap - is
+   what actually decides the size in the common case. */
+.window.maximized[data-window="pinball"]{ width:min(calc(100vw - 24px), 1250px); }
 /* Minesweeper/Solitaire boards don't stretch to fill a wide maximized window -
    they'd just look enormous and lopsided pinned to the top-left - so center
    them in the extra space instead. */
@@ -717,9 +723,11 @@ hr.divider{
   justify-content:center;
   padding:40px 16px;
   overflow-y:auto;
-  z-index:250; /* above .window.maximized's 150 and the taskbar's 200, so e.g.
-                  the pinball high-score entry stays on top of both even when
-                  the pinball window is maximized */
+  z-index:700; /* above .window.maximized's 150, the taskbar's 200, cascade
+                  cards (.sol-cascade-card 500), drag ghost (.sol-drag-ghost
+                  600), and hit particles (.hit-particle 500) — so the
+                  "save your score?" dialog always appears on top even when
+                  a game window is maximized and the win animation is playing */
 }
 .overlay[hidden]{ display:none; }
 
@@ -1159,7 +1167,7 @@ hr.divider{
    a little off-center, then settles into place. */
 .ms-flag.spawn{ animation:ms-flag-spawn 0.28s cubic-bezier(.34,1.56,.64,1); }
 @keyframes ms-flag-spawn{
-  0%{ transform:scale(3) translate(15%,-15%); opacity:0.6; }
+  0%{ transform:scale(9) translate(15%,-15%); opacity:0.6; }
   100%{ transform:scale(1) translate(0,0); opacity:1; }
 }
 @media (prefers-reduced-motion:reduce){
@@ -1351,18 +1359,25 @@ hr.divider{
   border-top:1px solid var(--w98-face-dark);
 }
 .pinball-credit a{ color:#000080; }
-.window.maximized .pinball-body{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
+/* Used to be display:flex + align-items:center, relying on flex-grow
+   (flex:1 1 0 below) to size .pinball-frame-wrap into the available space.
+   Switched to driving width directly instead, with height following via
+   aspect-ratio - block centering (margin:0 auto below) needs no flex
+   context at all. */
 .window.maximized .pinball-frame-wrap{
-  flex:1 1 0;
-  width:auto;
+  width:min(100%, calc(85vh * 6 / 5));
+  /* The non-maximized rule above sets an explicit height:70vh - aspect-ratio
+     only fills in a dimension that's otherwise auto, so without resetting
+     height here that 70vh would silently keep winning over the ratio
+     (measured: a 1224x840 box, not the intended 6:5, until this was added).
+     The old flex:1 1 0 rule never hit this, since flex-basis:0 replaces the
+     used value for the main-axis size regardless of what height says. */
+  height:auto;
   aspect-ratio:6/5;
   max-width:100%;
   max-height:none;
   min-height:0;
+  margin:0 auto;
 }
 
 /* ===== repo list ===== */
@@ -1584,6 +1599,29 @@ hr.divider{
   .taskbar-clock{ padding:3px 5px; font-size:11px; }
   .version-badge{ padding:3px 5px; font-size:10px; }
   .lang-btn{ padding:3px 5px; font-size:10px; }
+
+  /* Pinball opens maximized on a phone (data-mobile-maximize) - make it a real
+     full-screen game there instead of the desktop's centered, aspect-boxed
+     board. The frame grows to fill whatever height is left after the tiny
+     toolbar/credit, so the table uses the whole screen; the desktop's
+     85vh-width / 6:5 aspect rules (which would leave a small centered box on a
+     tall narrow phone) are overridden. The window-body must NOT scroll here,
+     or the flex child can't be sized by the leftover space. */
+  .window.maximized[data-window="pinball"]{ width:auto; left:12px; right:12px; transform:none; }
+  .window.maximized[data-window="pinball"] .window-body{ overflow:hidden; }
+  .window.maximized .pinball-frame-wrap{
+    width:100%;
+    height:auto;
+    aspect-ratio:auto;
+    flex:1 1 0;
+    min-height:0;
+    max-height:none;
+    margin:0;
+  }
+  /* Credit line is desktop-nicety fine print; on a phone it just steals height
+     the game wants. Keep the Reset button (the toolbar). */
+  .pinball-credit{ display:none; }
+  .pinball-toolbar{ padding:4px 8px; }
 }
 
 /* ===== Chat (Firebase Auth + Firestore, see js/chat.js) ===== */
