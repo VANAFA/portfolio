@@ -1608,7 +1608,16 @@ hr.divider{
      tall narrow phone) are overridden. The window-body must NOT scroll here,
      or the flex child can't be sized by the leftover space. */
   .window.maximized[data-window="pinball"]{ width:auto; left:12px; right:12px; transform:none; }
-  .window.maximized[data-window="pinball"] .window-body{ overflow:hidden; }
+  /* flex:1 1 0 on the frame-wrap below only fills leftover height if this is a
+     column flex container - the desktop rules dropped that context when they
+     moved to width + aspect-ratio, so it has to be restored here. padding:0
+     beats the generic .window-body{padding:10px} in this same block. */
+  .window.maximized[data-window="pinball"] .window-body{
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    padding:0;
+  }
   .window.maximized .pinball-frame-wrap{
     width:100%;
     height:auto;
