@@ -216,12 +216,19 @@
 
 			// Touch controls: each button simulates its key being pressed/held.
 			// A real keypress's event target is wherever focus is (often the
-			// canvas once the game's grabbed it) and bubbles up to document -
-			// the "c"/"r" remap above is a document-level listener, while the
-			// engine's own SDL input almost certainly listens on the canvas
-			// directly (that's where the remap forwards its translated events
-			// to). Dispatching on both, for every key, reaches whichever of
-			// the two actually needs it without having to know for sure.
+			// canvas once the game's grabbed it) and bubbles up to document.
+			// Dispatch each synthetic key ONCE, on document, with bubbles:true.
+			// That single event reaches both consumers exactly once:
+			//   - the "m"/"r" remap listener above (a document-level listener),
+			//     which then forwards its own translated event to the canvas; and
+			//   - the game engine's SDL keyboard listener, which SDL2's emscripten
+			//     port registers on window (EMSCRIPTEN_EVENT_TARGET_WINDOW), so a
+			//     document event bubbles straight up to it.
+			// Do NOT also dispatch on the canvas: a canvas-targeted key event
+			// ALSO bubbles up to window, so the engine would then see every tap
+			// twice - two keydown/keyup edges per tap. That doubled input is
+			// what made the flippers/launch "speed up" or stutter when tapping
+			// or rapid-tapping the buttons.
 			var IS_TOUCH_DEVICE = ("ontouchstart" in window) || navigator.maxTouchPoints > 0;
 			// Enabling this immediately (rather than once the game actually starts,
 			// below in the gui_start handler) used to leave the Launch button
@@ -263,9 +270,9 @@
 				var releaseTimer = null;
 				function fire(type) {
 					var opts = Object.assign({ key: key, shiftKey: false, ctrlKey: false, altKey: false, metaKey: false, bubbles: true, cancelable: true }, info);
+					// Once only - see the comment above on why a second dispatch
+					// on the canvas would double every tap at the window listener.
 					document.dispatchEvent(new KeyboardEvent(type, opts));
-					var canvas = document.getElementById("canvas");
-					if (canvas) canvas.dispatchEvent(new KeyboardEvent(type, opts));
 				}
 				function sendDown() {
 					if (down) return;
