@@ -84,9 +84,9 @@
 		<div class="pleasewait"><div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
 		<canvas id="canvas"></canvas>
 		<div class="touch-controls" id="touch-controls">
-			<div class="touch-btn" id="touch-flipper-left" data-key="z">LEFT<br>FLIPPER</div>
-			<div class="touch-btn touch-btn-launch" id="touch-launch" data-key=" ">LAUNCH</div>
-			<div class="touch-btn" id="touch-flipper-right" data-key="m">RIGHT<br>FLIPPER</div>
+			<div class="touch-btn" id="touch-flipper-left" data-key="z"><span class="touch-label">LEFT<br>FLIPPER</span></div>
+			<div class="touch-btn touch-btn-launch" id="touch-launch" data-key=" "><span class="touch-label">HOLD<br>LAUNCH</span></div>
+			<div class="touch-btn" id="touch-flipper-right" data-key="m"><span class="touch-label">RIGHT<br>FLIPPER</span></div>
 		</div>
 		<div class="gui_container">
 			<div class="gui_background"></div>
@@ -213,9 +213,11 @@
 			// to). Dispatching on both, for every key, reaches whichever of
 			// the two actually needs it without having to know for sure.
 			var IS_TOUCH_DEVICE = ("ontouchstart" in window) || navigator.maxTouchPoints > 0;
-			if (IS_TOUCH_DEVICE) {
-				document.getElementById("touch-controls").classList.add("enabled");
-			}
+			// Enabling this immediately (rather than once the game actually starts,
+			// below in the gui_start handler) used to leave the Launch button
+			// sitting on screen at the same time as - and overlapping - the red
+			// Play button, since both this and .gui_container are visible on the
+			// pre-game splash.
 			// code/which/keyCode included alongside key, matching the shape the
 			// "c"/"r" remap above already uses - whichever of the old/new
 			// properties the engine's SDL glue actually reads, this covers it.
@@ -224,10 +226,20 @@
 				"m": { code: "KeyM", which: 77, keyCode: 77 },
 				" ": { code: "Space", which: 32, keyCode: 32 }
 			};
+			// A fast tap can dispatch keydown then keyup before the engine's own
+			// input handling ever registers the key as having been down (same
+			// symptom reported with real hold-to-flip play: "fast tapping the
+			// flippers don't move, you need to hold a bit") - padding every press
+			// out to at least MIN_HOLD_MS, and coalescing a rapid re-tap into the
+			// same still-held press rather than double-firing, works around it
+			// without needing to know exactly why the engine misses the short one.
+			var MIN_HOLD_MS = 90;
 			Array.prototype.forEach.call(document.querySelectorAll(".touch-btn"), function (btn) {
 				var key = btn.getAttribute("data-key");
 				var info = TOUCH_KEY_INFO[key] || {};
 				var held = false;
+				var pressedAt = 0;
+				var gen = 0;
 				function fire(type) {
 					var opts = Object.assign({ key: key, shiftKey: false, ctrlKey: false, altKey: false, metaKey: false, bubbles: true, cancelable: true }, info);
 					document.dispatchEvent(new KeyboardEvent(type, opts));
@@ -236,23 +248,80 @@
 				}
 				function press(e) {
 					e.preventDefault();
+					gen++;
 					if (held) return;
 					held = true;
+					pressedAt = performance.now();
 					btn.classList.add("pressed");
 					fire("keydown");
 				}
 				function release(e) {
 					if (e) e.preventDefault();
 					if (!held) return;
-					held = false;
-					btn.classList.remove("pressed");
-					fire("keyup");
+					var myGen = gen;
+					var wait = Math.max(0, MIN_HOLD_MS - (performance.now() - pressedAt));
+					setTimeout(function () {
+						// A new press landed before this one's minimum hold elapsed -
+						// let that press's own release own the eventual keyup instead
+						// of cutting it short here.
+						if (gen !== myGen) return;
+						held = false;
+						btn.classList.remove("pressed");
+						fire("keyup");
+					}, wait);
 				}
 				btn.addEventListener("pointerdown", press);
 				btn.addEventListener("pointerup", release);
 				btn.addEventListener("pointercancel", release);
 				btn.addEventListener("pointerleave", release);
 				btn.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+			});
+
+			// ---- language: mirror the parent site's EN/ES choice -----------
+			// Same origin as the parent page, so its localStorage is visible here
+			// directly - no need to pull in the whole js/i18n.js machinery for
+			// just these few strings. "storage" fires in this frame (but not the
+			// one that made the write) whenever the parent toggles the language.
+			var PINBALL_STRINGS = {
+				en: {
+					guiControls: '<span class="gui_controls_key">LEFT FLIPPER = </span>Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gui_controls_key">RIGHT FLIPPER = </span>M<br><span class="gui_controls_key">TILT FLIPPER TABLE = </span>X&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gui_controls_key">LAUNCH BALL = </span>SPACE<br><span class="gui_controls_key">RESTART GAME = </span>R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gui_controls_key">ENABLE/DISABLE SOUND = </span>T',
+					left: "LEFT<br>FLIPPER",
+					launch: "HOLD<br>LAUNCH",
+					right: "RIGHT<br>FLIPPER"
+				},
+				es: {
+					guiControls: '<span class="gui_controls_key">FLIPPER IZQUIERDO = </span>Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gui_controls_key">FLIPPER DERECHO = </span>M<br><span class="gui_controls_key">SACUDIR LA MESA = </span>X&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gui_controls_key">LANZAR BOLA = </span>ESPACIO<br><span class="gui_controls_key">REINICIAR JUEGO = </span>R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gui_controls_key">ACTIVAR/DESACTIVAR SONIDO = </span>T',
+					left: "FLIPPER<br>IZQUIERDO",
+					launch: "MANTENÉ<br>LANZAR",
+					right: "FLIPPER<br>DERECHO"
+				}
+			};
+			function applyPinballLang() {
+				var lang = "en";
+				try { if (localStorage.getItem("site-lang") === "es") lang = "es"; } catch (e) {}
+				var s = PINBALL_STRINGS[lang];
+				var gc = document.querySelector(".gui_controls");
+				if (gc) gc.innerHTML = s.guiControls;
+				var left = document.querySelector("#touch-flipper-left .touch-label");
+				var launch = document.querySelector("#touch-launch .touch-label");
+				var right = document.querySelector("#touch-flipper-right .touch-label");
+				if (left) left.innerHTML = s.left;
+				if (launch) launch.innerHTML = s.launch;
+				if (right) right.innerHTML = s.right;
+			}
+			applyPinballLang();
+			window.addEventListener("storage", function (e) {
+				if (!e.key || e.key === "site-lang") applyPinballLang();
+			});
+
+			// ---- reset, requested by the parent window's own Reset button -----
+			// Mirrors the "r" key remap above (dispatched straight from here
+			// rather than duplicating the F2 translation a second time).
+			window.addEventListener("message", function (e) {
+				if (e.data === "pinball-reset" && e.source === window.parent) {
+					document.dispatchEvent(new KeyboardEvent("keydown", { key: "r", bubbles: true, cancelable: true }));
+					document.dispatchEvent(new KeyboardEvent("keyup", { key: "r", bubbles: true, cancelable: true }));
+				}
 			});
 
 			window.addEventListener("load", function()
@@ -266,6 +335,9 @@
 					{
 					document.getElementsByClassName("gui_container")[0].style.display = "none";
 					document.getElementsByClassName("pleasewait")[0].style.display = "block";
+					if (IS_TOUCH_DEVICE) {
+						document.getElementById("touch-controls").classList.add("enabled");
+					}
 
 					const scriptGame = document.createElement("script");
 					scriptGame.src = "SpaceCadetPinball.js";

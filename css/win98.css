@@ -76,6 +76,23 @@ a:visited{ color:#551a8b; }
   flex:1;
   overflow-y:auto;
 }
+/* Minesweeper/Solitaire/Pinball's own boards are already capped well short of
+   a wide monitor's full width (see their max-width rules below/in
+   js/minesweeper.js's fitBoard) - left at the base rule's full-viewport
+   inset, that just leaves the window's own gray chrome padding out both
+   sides of a narrow centered board. Capping each window's own width to
+   roughly its content's real size, and centering the window itself, keeps
+   the vertical breathing room maximizing was for without the dead space. */
+.window.maximized[data-window="minesweeper"],
+.window.maximized[data-window="solitaire"],
+.window.maximized[data-window="pinball"]{
+  left:50%;
+  right:auto;
+  transform:translateX(-50%);
+}
+.window.maximized[data-window="minesweeper"]{ width:min(calc(100vw - 24px), 700px); }
+.window.maximized[data-window="solitaire"]{ width:min(calc(100vw - 24px), 960px); }
+.window.maximized[data-window="pinball"]{ width:min(calc(100vw - 24px), 760px); }
 /* Minesweeper/Solitaire boards don't stretch to fill a wide maximized window -
    they'd just look enormous and lopsided pinned to the top-left - so center
    them in the extra space instead. */
@@ -306,7 +323,7 @@ hr.divider{
     position:fixed;
     top:460px;
     right:24px;
-    width:260px;
+    width:380px;
     margin:0;
     z-index:55;
   }
@@ -707,6 +724,22 @@ hr.divider{
 .overlay[hidden]{ display:none; }
 
 /* ===== Easter egg: drag "My Computer" onto the Recycle Bin ============= */
+.rickroll-overlay{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+.rickroll-overlay[hidden]{ display:none; }
+.rickroll-overlay iframe{
+  width:min(90vw,960px);
+  aspect-ratio:16/9;
+  border:none;
+}
 .bsod-overlay{
   position:fixed;
   inset:0;
@@ -898,6 +931,7 @@ hr.divider{
    the encrypted lock screen above - starfield background, Comic Sans/Times
    headers, a scrolling marquee welcome banner, dashed borders. The lock
    screen itself keeps its plain terminal look; this is the "reveal". ===== */
+.travel-content[hidden]{ display:none; }
 .travel-content{
   display:flex;
   flex-direction:column;
@@ -985,6 +1019,35 @@ hr.divider{
   color:#ffcc00;
   margin:4px 0 0;
 }
+
+/* One preview card per trip, newest first (My Projects' "small tile, read
+   more opens the real thing" pattern) instead of every trip's full text and
+   photos landing on the page at once. */
+.travel-preview-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:16px;
+}
+.travel-preview-card{
+  background:#fffdf0;
+  border:3px dashed #ff66cc;
+  border-radius:6px;
+  padding:10px 12px;
+  box-shadow:0 0 0 3px #06061f, 0 0 10px rgba(255,255,255,0.2);
+  display:flex;
+  flex-direction:column;
+}
+.travel-preview-card h2{
+  font-family:"Comic Sans MS","Comic Sans",cursive;
+  font-size:16px;
+  margin:0 0 4px;
+  color:#cc0066;
+  text-shadow:1px 1px 0 #ffcc00;
+}
+.travel-preview-card .travel-meta{ font-size:11px; margin:0 0 8px; }
+.travel-preview-thumb{ max-width:100%; max-height:120px; object-fit:cover; }
+.travel-preview-card .travel-image-wrap{ margin-bottom:8px; }
+.travel-readmore{ margin-top:auto; align-self:flex-start; }
 
 /* ===== Minesweeper ===== */
 .ms-levels{
@@ -1091,6 +1154,17 @@ hr.divider{
   background-position:center;
   image-rendering:pixelated;
 }
+/* Extra feedback for placing a flag on a touchscreen, where there's no
+   cursor/hover to make the change obvious - the flag pops in oversized and
+   a little off-center, then settles into place. */
+.ms-flag.spawn{ animation:ms-flag-spawn 0.28s cubic-bezier(.34,1.56,.64,1); }
+@keyframes ms-flag-spawn{
+  0%{ transform:scale(3) translate(15%,-15%); opacity:0.6; }
+  100%{ transform:scale(1) translate(0,0); opacity:1; }
+}
+@media (prefers-reduced-motion:reduce){
+  .ms-flag.spawn{ animation:none; }
+}
 .ms-cell.wrong-flag{ position:relative; }
 .ms-cell.wrong-flag::after{
   content:"✕";
@@ -1165,9 +1239,29 @@ hr.divider{
   height:var(--sol-card);
   image-rendering:pixelated;
   filter:drop-shadow(1px 1px 1px rgba(0,0,0,0.4));
+  touch-action:none;
 }
 .sol-card.selected{
   filter:drop-shadow(0 0 3px #ffcc00) drop-shadow(0 0 3px #ffcc00);
+}
+/* Dragging a card: the real card(s) stay in the layout (so nothing reflows)
+   but go invisible while a .sol-drag-ghost - a floating copy under the
+   pointer - stands in for them; see js/solitaire.js's drag handling. */
+.sol-card.sol-drag-hidden{ visibility:hidden; }
+.sol-drag-ghost{
+  position:fixed;
+  top:0;
+  left:0;
+  image-rendering:pixelated;
+  pointer-events:none;
+  z-index:600;
+  will-change:transform;
+  filter:drop-shadow(2px 3px 3px rgba(0,0,0,0.5));
+}
+.sol-tableau-col.sol-drag-over,
+.sol-foundation.sol-drag-over{
+  outline:2px dashed #ffcc00;
+  outline-offset:2px;
 }
 /* -0.68x card height keeps the same fraction of each stacked card visible
    (a run of face-up cards) no matter how big --sol-card grows. */
@@ -1242,6 +1336,10 @@ hr.divider{
   width:100%;
   height:100%;
   border:none;
+}
+.pinball-toolbar{
+  padding:6px 10px;
+  border-top:1px solid var(--w98-face-dark);
 }
 .pinball-credit{
   margin:0;
@@ -1499,6 +1597,22 @@ hr.divider{
   font-size:11px;
   color:#404040;
 }
+.chat-presence{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  margin:0;
+  font-size:11px;
+  color:#404040;
+}
+.presence-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 4px #22c55e;
+  flex-shrink:0;
+}
 .chat-messages{
   flex:1;
   min-height:220px;
@@ -1637,18 +1751,29 @@ hr.divider{
 .chat-cap-shield{ font-size:20px; }
 
 /* ===== Leaderboard (Firestore, see js/leaderboard.js) ===== */
-.leaderboard-tabs{
+/* One column per game, all shown at once instead of a toggle that swaps a
+   single shared list - each headed by the game's own icon so the label next
+   to it can just be "Easy"/"Expert"/etc rather than spelling out
+   "Minesweeper" every time. Columns wrap onto more than one row rather than
+   force the pinned box ever wider - see [data-window="leaderboard"] above. */
+.leaderboard-columns{
   display:flex;
   flex-wrap:wrap;
+  gap:10px;
+}
+.leaderboard-col{
+  flex:1 1 100px;
+  min-width:100px;
+}
+.leaderboard-col-head{
+  display:flex;
+  align-items:center;
   gap:4px;
-  margin-bottom:10px;
+  font-weight:bold;
+  font-size:12px;
+  margin-bottom:4px;
 }
-.leaderboard-tabs .btn98.selected{
-  border-top:2px solid var(--w98-face-darker);
-  border-left:2px solid var(--w98-face-darker);
-  border-right:2px solid var(--w98-face-lighter);
-  border-bottom:2px solid var(--w98-face-lighter);
-}
+.leaderboard-col-head img{ width:16px; height:16px; image-rendering:pixelated; }
 .leaderboard-list{
   list-style:none;
   margin:0;
@@ -1661,27 +1786,28 @@ hr.divider{
   border-left:2px solid var(--w98-face-darker);
   border-right:2px solid var(--w98-face-lighter);
   border-bottom:2px solid var(--w98-face-lighter);
-  padding:8px;
-  min-height:120px;
+  padding:6px;
+  min-height:70px;
 }
 .leaderboard-row{
   display:flex;
+  flex-wrap:wrap;
   align-items:baseline;
-  gap:8px;
-  font-size:13px;
-  padding:2px 4px;
+  gap:4px;
+  font-size:11.5px;
+  padding:2px 3px;
 }
 .leaderboard-row:nth-child(odd){ background:var(--w98-face-light); }
 .leaderboard-rank{
   font-weight:bold;
   color:#000080;
-  min-width:1.6em;
+  min-width:1.4em;
 }
-.leaderboard-name{ flex:1; }
+.leaderboard-name{ flex:1; overflow-wrap:anywhere; }
 .leaderboard-value{ font-family:"Courier New",monospace; }
 .leaderboard-empty{
   color:#555;
-  font-size:12px;
+  font-size:11px;
   padding:4px;
 }
 

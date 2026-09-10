@@ -477,6 +477,138 @@
     }
   }
 
+  // ---- drag-and-drop (layered on top of the click-to-select/click-to-place
+  // flow above, not replacing it - a plain click with no real movement falls
+  // straight through to the existing click handlers unchanged). A drag just
+  // decides *what to drop where*; the actual legality/removal/placement is
+  // still done by the same tryMoveToTableau/tryMoveToFoundation the click
+  // flow already uses, so there's exactly one set of rules for a legal move
+  // no matter how it was made. ----
+  var DRAG_THRESHOLD = 5;
+  var drag = null;
+
+  function cardRunElements(pile, col, index) {
+    if (pile === "waste") {
+      var w = wasteEl.querySelector(".sol-card");
+      return w ? [w] : [];
+    }
+    var colEl = tableauEl.children[col];
+    if (!colEl) return [];
+    return Array.prototype.slice.call(colEl.querySelectorAll(".sol-card")).slice(index);
+  }
+
+  function beginDragTracking(e, pile, col, index) {
+    if (autoCompleting) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    var els = cardRunElements(pile, col, index);
+    if (!els.length) return;
+    var firstRect = els[0].getBoundingClientRect();
+    drag = {
+      pile: pile, col: col, index: index, pointerId: e.pointerId,
+      els: els,
+      startX: e.clientX, startY: e.clientY,
+      grabDX: e.clientX - firstRect.left,
+      grabDY: e.clientY - firstRect.top,
+      offsets: els.map(function (el) {
+        var r = el.getBoundingClientRect();
+        return { dx: r.left - firstRect.left, dy: r.top - firstRect.top, w: r.width, h: r.height, src: el.src };
+      }),
+      active: false,
+      ghosts: [],
+      hoverTarget: null
+    };
+    document.addEventListener("pointermove", onDragPointerMove);
+    document.addEventListener("pointerup", onDragPointerUp);
+    document.addEventListener("pointercancel", onDragPointerUp);
+  }
+
+  function activateDrag() {
+    drag.active = true;
+    if (window.SFX) window.SFX.pick();
+    drag.els.forEach(function (el) { el.classList.add("sol-drag-hidden"); });
+    drag.ghosts = drag.offsets.map(function (o) {
+      var g = document.createElement("img");
+      g.className = "sol-drag-ghost";
+      g.src = o.src;
+      g.style.width = o.w + "px";
+      g.style.height = o.h + "px";
+      document.body.appendChild(g);
+      return g;
+    });
+    positionGhosts(drag.startX, drag.startY);
+  }
+
+  function positionGhosts(clientX, clientY) {
+    var baseX = clientX - drag.grabDX;
+    var baseY = clientY - drag.grabDY;
+    drag.ghosts.forEach(function (g, i) {
+      var o = drag.offsets[i];
+      g.style.transform = "translate(" + (baseX + o.dx) + "px," + (baseY + o.dy) + "px)";
+    });
+  }
+
+  // Ghosts sit on top of everything (including the pile they're over), so
+  // they have to duck out of the way for elementFromPoint to see the real
+  // pile underneath instead of just finding its own ghost again.
+  function findDropTarget(clientX, clientY) {
+    drag.ghosts.forEach(function (g) { g.style.display = "none"; });
+    var el = document.elementFromPoint(clientX, clientY);
+    drag.ghosts.forEach(function (g) { g.style.display = ""; });
+    if (!el) return null;
+    var foundationEl = el.closest(".sol-foundation");
+    if (foundationEl) return { type: "foundation", suit: foundationEl.dataset.suit, el: foundationEl };
+    var colEl = el.closest(".sol-tableau-col");
+    if (colEl) {
+      var idx = Array.prototype.indexOf.call(tableauEl.children, colEl);
+      if (idx !== -1) return { type: "tableau", col: idx, el: colEl };
+    }
+    return null;
+  }
+
+  function setHoverTarget(target) {
+    var sameEl = drag.hoverTarget && target && drag.hoverTarget.el === target.el;
+    if (drag.hoverTarget && !sameEl) drag.hoverTarget.el.classList.remove("sol-drag-over");
+    if (target && !sameEl) target.el.classList.add("sol-drag-over");
+    drag.hoverTarget = target;
+  }
+
+  function onDragPointerMove(e) {
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    if (!drag.active) {
+      if (Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY) < DRAG_THRESHOLD) return;
+      activateDrag();
+    }
+    e.preventDefault();
+    positionGhosts(e.clientX, e.clientY);
+    setHoverTarget(findDropTarget(e.clientX, e.clientY));
+  }
+
+  function onDragPointerUp(e) {
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    document.removeEventListener("pointermove", onDragPointerMove);
+    document.removeEventListener("pointerup", onDragPointerUp);
+    document.removeEventListener("pointercancel", onDragPointerUp);
+
+    var wasActive = drag.active;
+    var target = wasActive ? findDropTarget(e.clientX, e.clientY) : null;
+    if (drag.hoverTarget) drag.hoverTarget.el.classList.remove("sol-drag-over");
+    drag.ghosts.forEach(function (g) { g.remove(); });
+    drag.els.forEach(function (el) { el.classList.remove("sol-drag-hidden"); });
+    var pile = drag.pile, col = drag.col, index = drag.index;
+    drag = null;
+    if (!wasActive) return; // no real movement - let the plain click handlers deal with it
+
+    selection = pile === "waste" ? { pile: "waste" } : { pile: "tableau", col: col, index: index };
+    var moved = false;
+    if (target && target.type === "foundation") moved = tryMoveToFoundation(target.suit);
+    else if (target && target.type === "tableau") moved = tryMoveToTableau(target.col);
+    if (!moved) {
+      selection = null;
+      if (target && window.SFX) window.SFX.invalid();
+      render();
+    }
+  }
+
   function isSelected(pile, col, index) {
     if (!selection) return false;
     if (pile === "waste") return selection.pile === "waste";
@@ -500,6 +632,7 @@
       var top = waste[waste.length - 1];
       var wEl = cardEl(top, false);
       if (isSelected("waste")) wEl.classList.add("selected");
+      wEl.addEventListener("pointerdown", function (e) { beginDragTracking(e, "waste"); });
       wasteEl.appendChild(wEl);
     }
 
@@ -536,6 +669,9 @@
       pile.forEach(function (card, index) {
         var el = cardEl(card, !card.faceUp);
         if (isSelected("tableau", col, index)) el.classList.add("selected");
+        if (card.faceUp) {
+          el.addEventListener("pointerdown", function (e) { beginDragTracking(e, "tableau", col, index); });
+        }
         el.addEventListener("click", function (e) {
           e.stopPropagation();
           onTableauCardClick(col, index, colEl);

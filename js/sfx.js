@@ -109,6 +109,12 @@
       tone(900, 500, 0.05, "square", 0.05);
       noise(0.03, 2600, 2.5, 0.05);
     },
+    // Planting a Minesweeper flag - a small bright plink with a flutter of
+    // cloth, distinct from a card's flatter "place" tap.
+    flag: function () {
+      tone(1400, 1900, 0.05, "triangle", 0.045);
+      noise(0.04, 3500, 4, 0.02);
+    },
     // An illegal move - a short low buzz, paired with a shake in the UI.
     invalid: function () {
       tone(180, 140, 0.12, "sawtooth", 0.07);
@@ -124,6 +130,12 @@
     click: function () {
       tone(1000, 700, 0.035, "square", 0.035);
       noise(0.02, 3000, 3, 0.03);
+    },
+    // A little two-note chime for an incoming chat message - not a
+    // reproduction of the classic MSN "doot-doot", just evoking it.
+    message: function () {
+      tone(760, 760, 0.09, "sine", 0.05);
+      setTimeout(function () { tone(1010, 1010, 0.12, "sine", 0.05); }, 100);
     },
     // A short rising jingle for a win.
     win: function () {
@@ -181,6 +193,8 @@
     invalid: function () { play("invalid"); },
     shuffle: function () { play("shuffle"); },
     win: function () { play("win"); },
-    click: function () { play("click"); }
+    click: function () { play("click"); },
+    message: function () { play("message"); },
+    flag: function () { play("flag"); }
   };
 })();

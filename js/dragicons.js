@@ -12,7 +12,9 @@
     return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
   }
 
-  function crashDesktop() {
+  var RICKROLL_MS = 8000;
+
+  function showBsod() {
     var overlay = document.getElementById("bsod-overlay");
     if (!overlay) return;
     overlay.hidden = false;
@@ -20,6 +22,32 @@
     function reload() { location.reload(); }
     overlay.addEventListener("click", reload);
     document.addEventListener("keydown", reload);
+  }
+
+  // The "crash" now has an intro: a few seconds of the obligatory rickroll
+  // before the actual fake blue screen - a click/keypress skips straight to
+  // it for anyone who'd rather not wait it out.
+  function crashDesktop() {
+    var rick = document.getElementById("rickroll-overlay");
+    var frame = document.getElementById("rickroll-frame");
+    if (!rick || !frame) { showBsod(); return; }
+
+    frame.src = "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1&mute=0&controls=0&modestbranding=1&rel=0";
+    rick.hidden = false;
+
+    var advanced = false;
+    function advance() {
+      if (advanced) return;
+      advanced = true;
+      rick.hidden = true;
+      frame.src = "about:blank"; // stop playback - an empty string here just reloads *this* page inside the iframe instead of actually clearing it
+      rick.removeEventListener("click", advance);
+      document.removeEventListener("keydown", advance);
+      showBsod();
+    }
+    rick.addEventListener("click", advance);
+    document.addEventListener("keydown", advance);
+    setTimeout(advance, RICKROLL_MS);
   }
 
   function attachDrag(el) {

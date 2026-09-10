@@ -58,6 +58,16 @@ rules_version = '2';
 // update below) - that's what makes an old record disappear once beaten,
 // and stops anyone from overwriting a good score with a worse one.
 //
+// Collection: presence
+// Document ID: a random id the client generates itself (js/presence.js),
+//   one per open tab - the MSN chat window's "N online" counter.
+// Fields:
+//   - lastSeen: timestamp (required) - refreshed by a ~20s heartbeat while
+//     the tab is visible; must equal the server's request time.
+// See the match block below for the full rationale (no Realtime Database on
+// the Spark plan, so this approximates presence with an aged-out heartbeat
+// instead of true online/offline tracking).
+//
 // ===============================================================
 
 service cloud.firestore {
@@ -132,6 +142,35 @@ service cloud.firestore {
       allow update: if isValidScore(request.resource.data) &&
         request.resource.data.game == resource.data.game &&
         isScoreImprovement(request.resource.data, resource.data);
+      allow delete: if false;
+    }
+
+    function isValidPresence(data) {
+      return hasOnlyAllowedFields(['lastSeen']) &&
+        hasRequiredFields(['lastSeen']) &&
+        data.lastSeen == request.time;
+    }
+
+    // presence - the MSN chat window's "N online" counter (js/presence.js).
+    // Document ID: a random id the client generates itself (crypto.randomUUID,
+    //   kept in sessionStorage) - one document per open tab, not per person.
+    //   Spark plan has no Realtime Database/Cloud Functions for real
+    //   presence, so this is a plain heartbeat write every ~20s; the client
+    //   only counts documents whose lastSeen is within the last ~75s, aging
+    //   a closed/backgrounded tab out of the count itself rather than
+    //   needing a server-side expiry.
+    // Fields:
+    //   - lastSeen: timestamp (required) - must equal the server's request
+    //     time, so a client can't fake a fresher heartbeat than it just sent.
+    // No login required - same trust level as a leaderboard name. A griefer
+    // could hammer this with junk heartbeats, but the worst outcome is a
+    // wrong-looking online count, nothing sensitive. Documents are never
+    // deleted (no scheduled Cloud Function on Spark to expire them); at any
+    // realistic traffic for this site, total storage here stays far under
+    // Firestore's free quota for years.
+    match /presence/{sessionId} {
+      allow read: if true;
+      allow create, update: if isValidPresence(request.resource.data);
       allow delete: if false;
     }
 

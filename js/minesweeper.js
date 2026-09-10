@@ -120,7 +120,7 @@
     return "";
   }
 
-  function renderCell(cell) {
+  function renderCell(cell, animateFlag) {
     var el = cell.el;
     el.className = "ms-cell";
     el.innerHTML = "";
@@ -142,7 +142,7 @@
     } else if (cell.flagged) {
       el.classList.add("flagged");
       var flag = document.createElement("span");
-      flag.className = "ms-flag";
+      flag.className = "ms-flag" + (animateFlag ? " spawn" : "");
       el.appendChild(flag);
       if (state === "lost" && !cell.mine) el.classList.add("wrong-flag");
     }
@@ -243,8 +243,8 @@
     }
     cell.flagged = !cell.flagged;
     flagsPlaced += cell.flagged ? 1 : -1;
-    if (window.SFX) window.SFX[cell.flagged ? "place" : "pick"]();
-    renderCell(cell);
+    if (window.SFX) window.SFX[cell.flagged ? "flag" : "pick"]();
+    renderCell(cell, cell.flagged);
     updateCounters();
   }
 

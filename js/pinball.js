@@ -68,6 +68,18 @@
       new MutationObserver(sync).observe(win, { attributes: true, attributeFilter: ["hidden"] });
       document.addEventListener("visibilitychange", sync);
     }
+
+    // Reset: same-origin postMessage into the iframe, which forwards it to
+    // the same "r" -> F2 remap pinball/index.html already does for the real
+    // keyboard shortcut - simplest way to trigger the engine's own restart
+    // without duplicating that translation a second time out here.
+    var resetBtn = wrap.parentElement.querySelector('[data-action="pinball-reset"]');
+    if (resetBtn) {
+      resetBtn.addEventListener("click", function () {
+        if (window.SFX) window.SFX.click();
+        if (frame.contentWindow) frame.contentWindow.postMessage("pinball-reset", location.origin);
+      });
+    }
   });
 
   // Leaderboard scores report themselves: pinball/index.html is a custom

@@ -39,8 +39,19 @@
     btn.setAttribute("aria-pressed", visible ? "true" : "false");
   }
 
+  var MOBILE_QUERY = "(max-width: 600px)";
+
   function showWindow(win) {
     win.hidden = false;
+    // A handful of windows (Pinball) are fixed-aspect game boards that just
+    // look cramped in their normal small window on a phone screen - those
+    // opt in via data-mobile-maximize to start maximized there instead,
+    // same as clicking the title bar's own maximize button would do.
+    if (win.hasAttribute("data-mobile-maximize") && !win.classList.contains("maximized") &&
+        window.matchMedia && window.matchMedia(MOBILE_QUERY).matches) {
+      win.classList.add("maximized");
+    }
+    bringToFront(win);
     updateButton(win);
     if (typeof win.scrollIntoView === "function") {
       win.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -69,8 +80,34 @@
 
   document.addEventListener("langchange", function () { relabelButtons(); });
 
+  // Clicking any window (not just its title bar) brings it in front of
+  // whichever other windows are currently overlapping it, same as a real OS.
+  // An inline z-index always wins over .window/.window.maximized's own
+  // z-index rule on the same element (equal-or-higher specificity), so this
+  // works regardless of maximized state. Z_BASE sits just above
+  // .window.maximized's static 150 so a freshly-raised window - maximized or
+  // not - is never left behind a non-raised maximized one; the counter is
+  // renormalized well before it could ever reach the taskbar's 200.
+  var Z_BASE = 160;
+  var Z_CEILING = 195;
+  var zCounter = Z_BASE;
+
+  function bringToFront(win) {
+    if (parseInt(win.style.zIndex, 10) === zCounter) return; // already on top
+    zCounter++;
+    if (zCounter > Z_CEILING) {
+      var ranked = windowEls.slice().sort(function (a, b) {
+        return (parseInt(a.style.zIndex, 10) || 0) - (parseInt(b.style.zIndex, 10) || 0);
+      });
+      ranked.forEach(function (w, i) { w.style.zIndex = Z_BASE + i; });
+      zCounter = Z_BASE + ranked.length;
+    }
+    win.style.zIndex = zCounter;
+  }
+
   windowEls.forEach(function (win) {
     var id = win.dataset.window;
+    win.addEventListener("pointerdown", function () { bringToFront(win); });
 
     // A window like "blog" isn't a standalone app - it only ever shows
     // something after a project's "To know more" opens it, so a permanent

@@ -23,7 +23,7 @@ OUT_DIR = HERE / "sounds"
 # One per window.SFX method in js/sfx.js.
 EFFECTS = [
     "pick", "drop", "chew", "swallow", "hit", "speak", "burp",
-    "place", "invalid", "shuffle", "win", "click",
+    "place", "invalid", "shuffle", "win", "click", "message", "flag",
 ]
 
 DURATION_S = "0.3"

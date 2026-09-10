@@ -37,6 +37,15 @@ import {
     "solitaire": "leaderboard.solitaire",
     "pinball": "leaderboard.pinball"
   };
+  // The column header carries the game's own icon, so the label next to it
+  // no longer has to spell "Minesweeper" out three times over.
+  var GAME_ICON = {
+    "minesweeper-beginner": "images/icons/minesweeper-16.png",
+    "minesweeper-intermediate": "images/icons/minesweeper-16.png",
+    "minesweeper-expert": "images/icons/minesweeper-16.png",
+    "solitaire": "images/icons/solitaire-16.png",
+    "pinball": "images/icons/pinball-16.png"
+  };
   // Minesweeper (seconds) and Solitaire (moves): lower is better. Pinball
   // (points): higher is better - the one game here where that flips.
   var SORT_DIR = {
@@ -46,11 +55,9 @@ import {
     "solitaire": "asc",
     "pinball": "desc"
   };
-  var currentGame = GAMES[0];
-  var unsub = null;
+  var unsubs = {};
 
-  var tabsEl = document.getElementById("leaderboard-tabs");
-  var listEl = document.getElementById("leaderboard-list");
+  var columnsEl = document.getElementById("leaderboard-columns");
 
   function formatValue(game, value) {
     if (game === "solitaire") return value + " " + t("leaderboard.moves");
@@ -58,65 +65,73 @@ import {
     return value + " " + t("leaderboard.seconds");
   }
 
-  function renderTabs() {
-    tabsEl.innerHTML = "";
+  function renderColumns() {
+    columnsEl.innerHTML = GAMES.map(function (g) {
+      return (
+        '<div class="leaderboard-col">' +
+        '<div class="leaderboard-col-head"><img src="' + GAME_ICON[g] + '" alt=""><span>' + escapeHtml(t(GAME_LABEL_KEYS[g])) + "</span></div>" +
+        '<ol class="leaderboard-list" id="leaderboard-list-' + g + '"></ol>' +
+        "</div>"
+      );
+    }).join("");
+  }
+
+  function unsubscribeAll() {
+    Object.keys(unsubs).forEach(function (g) { unsubs[g](); });
+    unsubs = {};
+  }
+
+  // All five games' top-10 lists are shown at once now (see renderColumns),
+  // so this opens one live query per game instead of the single one a
+  // tab-at-a-time UI needed.
+  function subscribeAll() {
+    unsubscribeAll();
     GAMES.forEach(function (g) {
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "btn98" + (g === currentGame ? " selected" : "");
-      btn.textContent = t(GAME_LABEL_KEYS[g]);
-      btn.addEventListener("click", function () {
-        if (window.SFX) window.SFX.click();
-        if (g === currentGame) return;
-        currentGame = g;
-        renderTabs();
-        subscribe();
+      var q = query(
+        collection(db, "leaderboard_scores"),
+        where("game", "==", g),
+        orderBy("value", SORT_DIR[g]),
+        limit(10)
+      );
+      unsubs[g] = onSnapshot(q, function (snap) {
+        var listEl = document.getElementById("leaderboard-list-" + g);
+        if (!listEl) return; // a langchange re-render can land after a slow response
+        var rows = [];
+        snap.forEach(function (doc) { rows.push(doc.data()); });
+        if (!rows.length) {
+          listEl.innerHTML = '<li class="leaderboard-empty">' + escapeHtml(t("leaderboard.empty")) + "</li>";
+          return;
+        }
+        listEl.innerHTML = rows.map(function (r, i) {
+          return (
+            '<li class="leaderboard-row"><span class="leaderboard-rank">' + (i + 1) + ".</span> " +
+            '<span class="leaderboard-name">' + escapeHtml(r.name) + "</span>" +
+            '<span class="leaderboard-value">' + escapeHtml(formatValue(g, r.value)) + "</span></li>"
+          );
+        }).join("");
+      }, function (err) {
+        var listEl = document.getElementById("leaderboard-list-" + g);
+        if (listEl) listEl.innerHTML = '<li class="leaderboard-empty">' + escapeHtml(err.message) + "</li>";
       });
-      tabsEl.appendChild(btn);
     });
   }
 
-  function subscribe() {
-    if (unsub) unsub();
-    listEl.innerHTML = "";
-    var q = query(
-      collection(db, "leaderboard_scores"),
-      where("game", "==", currentGame),
-      orderBy("value", SORT_DIR[currentGame]),
-      limit(10)
-    );
-    unsub = onSnapshot(q, function (snap) {
-      var rows = [];
-      snap.forEach(function (doc) { rows.push(doc.data()); });
-      if (!rows.length) {
-        listEl.innerHTML = '<li class="leaderboard-empty">' + escapeHtml(t("leaderboard.empty")) + "</li>";
-        return;
-      }
-      listEl.innerHTML = rows.map(function (r, i) {
-        return (
-          '<li class="leaderboard-row"><span class="leaderboard-rank">' + (i + 1) + ".</span> " +
-          '<span class="leaderboard-name">' + escapeHtml(r.name) + "</span>" +
-          '<span class="leaderboard-value">' + escapeHtml(formatValue(currentGame, r.value)) + "</span></li>"
-        );
-      }).join("");
-    }, function (err) {
-      listEl.innerHTML = '<li class="leaderboard-empty">' + escapeHtml(err.message) + "</li>";
-    });
-  }
-
-  document.addEventListener("langchange", renderTabs);
+  document.addEventListener("langchange", function () {
+    renderColumns();
+    subscribeAll();
+  });
   // A backgrounded tab has no one reading the list, so drop the live
-  // connection while hidden instead of leaving it open for nothing (same
+  // connections while hidden instead of leaving them open for nothing (same
   // approach as js/chat.js and js/pinball.js).
   document.addEventListener("visibilitychange", function () {
     if (document.hidden) {
-      if (unsub) { unsub(); unsub = null; }
+      unsubscribeAll();
     } else {
-      subscribe();
+      subscribeAll();
     }
   });
-  renderTabs();
-  subscribe();
+  renderColumns();
+  subscribeAll();
 
   // ---- "save your score?" dialog, called from minesweeper.js / solitaire.js ----
   var overlay = document.getElementById("score-overlay");

@@ -122,6 +122,21 @@
     </div>
   </section>
 
+  <!-- Pop-up window for a single trip's full write-up, opened from a preview
+       card in the Travel Blog window above (js/travel.js) - same "read more
+       opens its own window" pattern as a Project's blog post. -->
+  <section class="window raised" data-window="travel-entry" data-no-taskbar hidden>
+    <div class="title-bar">
+      <div class="title-bar-text"><img class="icon-inline" src="images/icons/globe_map-1.png?v=3d579dcb" alt=""> <span id="travel-entry-title">Travel Blog</span></div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" data-action="minimize">_</button>
+        <button aria-label="Maximize" data-action="maximize">□</button>
+        <button aria-label="Close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="window-body" id="travel-entry-root"></div>
+  </section>
+
   <section class="window raised" data-window="chat" data-taskbar-key="tb.chat">
     <div class="title-bar">
       <div class="title-bar-text"><img class="icon-inline" src="images/icons/msn-16.png?v=63710773" alt=""> <span data-i18n="win.chat">Chat</span></div>
@@ -132,6 +147,7 @@
       </div>
     </div>
     <div class="window-body chat-body" id="chat-root">
+      <p class="chat-presence"><span class="presence-dot" aria-hidden="true"></span> <span id="chat-online-count">1</span> <span data-i18n="chat.onlineLabel">online</span></p>
       <p class="chat-readonly-hint" id="chat-readonly-hint" data-i18n="chat.readOnlyHint">Anyone can read this chat. Sign in or sign up to post.</p>
       <div class="chat-messages" id="chat-messages" aria-live="polite"></div>
 
@@ -187,8 +203,7 @@
       </div>
     </div>
     <div class="window-body" id="leaderboard-root">
-      <div class="leaderboard-tabs" id="leaderboard-tabs"></div>
-      <ol class="leaderboard-list" id="leaderboard-list"></ol>
+      <div class="leaderboard-columns" id="leaderboard-columns"></div>
     </div>
   </section>
 
@@ -300,7 +315,7 @@
     </div>
   </section>
 
-  <section class="window raised" data-window="pinball" data-taskbar-key="tb.pinball" hidden>
+  <section class="window raised" data-window="pinball" data-taskbar-key="tb.pinball" data-mobile-maximize hidden>
     <div class="title-bar">
       <div class="title-bar-text"><img class="icon-inline" src="images/icons/pinball-16.png?v=13e5b624" alt=""> <span data-i18n="win.pinball">Pinball</span></div>
       <div class="title-bar-controls">
@@ -311,6 +326,7 @@
     </div>
     <div class="window-body pinball-body">
       <div class="pinball-frame-wrap"><iframe class="pinball-frame" src="pinball/index.html" title="3D Pinball: Space Cadet" loading="lazy" allow="autoplay; fullscreen"></iframe></div>
+      <div class="pinball-toolbar"><button class="btn98" type="button" data-action="pinball-reset" data-i18n="pin.reset">Reset</button></div>
       <p class="pinball-credit"><span data-i18n="pin.credit">3D Pinball: Space Cadet - not built by me; mirrored here since the original disables Play when framed.</span> <a href="https://github.com/lrusso/3DPinballSpaceCadet" target="_blank" rel="noopener">lrusso</a> (<span data-i18n="pin.creditPort">web port</span>) &middot; <a href="https://github.com/alula/SpaceCadetPinball" target="_blank" rel="noopener">alula</a> (<span data-i18n="pin.creditDecompile">decompilation</span>)</p>
     </div>
   </section>
@@ -360,6 +376,12 @@
     <span data-i18n="chat.language">Language!</span>
   </div>
 
+  <!-- Plays before the fake crash below - drag "My Computer" onto the
+       Recycle Bin to trigger both in sequence (js/dragicons.js). -->
+  <div class="rickroll-overlay" id="rickroll-overlay" hidden>
+    <iframe id="rickroll-frame" title="Never Gonna Give You Up" allow="autoplay" frameborder="0" src=""></iframe>
+  </div>
+
   <div class="bsod-overlay" id="bsod-overlay" hidden role="alert">
     <pre class="bsod-text" data-i18n="bsod.text">A fatal exception has occurred.</pre>
     <p class="bsod-hint" data-i18n="bsod.hint">Press any key to continue.</p>
@@ -398,6 +420,7 @@
   <script src="js/dragicons.js?v=1ac270b"></script>
   <script type="module" src="js/chat.js?v=1ac270b"></script>
   <script type="module" src="js/leaderboard.js?v=1ac270b"></script>
+  <script type="module" src="js/presence.js"></script>
   <script src="js/mycomputer.js?v=1ac270b"></script>
   <script src="js/minesweeper.js?v=1ac270b"></script>
   <script src="js/solitaire.js?v=1ac270b"></script>

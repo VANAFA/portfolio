@@ -217,50 +217,107 @@
   }
 
   // ---- rendering unlocked content ---------------------------------------
+  // Like My Projects: a grid of preview cards (one per trip, newest first,
+  // just a thumbnail + title) rather than dumping every trip's full text and
+  // photos onto the page at once. "Read more" opens that one trip's full
+  // write-up in its own window (#travel-entry-root), same as a project's
+  // "To know more" opens its blog post.
 
-  function renderUnlocked() {
+  var openEntryId = null; // which trip (if any) is showing in the entry window
+
+  function firstImageBlock(entry) {
+    for (var i = 0; i < entry.blocks.length; i++) {
+      if (entry.blocks[i].type === "image") return { block: entry.blocks[i], idx: i };
+    }
+    return null;
+  }
+
+  function renderTripGrid() {
     var L = lang();
     var marqueeHtml =
       '<div class="travel-marquee"><span>' + escapeAttr(t("travel.marquee")) + "</span></div>";
-    var html = marqueeHtml + plaintextCache
+    var cardsHtml = plaintextCache
       .map(function (entry) {
-        var blocksHtml = entry.blocks
-          .map(function (block, idx) {
-            if (block.type === "image") {
-              var dateHtml = block.date ? '<p class="travel-image-date">' + escapeAttr(block.date) + "</p>" : "";
-              return (
-                '<div class="travel-image-wrap">' +
-                '<canvas class="travel-canvas" data-entry="' + entry.id + '" data-idx="' + idx + '"></canvas>' +
-                dateHtml +
-                "</div>"
-              );
-            }
-            return '<p class="travel-scramble" data-final="' + escapeAttr(block.body[L]) + '"></p>';
-          })
-          .join("");
+        var thumb = firstImageBlock(entry);
+        var thumbHtml = thumb
+          ? '<div class="travel-image-wrap"><canvas class="travel-canvas travel-preview-thumb" data-entry="' + entry.id + '" data-idx="' + thumb.idx + '"></canvas></div>'
+          : "";
         return (
-          '<article class="travel-card">' +
+          '<div class="travel-preview-card">' +
+          thumbHtml +
           '<h2 class="travel-scramble" data-final="' + escapeAttr(entry.title[L]) + '"></h2>' +
           '<p class="travel-meta"><span class="travel-scramble" data-final="' + escapeAttr(entry.location[L]) + '"></span> · ' + escapeAttr(entry.date) + "</p>" +
-          blocksHtml +
-          "</article>"
+          '<button type="button" class="btn98 travel-readmore" data-id="' + escapeAttr(entry.id) + '">' + escapeAttr(t("travel.readMore")) + "</button>" +
+          "</div>"
         );
       })
       .join("");
     var content = document.getElementById("travel-content");
-    content.innerHTML = html;
+    content.innerHTML = marqueeHtml + '<div class="travel-preview-grid">' + cardsHtml + "</div>";
 
     content.querySelectorAll(".travel-scramble").forEach(function (el) {
       scrambleReveal(el, el.getAttribute("data-final"), 500);
     });
-
     plaintextCache.forEach(function (entry) {
-      entry.blocks.forEach(function (block, idx) {
-        if (block.type !== "image") return;
-        var canvas = content.querySelector('canvas[data-entry="' + entry.id + '"][data-idx="' + idx + '"]');
-        if (canvas) revealImageTiles(canvas, block.url, 6, 4, 900);
+      var thumb = firstImageBlock(entry);
+      if (!thumb) return;
+      var canvas = content.querySelector('canvas[data-entry="' + entry.id + '"][data-idx="' + thumb.idx + '"]');
+      if (canvas) revealImageTiles(canvas, thumb.block.url, 4, 3, 700);
+    });
+    content.querySelectorAll(".travel-readmore").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (window.SFX) window.SFX.click();
+        openTripEntry(btn.getAttribute("data-id"));
       });
     });
+  }
+
+  function renderEntry(entry) {
+    var L = lang();
+    var root = document.getElementById("travel-entry-root");
+    if (!root) return;
+    var titleEl = document.getElementById("travel-entry-title");
+    if (titleEl) titleEl.textContent = entry.title[L] + " — " + t("win.travel");
+
+    var blocksHtml = entry.blocks
+      .map(function (block, idx) {
+        if (block.type === "image") {
+          var dateHtml = block.date ? '<p class="travel-image-date">' + escapeAttr(block.date) + "</p>" : "";
+          return (
+            '<div class="travel-image-wrap">' +
+            '<canvas class="travel-canvas" data-idx="' + idx + '"></canvas>' +
+            dateHtml +
+            "</div>"
+          );
+        }
+        return '<p class="travel-scramble" data-final="' + escapeAttr(block.body[L]) + '"></p>';
+      })
+      .join("");
+    root.innerHTML =
+      '<div class="travel-content">' +
+      '<article class="travel-card">' +
+      '<h2 class="travel-scramble" data-final="' + escapeAttr(entry.title[L]) + '"></h2>' +
+      '<p class="travel-meta"><span class="travel-scramble" data-final="' + escapeAttr(entry.location[L]) + '"></span> · ' + escapeAttr(entry.date) + "</p>" +
+      blocksHtml +
+      "</article>" +
+      "</div>";
+
+    root.querySelectorAll(".travel-scramble").forEach(function (el) {
+      scrambleReveal(el, el.getAttribute("data-final"), 500);
+    });
+    entry.blocks.forEach(function (block, idx) {
+      if (block.type !== "image") return;
+      var canvas = root.querySelector('canvas[data-idx="' + idx + '"]');
+      if (canvas) revealImageTiles(canvas, block.url, 6, 4, 900);
+    });
+  }
+
+  function openTripEntry(id) {
+    var entry = plaintextCache && plaintextCache.filter(function (e) { return e.id === id; })[0];
+    if (!entry) return;
+    openEntryId = id;
+    renderEntry(entry);
+    if (window.openAppWindow) window.openAppWindow("travel-entry");
   }
 
   function escapeAttr(str) {
@@ -302,7 +359,7 @@
         plaintextCache = decrypted;
         lockSection.hidden = true;
         contentSection.hidden = false;
-        renderUnlocked();
+        renderTripGrid();
       })
       .catch(function () {
         showError(t("travel.wrong"));
@@ -318,8 +375,12 @@
   if (form) form.addEventListener("submit", handleSubmit);
 
   document.addEventListener("langchange", function () {
-    if (plaintextCache) renderUnlocked();
-    else renderLocked();
+    if (!plaintextCache) { renderLocked(); return; }
+    renderTripGrid();
+    if (openEntryId) {
+      var entry = plaintextCache.filter(function (e) { return e.id === openEntryId; })[0];
+      if (entry) renderEntry(entry);
+    }
   });
 
   renderLocked();

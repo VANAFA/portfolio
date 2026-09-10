@@ -122,7 +122,18 @@ import {
           "</p>"
         );
       }).join("");
-      if (seenFirstSnapshot && window.SFX) window.SFX.click();
+      if (seenFirstSnapshot && window.SFX) {
+        // Firestore forbids updates/deletes on this collection (see
+        // firestore.rules), so every change here is a brand new message -
+        // the classic "message received" chime for one from someone else,
+        // the plain click as before for your own just-sent message echoing
+        // back through the same snapshot.
+        var myUid = auth.currentUser && auth.currentUser.uid;
+        var incoming = snap.docChanges().some(function (c) {
+          return c.type === "added" && c.doc.data().authorUid !== myUid;
+        });
+        window.SFX[incoming ? "message" : "click"]();
+      }
       seenFirstSnapshot = true;
       messagesEl.scrollTop = messagesEl.scrollHeight;
     }, function (err) {
