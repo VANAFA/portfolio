@@ -1,8 +1,19 @@
-# valentino.cv — Windows 98 portfolio site
+<div align="center">
+
+# [nallib.ar](https://nallib.ar)
+
+**A Windows 98 desktop, as a portfolio site.**
+
+[![The nallib.ar desktop: the About Me, My Projects and Contact windows open over a teal Windows 98 desktop, with icons and a taskbar](images/screenshot.png)](https://nallib.ar)
+
+### 🖥️ Live at **[nallib.ar](https://nallib.ar)**
+
+</div>
 
 A tiny, dependency-free static site (no build step, no framework) styled like
-Windows 98. Open `index.html` directly in a browser, or host the folder as-is
-on any static host (GitHub Pages, Netlify, etc.).
+Windows 98, deployed at **[nallib.ar](https://nallib.ar)**. Open `index.html`
+directly in a browser, or host the folder as-is on any static host (GitHub
+Pages, Netlify, etc.).
 
 ## Previewing before you deploy
 
@@ -83,6 +94,7 @@ js/taskbar.js      Decorative taskbar clock
 js/version.js      Version badge showing the deployed commit
 images/icons/      Real Windows 98 .ico icons used across the site
 images/            Photos/screenshots referenced from data.js
+images/screenshot.png  The shot of the live site at the top of this README
 ```
 
 ## Windows behave like real windows
