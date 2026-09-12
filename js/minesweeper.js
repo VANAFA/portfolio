@@ -267,6 +267,9 @@
       });
     }
 
+    var msWinEl = boardEl.closest(".window");
+    if (msWinEl) msWinEl.dataset.msLevel = level;
+
     boardEl.style.setProperty("--ms-cols", cols);
     boardEl.style.gridTemplateColumns = "repeat(" + cols + ", 1fr)";
     boardEl.innerHTML = "";

@@ -71,9 +71,6 @@
         '<div class="music-artist">' +
         escapeHtml(current.artist) +
         "</div>" +
-        '<div class="music-youtube">' +
-        escapeHtml(t("music.youtube")) +
-        "</div>" +
         "</div>" +
         "</a>";
     } else {

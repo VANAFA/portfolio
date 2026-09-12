@@ -29,7 +29,7 @@ import {
     return div.innerHTML;
   }
 
-  var GAMES = ["minesweeper-beginner", "minesweeper-intermediate", "minesweeper-expert", "solitaire", "pinball"];
+  var GAMES = ["minesweeper-beginner", "minesweeper-intermediate", "minesweeper-expert", "pinball", "solitaire"];
   var GAME_LABEL_KEYS = {
     "minesweeper-beginner": "leaderboard.msBeginner",
     "minesweeper-intermediate": "leaderboard.msIntermediate",

@@ -86,30 +86,30 @@
 
 			/* In-game hints: only shown once the game itself is running (added
 			   in the gui_start handler, removed as the player learns each
-			   control - see the script below). The launch hint blinks at the
-			   top of the board until the ball is launched; the z/m letters sit
+			   control - see the script below). The launch hint sits statically at
+			   the top of the board until the ball is launched; the z/m letters sit
 			   below each flipper on desktop only and each vanishes once its key
 			   has been pressed twice. Both start hidden and are revealed by
 			   adding .visible when the game starts, so they never overlap the
 			   pre-game splash the way the touch controls once did. */
+			/* The launch hint is intentionally static (no blink) - it stays
+			   fully visible until the ball is launched, then is removed. */
 			.launch-hint{display:none;position:fixed;left:0;right:0;top:8px;z-index:101;text-align:center;pointer-events:none;font-family:Arial;font-size:18px;font-weight:bold;color:#ffe400;padding:0 10px;
-				text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000,0 -2px 0 #000,0 2px 0 #000,-2px 0 0 #000,2px 0 0 #000;
-				animation:launch-hint-blink 1s steps(1) infinite}
+				text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000,0 -2px 0 #000,0 2px 0 #000,-2px 0 0 #000,2px 0 0 #000}
 			.launch-hint.visible{display:block}
-			@keyframes launch-hint-blink{0%{opacity:1}50%{opacity:0}100%{opacity:1}}
-			.flipper-hint{display:none;position:fixed;bottom:70px;z-index:101;pointer-events:none;font-family:Arial;font-size:34px;font-weight:bold;color:#ffe400;
+			.flipper-hint{display:none;position:fixed;bottom:110px;z-index:101;pointer-events:none;font-family:Arial;font-size:34px;font-weight:bold;color:#ffe400;
 				text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000,0 -2px 0 #000,0 2px 0 #000,-2px 0 0 #000,2px 0 0 #000}
 			.flipper-hint.visible{display:block}
-			.flipper-hint-left{left:38%}
-			.flipper-hint-right{right:38%}
+			.flipper-hint-left{left:20%}
+			.flipper-hint-right{left:34%}
 		</style>
 	</head>
 	<body>
 		<div class="pleasewait"><div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
 		<canvas id="canvas"></canvas>
 		<div class="launch-hint" id="launch-hint">Hold Space (on desktop) or Hold Launch (on mobile) to launch the ball</div>
-		<div class="flipper-hint flipper-hint-left" id="flipper-hint-left">Z</div>
-		<div class="flipper-hint flipper-hint-right" id="flipper-hint-right">M</div>
+		<div class="flipper-hint flipper-hint-left" id="flipper-hint-left">z</div>
+		<div class="flipper-hint flipper-hint-right" id="flipper-hint-right">m</div>
 		<div class="touch-controls" id="touch-controls">
 			<div class="touch-btn" id="touch-flipper-left" data-key="z"><span class="touch-label">LEFT<br>FLIPPER</span></div>
 			<div class="touch-btn touch-btn-launch" id="touch-launch" data-key=" "><span class="touch-label">HOLD<br>LAUNCH</span></div>
@@ -347,7 +347,7 @@
 			// Shown by showGameHints() from the gui_start click handler once the
 			// game actually starts (so they never overlap the pre-game splash),
 			// then removed as the player uses each control:
-			//   - the blinking top "launch" hint disappears the first time the
+			//   - the static top "launch" hint disappears the first time the
 			//     launch key (Space) is pressed. Both a real Space keypress and
 			//     the on-screen Launch touch button fire that same key on
 			//     document (see the touch-controls above), so this one listener

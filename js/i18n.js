@@ -26,7 +26,7 @@
       "win.music": "Music",
       "tb.music": "Music",
       "desktop.music": "Music",
-      "music.intro": "One of my favourite songs on Tidal, picked at random.",
+      "music.intro": "",
       "music.recommend": "Recommend me a song",
       "music.hint": "Hit the button and I'll pick one of my Tidal favourites for you.",
       "music.youtube": "▶ Play on YouTube",

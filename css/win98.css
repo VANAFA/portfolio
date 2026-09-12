@@ -91,6 +91,8 @@ a:visited{ color:#551a8b; }
   transform:translateX(-50%);
 }
 .window.maximized[data-window="minesweeper"]{ width:min(calc(100vw - 24px), 700px); }
+/* Expert board is 30 cols wide - give it more room when maximized */
+.window.maximized[data-window="minesweeper"][data-ms-level="expert"]{ width:min(calc(100vw - 24px), 1020px); }
 .window.maximized[data-window="solitaire"]{ width:min(calc(100vw - 24px), 960px); }
 /* Wider than the 760px other maximized windows use - unlike a document or a
    small board, the table+backglass composition actually has room to grow
@@ -114,6 +116,12 @@ a:visited{ color:#551a8b; }
 .window.maximized[data-window="minesweeper"] .ms-levels{
   width:100%;
   max-width:640px;
+}
+/* Expert mode: board/toolbar/levels may fill up to the wider window */
+.window.maximized[data-window="minesweeper"][data-ms-level="expert"] .ms-board,
+.window.maximized[data-window="minesweeper"][data-ms-level="expert"] .ms-toolbar,
+.window.maximized[data-window="minesweeper"][data-ms-level="expert"] .ms-levels{
+  max-width:960px;
 }
 .window.maximized[data-window="solitaire"] .sol-toolbar,
 .window.maximized[data-window="solitaire"] .sol-top-row,
@@ -340,21 +348,41 @@ hr.divider{
   [data-window="chat"]{
     position:fixed;
     left:120px;
-    bottom:50px; /* clears the 34px taskbar with a bit of a gap, rather than
-                    dipping into it like bottom:24px did */
+    top:320px; /* sits below the Music window (top:24px + ~290px height + 8px gap) */
+    bottom:50px; /* clears the 34px taskbar with a bit of a gap */
     width:360px;
     margin:0;
     z-index:55;
+    display:flex;
+    flex-direction:column;
+  }
+  [data-window="chat"] .window-body{
+    flex:1;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+  }
+  [data-window="chat"] .chat-messages{
+    max-height:none;
   }
   /* Right side, below the Hit me! face window - between it and the centered
      content column below, rather than off in a corner of its own. 460px
      clears the face window's own ~24-430px span with a bit of a gap, the
-     same way My Computer's bottom:140px clears the Recycle Bin. */
+     same way My Computer's bottom:140px clears the Recycle Bin.
+
+     Pinned to the right edge (right:24px) and grown leftward: as the viewport
+     widens, the box fills the right gutter toward the left but stops just
+     before the centered content column so it never overlaps the windows in
+     the middle. The centered column is capped at 760px, so its right edge
+     sits at 50vw + 380px; keeping our own left edge (100vw - 24px - width)
+     16px clear of that means width <= 50vw - 420px. 380px stays the floor so
+     it doesn't get cramped on the narrowest desktops, where the gutter is
+     too small to reach anyway. */
   [data-window="leaderboard"]{
     position:fixed;
     top:460px;
     right:24px;
-    width:380px;
+    width:max(380px, calc(50vw - 420px));
     margin:0;
     z-index:55;
   }
@@ -366,7 +394,7 @@ hr.divider{
   [data-window="music"]{
     position:fixed;
     top:24px;
-    left:120px;
+    right:232px; /* 24px + 184px (Hit me!) + 24px gap = same margin as outer edge */
     margin:0;
     z-index:55;
   }
@@ -678,6 +706,8 @@ hr.divider{
 .window[data-window="music"] .window-body{
   width:280px;
   max-width:100%;
+  margin-inline:auto;
+  text-align:center;
 }
 .music-recommend{
   display:block;
@@ -1298,6 +1328,9 @@ hr.divider{
    stay standard Win98 chrome. */
 [data-window="solitaire"] .window-body{
   background:#008000;
+  /* Prevent browser text-selection highlight when dragging cards. */
+  -webkit-user-select:none;
+  user-select:none;
   /* Cards scale with the window itself (e.g. maximized) via this one
      variable, instead of a fixed pixel size - everything below just reads
      it, so a bigger window means a bigger table, not empty green felt. */
@@ -1351,6 +1384,8 @@ hr.divider{
   image-rendering:pixelated;
   filter:drop-shadow(1px 1px 1px rgba(0,0,0,0.4));
   touch-action:none;
+  -webkit-user-select:none;
+  user-select:none;
 }
 .sol-card.selected{
   filter:drop-shadow(0 0 3px #ffcc00) drop-shadow(0 0 3px #ffcc00);
@@ -1708,7 +1743,7 @@ hr.divider{
 
   /* Taskbar is too crowded at phone widths for full text labels - go icon-only.
      Start button, clock, and version badge are hidden entirely on mobile to
-     free up horizontal space; the language toggle moves to a fixed corner. */
+     free up horizontal space; the language toggle stays in the taskbar. */
   .taskbar{ gap:4px; padding:2px; height:30px; }
   .start-btn{ display:none; }
   .taskbar-btn{ min-width:32px; max-width:32px; padding:4px; justify-content:center; }
@@ -1716,13 +1751,8 @@ hr.divider{
   .taskbar-clock{ display:none; }
   .version-badge{ display:none; }
 
-  /* Language toggle: pulled out of the taskbar and pinned to the top-right
-     corner so it's always reachable without cluttering the taskbar. */
+  /* Language toggle: stays in the taskbar on mobile, right side. */
   .lang-btn{
-    position:fixed;
-    top:6px;
-    right:6px;
-    z-index:201;
     padding:3px 8px;
     font-size:11px;
   }
@@ -1764,6 +1794,8 @@ hr.divider{
 .chat-body{
   display:flex;
   flex-direction:column;
+  flex:1;
+  min-height:0;
   gap:8px;
 }
 .chat-readonly-hint{
@@ -1931,14 +1963,17 @@ hr.divider{
    "Minesweeper" every time. Columns wrap onto more than one row rather than
    force the pinned box ever wider - see [data-window="leaderboard"] above. */
 .leaderboard-columns{
-  display:flex;
-  flex-wrap:wrap;
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
   gap:10px;
 }
-.leaderboard-col{
-  flex:1 1 100px;
-  min-width:100px;
-}
+/* Minesweeper (cols 1-3): each spans 2/6 = 1/3 of the row */
+.leaderboard-col:nth-child(1),
+.leaderboard-col:nth-child(2),
+.leaderboard-col:nth-child(3){ grid-column:span 2; }
+/* Pinball + Solitaire (cols 4-5): each spans 3/6 = 1/2 of the row */
+.leaderboard-col:nth-child(4),
+.leaderboard-col:nth-child(5){ grid-column:span 3; }
 .leaderboard-col-head{
   display:flex;
   align-items:center;
