@@ -13,6 +13,7 @@
     { key: "win.pinball", icon: "images/icons/pinball-48.png", open: "pinball" },
     { key: "win.leaderboard", icon: "images/icons/leaderboard-48.png", open: "leaderboard" },
     { key: "win.chat", icon: "images/icons/msn-48.png", open: "chat" },
+    { key: "desktop.music", icon: "images/icons/cd_audio_cd_a-3.png", open: "music" },
     { key: "desktop.travel", icon: "images/icons/globe_map-0.png", open: "travel", feature: "travel" }
   ];
 

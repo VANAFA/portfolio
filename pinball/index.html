@@ -83,11 +83,33 @@
 			.touch-btn{pointer-events:auto;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none;width:22vw;max-width:120px;height:22vw;max-height:120px;border-radius:50%;background:rgba(255,255,255,0.14);border:2px solid rgba(255,255,255,0.5);color:#fff;font-family:Arial;font-size:13px;font-weight:bold;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2}
 			.touch-btn.pressed{background:rgba(255,255,255,0.34)}
 			.touch-btn-launch{width:16vw;max-width:90px;height:16vw;max-height:90px;margin-bottom:4vw}
+
+			/* In-game hints: only shown once the game itself is running (added
+			   in the gui_start handler, removed as the player learns each
+			   control - see the script below). The launch hint blinks at the
+			   top of the board until the ball is launched; the z/m letters sit
+			   below each flipper on desktop only and each vanishes once its key
+			   has been pressed twice. Both start hidden and are revealed by
+			   adding .visible when the game starts, so they never overlap the
+			   pre-game splash the way the touch controls once did. */
+			.launch-hint{display:none;position:fixed;left:0;right:0;top:8px;z-index:101;text-align:center;pointer-events:none;font-family:Arial;font-size:18px;font-weight:bold;color:#ffe400;padding:0 10px;
+				text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000,0 -2px 0 #000,0 2px 0 #000,-2px 0 0 #000,2px 0 0 #000;
+				animation:launch-hint-blink 1s steps(1) infinite}
+			.launch-hint.visible{display:block}
+			@keyframes launch-hint-blink{0%{opacity:1}50%{opacity:0}100%{opacity:1}}
+			.flipper-hint{display:none;position:fixed;bottom:70px;z-index:101;pointer-events:none;font-family:Arial;font-size:34px;font-weight:bold;color:#ffe400;
+				text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000,0 -2px 0 #000,0 2px 0 #000,-2px 0 0 #000,2px 0 0 #000}
+			.flipper-hint.visible{display:block}
+			.flipper-hint-left{left:38%}
+			.flipper-hint-right{right:38%}
 		</style>
 	</head>
 	<body>
 		<div class="pleasewait"><div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
 		<canvas id="canvas"></canvas>
+		<div class="launch-hint" id="launch-hint">Hold Space (on desktop) or Hold Launch (on mobile) to launch the ball</div>
+		<div class="flipper-hint flipper-hint-left" id="flipper-hint-left">Z</div>
+		<div class="flipper-hint flipper-hint-right" id="flipper-hint-right">M</div>
 		<div class="touch-controls" id="touch-controls">
 			<div class="touch-btn" id="touch-flipper-left" data-key="z"><span class="touch-label">LEFT<br>FLIPPER</span></div>
 			<div class="touch-btn touch-btn-launch" id="touch-launch" data-key=" "><span class="touch-label">HOLD<br>LAUNCH</span></div>
@@ -321,6 +343,45 @@
 				btn.addEventListener("contextmenu", function (e) { e.preventDefault(); });
 			});
 
+			// ---- learn-the-controls hints ----------------------------------
+			// Shown by showGameHints() from the gui_start click handler once the
+			// game actually starts (so they never overlap the pre-game splash),
+			// then removed as the player uses each control:
+			//   - the blinking top "launch" hint disappears the first time the
+			//     launch key (Space) is pressed. Both a real Space keypress and
+			//     the on-screen Launch touch button fire that same key on
+			//     document (see the touch-controls above), so this one listener
+			//     covers desktop and mobile. The engine draws the ball as pixels
+			//     with no launch event exposed, so "launched" is detected as the
+			//     player performing the launch action the hint is teaching.
+			//   - the z / m letters under each flipper are desktop-only (touch
+			//     devices already have labelled on-screen flipper buttons) and
+			//     each vanishes once its flipper key has been pressed twice. z
+			//     is the left flipper, m the right (m is remapped to Slash for
+			//     the engine above, but we count the original m keydown here).
+			var launchHintEl = document.getElementById("launch-hint");
+			var flipperHintLeft = document.getElementById("flipper-hint-left");
+			var flipperHintRight = document.getElementById("flipper-hint-right");
+			var leftPresses = 0, rightPresses = 0;
+			function showGameHints() {
+				if (launchHintEl) launchHintEl.classList.add("visible");
+				// Desktop only - touch devices get the labelled touch buttons.
+				if (!IS_TOUCH_DEVICE) {
+					if (flipperHintLeft) flipperHintLeft.classList.add("visible");
+					if (flipperHintRight) flipperHintRight.classList.add("visible");
+				}
+			}
+			document.addEventListener("keydown", function (event) {
+				if (event.repeat) return; // ignore auto-repeat while a key is held
+				if (event.key === " ") {
+					if (launchHintEl) launchHintEl.classList.remove("visible");
+				} else if (event.key === "z") {
+					if (++leftPresses >= 2 && flipperHintLeft) flipperHintLeft.classList.remove("visible");
+				} else if (event.key === "m") {
+					if (++rightPresses >= 2 && flipperHintRight) flipperHintRight.classList.remove("visible");
+				}
+			});
+
 			// ---- language: mirror the parent site's EN/ES choice -----------
 			// Same origin as the parent page, so its localStorage is visible here
 			// directly - no need to pull in the whole js/i18n.js machinery for
@@ -331,13 +392,15 @@
 					guiControls: '<span class="gui_controls_key">LEFT FLIPPER = </span>Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gui_controls_key">RIGHT FLIPPER = </span>M<br><span class="gui_controls_key">TILT FLIPPER TABLE = </span>X&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gui_controls_key">LAUNCH BALL = </span>SPACE<br><span class="gui_controls_key">RESTART GAME = </span>R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gui_controls_key">ENABLE/DISABLE SOUND = </span>T',
 					left: "LEFT<br>FLIPPER",
 					launch: "HOLD<br>LAUNCH",
-					right: "RIGHT<br>FLIPPER"
+					right: "RIGHT<br>FLIPPER",
+					launchHint: "Hold Space (on desktop) or Hold Launch (on mobile) to launch the ball"
 				},
 				es: {
 					guiControls: '<span class="gui_controls_key">FLIPPER IZQUIERDO = </span>Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gui_controls_key">FLIPPER DERECHO = </span>M<br><span class="gui_controls_key">SACUDIR LA MESA = </span>X&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gui_controls_key">LANZAR BOLA = </span>ESPACIO<br><span class="gui_controls_key">REINICIAR JUEGO = </span>R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gui_controls_key">ACTIVAR/DESACTIVAR SONIDO = </span>T',
 					left: "FLIPPER<br>IZQUIERDO",
 					launch: "MANTENÉ<br>LANZAR",
-					right: "FLIPPER<br>DERECHO"
+					right: "FLIPPER<br>DERECHO",
+					launchHint: "Mantené Espacio (en escritorio) o Mantené Lanzar (en móvil) para lanzar la bola"
 				}
 			};
 			function applyPinballLang() {
@@ -352,6 +415,8 @@
 				if (left) left.innerHTML = s.left;
 				if (launch) launch.innerHTML = s.launch;
 				if (right) right.innerHTML = s.right;
+				var launchHint = document.getElementById("launch-hint");
+				if (launchHint) launchHint.textContent = s.launchHint;
 			}
 			applyPinballLang();
 			window.addEventListener("storage", function (e) {
@@ -382,6 +447,7 @@
 					if (IS_TOUCH_DEVICE) {
 						document.getElementById("touch-controls").classList.add("enabled");
 					}
+					showGameHints();
 
 					const scriptGame = document.createElement("script");
 					scriptGame.src = "SpaceCadetPinball.js";

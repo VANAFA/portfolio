@@ -358,9 +358,22 @@ hr.divider{
     margin:0;
     z-index:55;
   }
+  /* Top-left corner - the Music window is open by default (no `hidden` in
+     index.html), so this is where it first appears. left:120px clears the
+     desktop icon column the same way Minesweeper/Solitaire/Chat do; it shares
+     that default spot with the (hidden-until-opened) Minesweeper window, and
+     both are draggable so that overlap is just a starting point. */
+  [data-window="music"]{
+    position:fixed;
+    top:24px;
+    left:120px;
+    margin:0;
+    z-index:55;
+  }
   /* js/dragwindows.js - grab any of these by their title bar to move them;
      only wired up at this same breakpoint, where they're actually
      position:fixed instead of stacked in normal flow. */
+  [data-window="music"] .title-bar,
   [data-window="mycomputer"] .title-bar,
   [data-window="minesweeper"] .title-bar,
   [data-window="solitaire"] .title-bar,
@@ -369,6 +382,7 @@ hr.divider{
   [data-window="face"] .title-bar{
     cursor:grab;
   }
+  [data-window="music"].dragging .title-bar,
   [data-window="mycomputer"].dragging .title-bar,
   [data-window="minesweeper"].dragging .title-bar,
   [data-window="solitaire"].dragging .title-bar,
@@ -658,6 +672,68 @@ hr.divider{
   background:#000080;
   color:#fff;
   padding:1px 4px;
+}
+
+/* ===== "Music" window (random Tidal favourite) ===== */
+.window[data-window="music"] .window-body{
+  width:280px;
+  max-width:100%;
+}
+.music-recommend{
+  display:block;
+  width:100%;
+  margin-bottom:10px;
+}
+.music-card{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  text-align:center;
+  text-decoration:none;
+  color:inherit;
+  cursor:pointer;
+}
+.music-card:hover .music-title,
+.music-card:hover .music-youtube{ text-decoration:underline; }
+.music-art{
+  padding:4px;
+  line-height:0;
+}
+.music-art img{
+  display:block;
+  width:200px;
+  max-width:100%;
+  height:auto;
+  aspect-ratio:1 / 1;
+  object-fit:cover;
+  image-rendering:auto;
+}
+.music-meta{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  width:100%;
+}
+.music-title{
+  font-weight:bold;
+  font-size:14px;
+}
+.music-artist{
+  color:#000080;
+  font-size:12px;
+}
+.music-youtube{
+  color:#c00000;
+  font-size:11px;
+  margin-top:2px;
+}
+.music-hint,
+.music-empty{
+  margin:0;
+  color:#404040;
+  text-align:center;
 }
 
 .profile-info h1{
@@ -1630,15 +1706,26 @@ hr.divider{
   [data-window="solitaire"] .window-body{ --sol-card:clamp(40px, 7.65cqw, 160px); }
   .sol-tableau{ gap:4px; }
 
-  /* Taskbar is too crowded at phone widths for full text labels - go icon-only */
+  /* Taskbar is too crowded at phone widths for full text labels - go icon-only.
+     Start button, clock, and version badge are hidden entirely on mobile to
+     free up horizontal space; the language toggle moves to a fixed corner. */
   .taskbar{ gap:4px; padding:2px; height:30px; }
-  .start-label{ display:none; }
-  .start-btn{ padding:4px 7px; }
+  .start-btn{ display:none; }
   .taskbar-btn{ min-width:32px; max-width:32px; padding:4px; justify-content:center; }
   .taskbar-btn .taskbar-label{ display:none; }
-  .taskbar-clock{ padding:3px 5px; font-size:11px; }
-  .version-badge{ padding:3px 5px; font-size:10px; }
-  .lang-btn{ padding:3px 5px; font-size:10px; }
+  .taskbar-clock{ display:none; }
+  .version-badge{ display:none; }
+
+  /* Language toggle: pulled out of the taskbar and pinned to the top-right
+     corner so it's always reachable without cluttering the taskbar. */
+  .lang-btn{
+    position:fixed;
+    top:6px;
+    right:6px;
+    z-index:201;
+    padding:3px 8px;
+    font-size:11px;
+  }
 
   /* Pinball opens maximized on a phone (data-mobile-maximize) - make it a real
      full-screen game there instead of the desktop's centered, aspect-boxed
@@ -1911,4 +1998,43 @@ hr.divider{
   border-bottom:2px solid var(--w98-face-lighter);
   font-family:inherit;
   font-size:13px;
+}
+
+/* --------------------------------------------------------------------------
+ * Dev-mode inline editor (js/devedit.js). Present in the source on every host
+ * but only ever RENDERED locally, when tools/dev_server.py answers /__dev/ping
+ * - the live site never adds .dev-toolbar to the DOM, so these rules never
+ * apply there. Styling mimics a docked win98 toolbar.
+ * ------------------------------------------------------------------------ */
+.dev-toolbar{
+  position:fixed;
+  left:6px;
+  bottom:38px;            /* sit just above the taskbar */
+  z-index:99999;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:4px 8px;
+  background:var(--w98-face);
+  font-family:inherit;
+  font-size:12px;
+  max-width:calc(100vw - 12px);
+}
+.dev-toolbar-label{
+  white-space:nowrap;
+  color:var(--w98-text);
+}
+.dev-toolbar-toast{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:40vw;
+  font-style:italic;
+}
+[contenteditable].dev-editing,
+.dev-editing{
+  outline:2px dotted #000080;
+  outline-offset:1px;
+  background:#ffffcc;      /* classic "note" yellow while editing */
+  cursor:text;
 }

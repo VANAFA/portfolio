@@ -5,3 +5,7 @@ tools/travel-photos/
 
 node_modules/
 .DS_Store
+
+# Python bytecode from local tools (dev server, Tidal scraper)
+__pycache__/
+*.pyc
