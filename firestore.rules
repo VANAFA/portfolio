@@ -68,6 +68,10 @@ rules_version = '2';
 // the Spark plan, so this approximates presence with an aged-out heartbeat
 // instead of true online/offline tracking).
 //
+// Collection: cumple_invitados
+// Guests of the birthday-party page at cumple.nallib.ar (repo VANAFA/cumple).
+// See the match block below for the fields and the (no-login) trust model.
+//
 // ===============================================================
 
 service cloud.firestore {
@@ -172,6 +176,54 @@ service cloud.firestore {
       allow read: if true;
       allow create, update: if isValidPresence(request.resource.data);
       allow delete: if false;
+    }
+
+    // ===============================================================
+    // cumple_invitados - cumple.nallib.ar (repo VANAFA/cumple), the
+    // "how do we get to the party" page. One document per guest, keyed by
+    // a random id the guest's browser generates and remembers in
+    // localStorage. No login - same arcade-cabinet trust model as the
+    // leaderboard: anyone can read the list, add themselves, edit any
+    // entry (drivers mark whom they pick up by updating their own
+    // `pasajeros` list; a guest removing themselves also drops their id
+    // from drivers' lists) and delete. The only defense is field/size
+    // validation, which is enough for a one-night party page.
+    // Fields (all required, js/app.js always writes the full document):
+    //   - id: string, equals the document id
+    //   - nombre: string (0-40) - display name/alias, may be empty
+    //   - origen: map { lat: number, lng: number, label: string (0-200) }
+    //   - auto: bool - has a car
+    //   - lugares: int 0-8 - free seats
+    //   - vehiculo (0-30), color (0-20), patente (0-12): strings, optional
+    //   - horaSalida: string (0-5, "HH:MM" or empty)
+    //   - contacto: string (0-40)
+    //   - pasajeros: list of guest ids (<= 8) this driver picks up
+    //   - creado, actualizado: number (client ms timestamps)
+    // ===============================================================
+    function isValidInvitado(d) {
+      return d.keys().hasOnly(['id', 'nombre', 'origen', 'auto', 'lugares', 'vehiculo', 'color', 'patente', 'horaSalida', 'contacto', 'pasajeros', 'creado', 'actualizado']) &&
+        d.keys().hasAll(['id', 'nombre', 'origen', 'auto', 'lugares', 'vehiculo', 'color', 'patente', 'horaSalida', 'contacto', 'pasajeros', 'creado', 'actualizado']) &&
+        d.id is string && d.id.size() > 0 && d.id.size() <= 64 &&
+        d.nombre is string && d.nombre.size() <= 40 &&
+        d.origen is map && d.origen.keys().hasOnly(['lat', 'lng', 'label']) &&
+        d.origen.lat is number && d.origen.lat >= -90 && d.origen.lat <= 90 &&
+        d.origen.lng is number && d.origen.lng >= -180 && d.origen.lng <= 180 &&
+        d.origen.label is string && d.origen.label.size() <= 200 &&
+        d.auto is bool &&
+        d.lugares is int && d.lugares >= 0 && d.lugares <= 8 &&
+        d.vehiculo is string && d.vehiculo.size() <= 30 &&
+        d.color is string && d.color.size() <= 20 &&
+        d.patente is string && d.patente.size() <= 12 &&
+        d.horaSalida is string && d.horaSalida.size() <= 5 &&
+        d.contacto is string && d.contacto.size() <= 40 &&
+        d.pasajeros is list && d.pasajeros.size() <= 8 &&
+        d.creado is number && d.actualizado is number;
+    }
+
+    match /cumple_invitados/{guestId} {
+      allow read: if true;
+      allow create, update: if isValidInvitado(request.resource.data) && request.resource.data.id == guestId;
+      allow delete: if true;
     }
 
     // Default deny for anything else.
