@@ -199,9 +199,24 @@ service cloud.firestore {
     //   - contacto: string (0-40)
     //   - pasajeros: list of guest ids (<= 8) this driver picks up
     //   - creado, actualizado: number (client ms timestamps)
+    //   - resuelto: bool (optional) - the organizer flagged this guest's
+    //     ride as sorted (green dot on the map). Only the organizer's
+    //     account can change it; everybody else must carry it over
+    //     unchanged (js/app.js does) or leave it out.
+    // Organizer = one email/password account (same provider as the chat),
+    // email verified so nobody can squat the address with an unverified
+    // signup. Must match `adminEmail` in the cumple repo's js/config.js.
     // ===============================================================
+    function isOrganizadorCumple() {
+      return isVerified() && request.auth.token.email == 'nallibfadel@gmail.com';
+    }
+
+    function resueltoDe(d) {
+      return d.get('resuelto', false);
+    }
+
     function isValidInvitado(d) {
-      return d.keys().hasOnly(['id', 'nombre', 'origen', 'auto', 'lugares', 'vehiculo', 'color', 'patente', 'horaSalida', 'contacto', 'pasajeros', 'creado', 'actualizado']) &&
+      return d.keys().hasOnly(['id', 'nombre', 'origen', 'auto', 'lugares', 'vehiculo', 'color', 'patente', 'horaSalida', 'contacto', 'pasajeros', 'creado', 'actualizado', 'resuelto']) &&
         d.keys().hasAll(['id', 'nombre', 'origen', 'auto', 'lugares', 'vehiculo', 'color', 'patente', 'horaSalida', 'contacto', 'pasajeros', 'creado', 'actualizado']) &&
         d.id is string && d.id.size() > 0 && d.id.size() <= 64 &&
         d.nombre is string && d.nombre.size() <= 40 &&
@@ -217,12 +232,16 @@ service cloud.firestore {
         d.horaSalida is string && d.horaSalida.size() <= 5 &&
         d.contacto is string && d.contacto.size() <= 40 &&
         d.pasajeros is list && d.pasajeros.size() <= 8 &&
-        d.creado is number && d.actualizado is number;
+        d.creado is number && d.actualizado is number &&
+        (!('resuelto' in d) || d.resuelto is bool);
     }
 
     match /cumple_invitados/{guestId} {
       allow read: if true;
-      allow create, update: if isValidInvitado(request.resource.data) && request.resource.data.id == guestId;
+      allow create: if isValidInvitado(request.resource.data) && request.resource.data.id == guestId &&
+        (resueltoDe(request.resource.data) == false || isOrganizadorCumple());
+      allow update: if isValidInvitado(request.resource.data) && request.resource.data.id == guestId &&
+        (resueltoDe(request.resource.data) == resueltoDe(resource.data) || isOrganizadorCumple());
       allow delete: if true;
     }
 
